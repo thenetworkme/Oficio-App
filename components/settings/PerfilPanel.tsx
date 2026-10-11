@@ -10,6 +10,7 @@ import { Input, Label } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { AmbientPicker } from "@/components/sound/AmbientPicker";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { useNotifications } from "@/lib/notifications/NotificationProvider";
 import { useSound } from "@/lib/sound/SoundProvider";
 import { exportUserDataToCsv } from "@/lib/csv-export";
 import { getFirebaseAuth } from "@/lib/firebase";
@@ -194,6 +195,8 @@ export function PerfilPanel() {
   const { user, profile, signOut, hasPasswordProvider } = useAuth();
   const { skills, dailyMinutes, totalHours } = useAppData();
   const sound = useSound();
+  const notifications = useNotifications();
+  const [notificationsNote, setNotificationsNote] = useState("");
 
   const [displayName, setDisplayName] = useState("");
   const [timezone, setTimezone] = useState("America/Santo_Domingo");
@@ -258,6 +261,18 @@ export function PerfilPanel() {
       await exportUserDataToCsv(user!.uid);
     } finally {
       setExporting(false);
+    }
+  }
+
+  async function handleToggleNotifications(next: boolean) {
+    setNotificationsNote("");
+    const outcome = await notifications.setNotificationsEnabled(next);
+    if (outcome === "denied") {
+      setNotificationsNote(
+        "Bloqueaste los avisos en tu navegador. Para activarlos, cámbialo desde los ajustes de notificaciones del navegador.",
+      );
+    } else if (outcome === "unsupported") {
+      setNotificationsNote("Tu navegador no admite notificaciones de escritorio.");
     }
   }
 
@@ -414,6 +429,28 @@ export function PerfilPanel() {
             />
           </div>
           <AmbientPicker />
+        </Card>
+
+        <Card className="flex flex-col gap-3 p-6">
+          <CardHeading>Notificaciones</CardHeading>
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-ink py-2">
+            <div className="flex flex-col gap-0.5">
+              <span className="font-semibold">Avisos de escritorio</span>
+              <span className="text-sm text-muted">
+                Te avisamos cuando termine un tomate o un descanso, aunque la pestaña esté en segundo plano.
+              </span>
+            </div>
+            <Switch
+              checked={notifications.notificationsEnabled}
+              onCheckedChange={handleToggleNotifications}
+              label="Avisos de escritorio"
+            />
+          </div>
+          {notificationsNote && (
+            <p role="status" className="m-0 text-sm text-muted">
+              {notificationsNote}
+            </p>
+          )}
         </Card>
 
         <div className="flex flex-wrap items-center justify-end gap-3.5">

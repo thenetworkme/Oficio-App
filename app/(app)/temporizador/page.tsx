@@ -15,6 +15,8 @@ import { saveSession } from "@/lib/firestore/sessions";
 import { watchChallenges } from "@/lib/firestore/challenges";
 import { dayNumberForDate } from "@/lib/challenge";
 import { useCelebration } from "@/lib/hooks/useCelebration";
+import { notifyPeriodComplete } from "@/lib/notifications/browserNotify";
+import { useNotifications } from "@/lib/notifications/NotificationProvider";
 import { useSound } from "@/lib/sound/SoundProvider";
 import { resolveSkillColor } from "@/lib/skill-color";
 import { formatMinutes, formatTimeEs } from "@/lib/format";
@@ -35,6 +37,7 @@ export default function TemporizadorPage() {
   const store = useTimerStore();
   const { celebration, enqueueCelebration, closeCelebration } = useCelebration();
   const sound = useSound();
+  const notifications = useNotifications();
   const [now, setNow] = useState(() => Date.now());
   const [intention, setIntentionLocal] = useState(store.intention);
   // Purely presentational view state for the fullscreen takeover — the
@@ -88,6 +91,7 @@ export default function TemporizadorPage() {
   useEffect(() => {
     if (store.running && remaining <= 0) {
       sound.playComplete();
+      notifyPeriodComplete(store.mode, notifications.notificationsEnabled);
       sound.stopAmbient();
       store.completeFocusPeriod();
     }
@@ -136,6 +140,7 @@ export default function TemporizadorPage() {
 
   function handleFinishNow() {
     sound.playComplete();
+    notifyPeriodComplete(store.mode, notifications.notificationsEnabled);
     sound.stopAmbient();
     store.completeFocusPeriod();
   }

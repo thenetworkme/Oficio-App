@@ -24,6 +24,11 @@ export interface Profile {
   ambientSoundId: AmbientSoundId;
   /** 0-1 linear volume for the ambient loop. */
   ambientVolume: number;
+  /** Native OS notifications (Web Notification API, not FCM) when a Pomodoro
+   * period finishes while the tab is hidden. Opt-in only — never true unless
+   * the user explicitly turned it on AND the browser granted permission; see
+   * lib/notifications/NotificationProvider.tsx. */
+  notificationsEnabled: boolean;
   createdAt: number; // epoch ms
 }
 
@@ -44,6 +49,7 @@ export const DEFAULT_PROFILE: Omit<Profile, "uid" | "createdAt"> = {
   soundEffectsVolume: 0.6,
   ambientSoundId: "none",
   ambientVolume: 0.5,
+  notificationsEnabled: false,
 };
 
 export interface Skill {

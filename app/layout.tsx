@@ -3,6 +3,7 @@ import { Space_Grotesk, Space_Mono } from "next/font/google";
 import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister";
 import { ThemeScript } from "@/components/theme/ThemeScript";
 import { AuthProvider } from "@/lib/auth/AuthProvider";
+import { NotificationProvider } from "@/lib/notifications/NotificationProvider";
 import { SoundProvider } from "@/lib/sound/SoundProvider";
 import { ThemeProvider } from "@/lib/theme/ThemeProvider";
 import "./globals.css";
@@ -41,7 +42,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ServiceWorkerRegister />
         <AuthProvider>
           <ThemeProvider>
-            <SoundProvider>{children}</SoundProvider>
+            <SoundProvider>
+              <NotificationProvider>{children}</NotificationProvider>
+            </SoundProvider>
           </ThemeProvider>
         </AuthProvider>
       </body>
