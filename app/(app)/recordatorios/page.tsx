@@ -98,7 +98,7 @@ export default function RecordatoriosPage() {
       </header>
 
       {notifStatus !== "granted" && notifStatus !== "unsupported" && (
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-line bg-card px-5 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 bx rounded-[14px] px-5 py-4">
           <span className="flex-1 min-w-[280px]">
             Permite las notificaciones para que los avisos lleguen aunque cierres la pestaña.
           </span>
@@ -107,7 +107,7 @@ export default function RecordatoriosPage() {
       )}
 
       <div className="flex flex-wrap items-start gap-6">
-        <section aria-labelledby="h-list" className="min-w-0 flex-[3_1_460px] rounded-card border border-line bg-card p-5.5">
+        <section aria-labelledby="h-list" className="min-w-0 flex-[3_1_460px] bx p-5.5">
           <h2 id="h-list" className="m-0 mb-2.5 text-lg font-bold">
             Mis recordatorios
           </h2>
@@ -118,12 +118,12 @@ export default function RecordatoriosPage() {
               const skill = skills.find((s) => s.id === r.skillId);
               const { title, meta } = describeReminder(r, skill?.name);
               return (
-                <div key={r.id} className="flex flex-wrap items-center gap-4 border-t border-line py-4">
-                  <span className="font-num min-w-[76px] text-base font-medium" style={{ color: r.enabled ? "var(--accent)" : "var(--muted)" }}>
+                <div key={r.id} className="flex flex-wrap items-center gap-4 border-t border-ink py-4">
+                  <span className="font-num min-w-[76px] text-base font-medium" style={{ color: r.enabled ? "var(--a1)" : "var(--muted)" }}>
                     {r.timeOfDay}
                   </span>
                   <div className="min-w-[200px] flex-1 flex flex-col gap-0.5">
-                    <span className="font-semibold" style={{ color: r.enabled ? "var(--text)" : "var(--muted)" }}>
+                    <span className="font-semibold" style={{ color: r.enabled ? "var(--ink)" : "var(--muted)" }}>
                       {title}
                     </span>
                     <span className="text-[13px] text-muted">{meta}</span>
@@ -136,7 +136,7 @@ export default function RecordatoriosPage() {
         </section>
 
         <aside className="flex min-w-0 flex-[2_1_340px] flex-col gap-4">
-          <form onSubmit={handleCreate} className="flex flex-col gap-4.5 rounded-card border border-line bg-card p-5.5">
+          <form onSubmit={handleCreate} className="flex flex-col gap-4.5 bx p-5.5">
             <h2 className="m-0 text-lg font-bold">Nuevo recordatorio</h2>
 
             <div className="grid grid-cols-[repeat(auto-fit,minmax(min(140px,100%),1fr))] gap-3">
@@ -146,7 +146,7 @@ export default function RecordatoriosPage() {
                   id="f-skill"
                   value={selectedSkillId}
                   onChange={(e) => setSkillId(e.target.value)}
-                  className="box-border min-h-[46px] w-full rounded-button border border-line bg-bg px-3 text-[15px]"
+                  className="box-border min-h-[46px] w-full rounded-button border-[3px] border-ink bg-card px-3 text-[15px]"
                 >
                   {skills.map((s) => (
                     <option key={s.id} value={s.id}>
@@ -175,7 +175,7 @@ export default function RecordatoriosPage() {
                       aria-label={DAY_FULL[i]}
                       onClick={() => toggleDay(d)}
                       className="font-num flex size-11 items-center justify-center rounded-full border font-bold"
-                      style={{ borderColor: on ? "var(--accent)" : "var(--line)", background: on ? "var(--accent)" : "transparent", color: on ? "var(--on)" : "var(--text)" }}
+                      style={{ borderColor: on ? "var(--a1)" : "var(--ink)", background: on ? "var(--a1)" : "transparent", color: on ? "var(--ink)" : "var(--ink)" }}
                     >
                       {label}
                     </button>

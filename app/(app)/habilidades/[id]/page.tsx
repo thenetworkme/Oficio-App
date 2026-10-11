@@ -66,16 +66,16 @@ export default function SkillDetailPage() {
           </div>
         </div>
         <div className="flex flex-wrap gap-2.5">
-          <Link href="/registrar" className="inline-flex min-h-12 items-center gap-2 rounded-button border border-line px-5 font-semibold">
+          <Link href="/registrar" className="inline-flex min-h-12 items-center gap-2 rounded-button border-[3px] border-ink px-5 font-semibold">
             Registrar horas
           </Link>
-          <button aria-label="Editar habilidad" className="flex size-12 items-center justify-center rounded-button border border-line">
+          <button aria-label="Editar habilidad" className="flex size-12 items-center justify-center rounded-button border-[3px] border-ink bg-card">
             <Pencil size={20} aria-hidden="true" />
           </button>
           <Link
             href="/temporizador"
             className="inline-flex min-h-12 items-center gap-2.5 rounded-button px-6 text-[16px] font-bold"
-            style={{ background: "var(--accent)", color: "var(--on)" }}
+            style={{ background: "var(--a1)", color: "var(--ink)" }}
           >
             <Play size={18} fill="currentColor" aria-hidden="true" />
             Practicar ahora
@@ -83,7 +83,7 @@ export default function SkillDetailPage() {
         </div>
       </header>
 
-      <section className="flex flex-col gap-7 rounded-card border border-line bg-card p-7">
+      <section className="flex flex-col gap-7 bx p-7">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="flex flex-col gap-1.5">
             <h2 className="m-0 text-base font-semibold text-muted">Progreso hacia las {formatInt(skill.goalHours)} horas</h2>
@@ -116,9 +116,9 @@ export default function SkillDetailPage() {
               <li
                 key={m}
                 className="flex flex-col gap-0.5 rounded-xl border px-4 py-3.5"
-                style={{ borderColor: done ? "var(--line)" : isNext ? color : "var(--line)" }}
+                style={{ borderColor: done ? "var(--ink)" : isNext ? color : "var(--ink)" }}
               >
-                <span className="font-num text-lg font-medium" style={{ color: done ? color : "var(--text)" }}>
+                <span className="font-num text-lg font-medium" style={{ color: done ? color : "var(--ink)" }}>
                   {formatInt(m)} h
                 </span>
                 <span className="text-[13px] text-muted">
@@ -142,7 +142,7 @@ export default function SkillDetailPage() {
             <p className="py-3 text-sm text-muted">Todavía no hay sesiones registradas.</p>
           ) : (
             recent.slice(0, 8).map((s) => (
-              <div key={s.id} className="flex flex-col gap-1.5 border-t border-line py-3.5">
+              <div key={s.id} className="flex flex-col gap-1.5 border-t border-ink py-3.5">
                 <div className="flex flex-wrap items-center gap-2 gap-x-4">
                   <span className="min-w-[84px] font-semibold">{formatShortDateEs(new Date(s.startedAt))}</span>
                   <span className="font-num min-w-[70px] flex-1 text-sm">{formatMinutes(s.durationMin)}</span>
@@ -151,7 +151,7 @@ export default function SkillDetailPage() {
                       <span
                         key={n}
                         className="size-2.5 rounded-full"
-                        style={{ background: (s.quality ?? 0) >= n ? color : "var(--line)" }}
+                        style={{ background: (s.quality ?? 0) >= n ? color : "var(--ink)" }}
                       />
                     ))}
                   </div>
@@ -170,10 +170,10 @@ export default function SkillDetailPage() {
                 <div key={i} className="flex h-full flex-1 flex-col items-center justify-end gap-2">
                   <span className="font-num text-xs text-muted">{formatDecimal(w.minutes / 60)}</span>
                   <div
-                    className="w-full max-w-[38px] rounded-t-md rounded-b-sm"
+                    className="w-full max-w-[38px] rounded-t-md rounded-b-sm border-2 border-ink"
                     style={{
                       height: Math.max(3, Math.round((w.minutes / maxWeek) * 120)),
-                      background: i === weeks.length - 1 ? color : "#8A8F80",
+                      background: i === weeks.length - 1 ? color : "#fff",
                     }}
                   />
                   <span className="whitespace-nowrap text-[11px] text-muted">{w.label}</span>

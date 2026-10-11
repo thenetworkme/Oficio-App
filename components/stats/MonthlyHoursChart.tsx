@@ -22,13 +22,13 @@ export function MonthlyHoursChart({ data }: { data: MonthDatum[] }) {
           />
           <Tooltip
             cursor={false}
-            contentStyle={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 10 }}
-            labelStyle={{ color: "var(--text)" }}
+            contentStyle={{ background: "var(--card)", border: "1px solid var(--ink)", borderRadius: 10 }}
+            labelStyle={{ color: "var(--ink)" }}
             formatter={(value) => [`${formatDecimal(Number(value ?? 0))} h`, "Horas"]}
           />
           <Bar dataKey="hours" radius={[5, 5, 2, 2]} maxBarSize={34}>
             {data.map((d, i) => (
-              <Cell key={i} fill={d.isCurrent ? "var(--accent)" : "#8A8F80"} />
+              <Cell key={i} fill={d.isCurrent ? "var(--a1)" : "#fff"} stroke="var(--ink)" strokeWidth={2} />
             ))}
           </Bar>
         </BarChart>

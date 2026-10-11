@@ -12,7 +12,7 @@ import { hoursPerWeek, projectTimeRemaining, formatProjection } from "@/lib/proj
 import { createReminder } from "@/lib/firestore/reminders";
 
 const COLOR_OPTIONS = [
-  { id: "accent", name: "Acento", hex: "var(--accent)" },
+  { id: "accent", name: "Acento", hex: "var(--a1)" },
   { id: "a2", name: "Secundario", hex: "var(--a2)" },
   { id: "a3", name: "Terciario", hex: "var(--a3)" },
 ];
@@ -20,8 +20,8 @@ const GOAL_OPTIONS = [1000, 5000, 10000];
 const DAILY_OPTIONS = [30, 60, 90, 120, 180, 240];
 const DAY_OPTIONS = [3, 4, 5, 6, 7];
 
-const STEP_LABELS = ["Habilidad", "Ritmo", "Recordatorio"];
-const STEP_TITLES = ["¿Qué quieres dominar?", "¿Cuánto tiempo le vas a dar?", "Que no se te olvide"];
+const STEP_LABELS = ["Habilidad", "Ritmo", "Aviso", "Listo"];
+const STEP_TITLES = ["¿Qué quieres dominar?", "¿Cuánto tiempo le vas a dar?", "¿Cuándo te aviso?", "Todo listo"];
 
 export default function NewSkillPage() {
   const router = useRouter();
@@ -39,7 +39,7 @@ export default function NewSkillPage() {
   const [creating, setCreating] = useState(false);
 
   const displayName = name.trim() === "" ? "Nueva habilidad" : name;
-  const colorHex = COLOR_OPTIONS.find((c) => c.id === colorId)?.hex ?? "var(--accent)";
+  const colorHex = COLOR_OPTIONS.find((c) => c.id === colorId)?.hex ?? "var(--a1)";
   const perWeek = hoursPerWeek(daily, days);
   const initNum = Math.max(0, parseFloat(initial) || 0);
 
@@ -81,11 +81,11 @@ export default function NewSkillPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-6 py-6 sm:px-10">
+      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-ink px-6 py-6 sm:px-10">
         <div className="flex items-center gap-2.5">
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-            <circle cx="14" cy="14" r="11" stroke="var(--line)" strokeWidth="3" />
-            <path d="M14 3a11 11 0 0 1 9.5 5.5" stroke="var(--accent)" strokeWidth="3" strokeLinecap="round" />
+            <circle cx="14" cy="14" r="11" stroke="var(--ink)" strokeWidth="3" />
+            <path d="M14 3a11 11 0 0 1 9.5 5.5" stroke="var(--a1)" strokeWidth="3" strokeLinecap="round" />
           </svg>
           <span className="text-2xl font-bold tracking-tight">Oficio</span>
         </div>
@@ -95,11 +95,11 @@ export default function NewSkillPage() {
       </header>
 
       <main className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-8 px-6 py-10 sm:px-10">
-        <ol aria-label="Pasos" className="m-0 grid list-none grid-cols-3 gap-3 p-0">
+        <ol aria-label="Pasos" className="m-0 grid list-none grid-cols-4 gap-3 p-0">
           {STEP_LABELS.map((label, i) => (
             <li key={label} className="flex flex-col gap-2">
-              <div className="h-1.5 rounded-chip" style={{ background: i + 1 <= step ? colorHex : "var(--track)" }} />
-              <span className="text-[13px]" style={{ color: i + 1 === step ? "var(--text)" : "var(--muted)", fontWeight: i + 1 === step ? 600 : 400 }}>
+              <div className="h-1.5 rounded-chip" style={{ background: i + 1 <= step ? colorHex : "var(--card)" }} />
+              <span className="text-[13px]" style={{ color: i + 1 === step ? "var(--ink)" : "var(--muted)", fontWeight: i + 1 === step ? 600 : 400 }}>
                 {i + 1}. {label}
               </span>
             </li>
@@ -107,7 +107,7 @@ export default function NewSkillPage() {
         </ol>
 
         <div className="flex flex-wrap items-start gap-6">
-          <section className="flex min-w-0 flex-[3_1_480px] flex-col gap-7 rounded-card border border-line bg-card p-8">
+          <section className="flex min-w-0 flex-[3_1_480px] flex-col gap-7 bx p-8">
             <h1 className="m-0 text-[36px] font-bold leading-tight tracking-tight">{STEP_TITLES[step - 1]}</h1>
 
             {step === 1 && (
@@ -132,8 +132,8 @@ export default function NewSkillPage() {
                         aria-pressed={colorId === c.id}
                         aria-label={c.name}
                         onClick={() => setColorId(c.id)}
-                        className="box-border size-11 rounded-full border-2 bg-transparent p-1"
-                        style={{ borderColor: colorId === c.id ? "var(--text)" : "transparent" }}
+                        className="box-border size-11 rounded-full border-[3px] bg-transparent p-1"
+                        style={{ borderColor: colorId === c.id ? "var(--ink)" : "transparent" }}
                       >
                         <span className="block size-full rounded-full" style={{ background: c.hex }} />
                       </button>
@@ -149,8 +149,8 @@ export default function NewSkillPage() {
                         type="button"
                         aria-pressed={goal === g}
                         onClick={() => setGoal(g)}
-                        className="font-num min-h-12 rounded-button border px-5"
-                        style={{ borderColor: goal === g ? colorHex : "var(--line)", background: goal === g ? "var(--track)" : "transparent" }}
+                        className="font-num min-h-12 rounded-button border-[3px] px-5"
+                        style={{ borderColor: goal === g ? colorHex : "var(--ink)", background: goal === g ? "var(--card)" : "transparent" }}
                       >
                         {formatInt(g)} h
                       </button>
@@ -178,8 +178,8 @@ export default function NewSkillPage() {
                         type="button"
                         aria-pressed={daily === m}
                         onClick={() => setDaily(m)}
-                        className="font-num min-h-12 rounded-button border px-4.5"
-                        style={{ borderColor: daily === m ? colorHex : "var(--line)", background: daily === m ? "var(--track)" : "transparent" }}
+                        className="font-num min-h-12 rounded-button border-[3px] px-4.5"
+                        style={{ borderColor: daily === m ? colorHex : "var(--ink)", background: daily === m ? "var(--card)" : "transparent" }}
                       >
                         {formatMinutesLong(m)}
                       </button>
@@ -195,8 +195,8 @@ export default function NewSkillPage() {
                         type="button"
                         aria-pressed={days === d}
                         onClick={() => setDays(d)}
-                        className="font-num flex size-13 items-center justify-center rounded-button border"
-                        style={{ borderColor: days === d ? colorHex : "var(--line)", background: days === d ? "var(--track)" : "transparent" }}
+                        className="font-num flex size-13 items-center justify-center rounded-button border-[3px]"
+                        style={{ borderColor: days === d ? colorHex : "var(--ink)", background: days === d ? "var(--card)" : "transparent" }}
                       >
                         {d}
                       </button>
@@ -211,7 +211,7 @@ export default function NewSkillPage() {
 
             {step === 3 && (
               <div className="flex flex-col gap-6.5">
-                <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-line px-4.5 py-4">
+                <div className="flex flex-wrap items-center justify-between gap-4 bx rounded-[14px] px-4.5 py-4">
                   <div className="flex flex-col gap-0.5">
                     <span className="font-semibold">Recordarme todos los días</span>
                     <span className="text-[13px] text-muted">Aviso push a la hora que elijas</span>
@@ -232,19 +232,26 @@ export default function NewSkillPage() {
                       onClick={() => setRemind((r) => !r)}
                       className="relative h-11 w-13 border-0 bg-transparent p-0"
                     >
-                      <span className="absolute left-0 top-2 h-7 w-13 rounded-chip" style={{ background: remind ? colorHex : "var(--line)" }} />
+                      <span className="absolute left-0 top-2 h-7 w-13 rounded-chip border-[3px] border-ink" style={{ background: remind ? colorHex : "var(--card)" }} />
                       <span
-                        className="absolute top-3 size-5 rounded-full bg-text transition-transform"
+                        className="absolute top-3 size-5 rounded-full bg-ink transition-transform"
                         style={{ transform: remind ? "translateX(28px)" : "translateX(4px)" }}
                       />
                     </button>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {step === 4 && (
+              <div className="flex flex-col gap-4">
                 <dl className="m-0 grid grid-cols-[auto_1fr] items-baseline gap-x-6 gap-y-3">
                   <dt className="text-sm text-muted">Habilidad</dt>
-                  <dd className="m-0 font-semibold">{displayName}</dd>
+                  <dd className="m-0 font-bold">{displayName}</dd>
                   <dt className="text-sm text-muted">Meta</dt>
-                  <dd className="font-num m-0">{formatInt(goal)} h</dd>
+                  <dd className="font-num m-0">
+                    {formatInt(goal)} h{initNum > 0 ? ` (ya llevas ${formatDecimal(initNum)} h)` : ""}
+                  </dd>
                   <dt className="text-sm text-muted">Ritmo</dt>
                   <dd className="font-num m-0">
                     {formatMinutesLong(daily)} · {days} días por semana
@@ -258,17 +265,17 @@ export default function NewSkillPage() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>{step > 1 && <Button variant="outline" onClick={() => setStep((s) => s - 1)}>Atrás</Button>}</div>
               <div>
-                {step < 3 && <Button onClick={() => setStep((s) => s + 1)}>Siguiente</Button>}
-                {step === 3 && (
+                {step < 4 && <Button onClick={() => setStep((s) => s + 1)}>{step === 3 ? "Ver resumen" : "Siguiente"}</Button>}
+                {step === 4 && (
                   <Button onClick={handleCreate} disabled={creating}>
-                    Crear habilidad
+                    {creating ? "Creando…" : "Crear habilidad"}
                   </Button>
                 )}
               </div>
             </div>
           </section>
 
-          <aside aria-label="Tu camino" className="flex min-w-0 flex-[2_1_320px] flex-col gap-5.5 rounded-card border border-line bg-card p-7">
+          <aside aria-label="Tu camino" className="flex min-w-0 flex-[2_1_320px] flex-col gap-5.5 bx p-7">
             <div className="flex items-center gap-3">
               <span className="size-3.5 rounded-full" style={{ background: colorHex }} />
               <h2 className="m-0 text-xl font-bold">{displayName}</h2>
@@ -284,7 +291,7 @@ export default function NewSkillPage() {
             </div>
             <div className="flex flex-col">
               {marks.map((h) => (
-                <div key={h} className="flex items-baseline justify-between gap-3 border-t border-line py-3">
+                <div key={h} className="flex items-baseline justify-between gap-3 border-t border-ink py-3">
                   <span className="font-num text-[15px]">{formatInt(h)} h</span>
                   <span className="text-sm text-muted">{etaFor(h)}</span>
                 </div>

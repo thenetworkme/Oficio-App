@@ -93,8 +93,8 @@ export default function LogrosPage() {
             type="button"
             aria-pressed={activeSkill.id === s.id}
             onClick={() => setSkillId(s.id)}
-            className="inline-flex min-h-11 items-center gap-2 rounded-chip border px-4.5 text-[15px] font-semibold"
-            style={{ borderColor: activeSkill.id === s.id ? resolveSkillColor(s.color) : "var(--line)", background: activeSkill.id === s.id ? "var(--track)" : "transparent" }}
+            className="inline-flex min-h-11 items-center gap-2 rounded-chip border-[3px] px-4.5 text-[15px] font-bold"
+            style={{ borderColor: activeSkill.id === s.id ? resolveSkillColor(s.color) : "var(--ink)", background: activeSkill.id === s.id ? "var(--card)" : "transparent" }}
           >
             <span className="size-2.5 rounded-full" style={{ background: resolveSkillColor(s.color) }} />
             {s.name}
@@ -103,7 +103,7 @@ export default function LogrosPage() {
       </div>
 
       <div className="flex flex-wrap items-start gap-6">
-        <section aria-labelledby="h-line" className="min-w-0 flex-[3_1_480px] rounded-card border border-line bg-card px-7 pb-3 pt-7">
+        <section aria-labelledby="h-line" className="min-w-0 flex-[3_1_480px] bx px-7 pb-3 pt-7">
           <h2 id="h-line" className="m-0 mb-6 text-xl font-bold">
             Línea de tiempo · {activeSkill.name}
           </h2>
@@ -114,29 +114,29 @@ export default function LogrosPage() {
                   <span
                     className="box-border flex size-10 items-center justify-center rounded-full border-2"
                     style={{
-                      borderColor: m.done ? color : m.isNext ? "var(--text)" : "var(--line)",
+                      borderColor: m.done ? color : m.isNext ? "var(--ink)" : "var(--ink)",
                       background: m.done ? color : "var(--card)",
-                      color: "var(--on)",
+                      color: "var(--ink)",
                     }}
                   >
                     {m.done && <Check size={20} aria-hidden="true" />}
-                    {m.isNext && <span className="size-3 rounded-full" style={{ background: "var(--text)" }} />}
+                    {m.isNext && <span className="size-3 rounded-full" style={{ background: "var(--ink)" }} />}
                   </span>
                   {i < items.length - 1 && (
-                    <span className="min-h-6 w-0.5 flex-1" style={{ background: m.done ? color : "var(--line)" }} />
+                    <span className="min-h-6 w-0.5 flex-1" style={{ background: m.done ? color : "var(--ink)" }} />
                   )}
                 </div>
                 <div className="flex min-w-0 flex-1 flex-col gap-2 pb-7">
                   <div className="flex flex-wrap items-baseline gap-1.5 gap-x-3.5">
-                    <span className="font-num text-[26px] font-medium" style={{ color: m.done ? color : m.isNext ? "var(--text)" : "var(--muted)" }}>
+                    <span className="font-num text-[26px] font-medium" style={{ color: m.done ? color : m.isNext ? "var(--ink)" : "var(--muted)" }}>
                       {formatInt(m.hours)} h
                     </span>
-                    <span className="text-[17px] font-bold" style={{ color: m.done || m.isNext ? "var(--text)" : "var(--muted)" }}>
+                    <span className="text-[17px] font-bold" style={{ color: m.done || m.isNext ? "var(--ink)" : "var(--muted)" }}>
                       {m.title}
                     </span>
                     <span
-                      className="label-xs rounded-chip border px-2.5 py-0.5"
-                      style={{ borderColor: m.done ? color : m.isNext ? "var(--text)" : "var(--line)", color: m.done ? color : m.isNext ? "var(--text)" : "var(--muted)" }}
+                      className="label-xs rounded-chip border-[3px] px-2.5 py-0.5"
+                      style={{ borderColor: m.done ? color : m.isNext ? "var(--ink)" : "var(--ink)", color: m.done ? color : m.isNext ? "var(--ink)" : "var(--muted)" }}
                     >
                       {m.done ? "Logrado" : m.isNext ? "Siguiente" : "Pendiente"}
                     </span>
@@ -154,7 +154,7 @@ export default function LogrosPage() {
                     <button
                       type="button"
                       onClick={() => setCelebrateHours(m.hours)}
-                      className="inline-flex min-h-11 items-center gap-2 self-start rounded-button border border-line px-4 text-sm font-semibold"
+                      className="inline-flex min-h-11 items-center gap-2 self-start rounded-button border-[3px] border-ink px-4 text-sm font-semibold"
                     >
                       <Sparkles size={16} aria-hidden="true" />
                       Ver celebración
@@ -176,15 +176,15 @@ export default function LogrosPage() {
               <span className="font-num text-lg text-muted">de {items.length}</span>
             </div>
             {last && (
-              <div className="flex flex-col gap-2.5 border-t border-line pt-3.5">
+              <div className="flex flex-col gap-2.5 border-t border-ink pt-3.5">
                 <span className="text-sm text-muted">
-                  Último: <span className="font-semibold text-text">{formatInt(last.hours)} h · {last.title}</span>
+                  Último: <span className="font-semibold text-ink">{formatInt(last.hours)} h · {last.title}</span>
                 </span>
                 <button
                   type="button"
                   onClick={() => setCelebrateHours(last.hours)}
                   className="inline-flex min-h-11 items-center self-start rounded-button px-4 text-sm font-bold"
-                  style={{ background: color, color: "var(--on)" }}
+                  style={{ background: color, color: "var(--ink)" }}
                 >
                   Ver última celebración
                 </button>
@@ -202,10 +202,10 @@ export default function LogrosPage() {
               {next ? `Faltan ${formatInt(next.hours - hours)} h · ${formatProjection(projectTimeRemaining(next.hours - hours, weekly))}` : ""}
             </span>
             <div className="flex flex-wrap gap-2.5">
-              <Link href="/temporizador" className="inline-flex min-h-11 items-center rounded-button px-4.5 text-sm font-bold" style={{ background: color, color: "var(--on)" }}>
+              <Link href="/temporizador" className="inline-flex min-h-11 items-center rounded-button px-4.5 text-sm font-bold" style={{ background: color, color: "var(--ink)" }}>
                 Practicar ahora
               </Link>
-              <Link href="/registrar" className="inline-flex min-h-11 items-center rounded-button border border-line px-4.5 text-sm font-semibold">
+              <Link href="/registrar" className="inline-flex min-h-11 items-center rounded-button border-[3px] border-ink px-4.5 text-sm font-semibold">
                 Registrar horas
               </Link>
             </div>

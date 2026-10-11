@@ -93,8 +93,8 @@ export default function EstadisticasPage() {
             type="button"
             aria-pressed={activeSkill.id === s.id}
             onClick={() => setSkillId(s.id)}
-            className="inline-flex min-h-11 items-center gap-2 rounded-chip border px-4.5 text-[15px] font-semibold"
-            style={{ borderColor: activeSkill.id === s.id ? resolveSkillColor(s.color) : "var(--line)", background: activeSkill.id === s.id ? "var(--track)" : "transparent" }}
+            className="inline-flex min-h-11 items-center gap-2 rounded-chip border-[3px] px-4.5 text-[15px] font-bold"
+            style={{ borderColor: activeSkill.id === s.id ? resolveSkillColor(s.color) : "var(--ink)", background: activeSkill.id === s.id ? "var(--card)" : "transparent" }}
           >
             <span className="size-2.5 rounded-full" style={{ background: resolveSkillColor(s.color) }} />
             {s.name}
@@ -102,7 +102,7 @@ export default function EstadisticasPage() {
         ))}
       </div>
 
-      <section className="flex flex-col gap-7 rounded-card border border-line bg-card p-7">
+      <section className="flex flex-col gap-7 bx p-7">
         <div className="flex flex-wrap justify-between gap-4">
           <div className="flex flex-col gap-1.5">
             <h2 className="m-0 text-lg font-bold">Camino a las {formatInt(activeSkill.goalHours)} horas · {activeSkill.name}</h2>
@@ -170,8 +170,8 @@ export default function EstadisticasPage() {
               <div key={s.label} className="flex h-full flex-1 flex-col items-center justify-end gap-2">
                 <span className="font-num text-xs text-muted">{formatDecimal(s.hours)} h</span>
                 <div
-                  className="w-full max-w-16 rounded-t-md rounded-b-sm"
-                  style={{ height: Math.max(4, Math.round((s.hours / s.max) * 90)), background: s.isBest ? "var(--accent)" : "#8A8F80" }}
+                  className="w-full max-w-16 rounded-t-md rounded-b-sm border-2 border-ink"
+                  style={{ height: Math.max(4, Math.round((s.hours / s.max) * 90)), background: s.isBest ? "var(--a1)" : "#fff" }}
                 />
                 <span className="text-center text-[13px] text-muted">{s.label}</span>
               </div>
