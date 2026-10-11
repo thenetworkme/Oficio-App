@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Pegatina — Galería y diario del reto</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF4D6}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px solid var(--ink,#111);outline-offset:3px}
+.bx{border:3px solid var(--bd,#111);border-radius:14px;box-shadow:6px 6px 0 var(--sh,#111)}
+.mono{font-family:'Space Mono',monospace}
+.lbl{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.02em}
+.h1{margin:0;font-size:84px;line-height:.95;font-weight:700;letter-spacing:-.05em}
+.h2{margin:0;font-size:38px;line-height:1.05;font-weight:700;letter-spacing:-.03em}
+.h3{margin:0;font-size:28px;line-height:1.1;font-weight:700;letter-spacing:-.03em}
+.chip{min-height:44px;padding:0 18px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700;font-size:15px;background:var(--card,#fff);color:var(--ink,#111)}
+.btn{min-height:56px;padding:0 28px;font-size:20px;font-weight:700;color:#111;display:inline-flex;align-items:center;justify-content:center}
+.in{min-height:48px;padding:0 14px;border:3px solid var(--bd,#111);border-radius:12px;font-size:16px;background:var(--card,#fff);color:var(--ink,#111);width:100%;box-sizing:border-box}
+.in::placeholder{color:#6b6b6b}
+.hov{transition:transform .12s,box-shadow .12s}
+.hov:hover{transform:translate(-2px,-2px) rotate(var(--r,0deg));box-shadow:9px 9px 0 var(--sh,#111)}
+.press:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--sh,#111)}
+@media (prefers-reduced-motion:reduce){.hov{transition:none}}
+</style>
+</helmet>
+<div style="background:var(--bg,#FFF4D6);color:var(--ink,#111);font-family:'Space Grotesk',system-ui,sans-serif;font-size:16px;line-height:1.4;min-height:1150px;padding:28px 48px 64px;box-sizing:border-box;display:flex;flex-direction:column;gap:32px;">
+<header style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+<a href="PegatinaPanel.dc.html" class="bx" style="background:var(--a1,#FFD84D);color:#111;padding:6px 18px;font-size:30px;font-weight:700;transform:rotate(-2deg);letter-spacing:-.02em">oficio!</a>
+<nav aria-label="Principal" style="display:flex;gap:8px;flex:1;flex-wrap:wrap"><a href="PegatinaPanel.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Hoy</a><a href="PegatinaRetos.dc.html" aria-current="page" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;background:var(--ink,#111);color:var(--paper,#FFF4D6);font-weight:700">Retos</a><a href="PegatinaTimer.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Tomate</a><a href="PegatinaStats.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Números</a><a href="PegatinaLogros.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Logros</a><a href="PegatinaTienda.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Tienda</a><a href="PegatinaAvisos.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Avisos</a><a href="PegatinaAjustes.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Ajustes</a></nav>
+<a href="PegatinaAjustes.dc.html" aria-label="Perfil de Kobox" class="bx" style="background:var(--a3,#7BE0A4);color:#111;padding:6px 16px 6px 8px;min-height:44px;box-sizing:border-box;display:flex;align-items:center;gap:10px;font-weight:700"><span aria-hidden="true" style="width:32px;height:32px;border-radius:50%;background:#111;color:var(--a3,#7BE0A4);display:flex;align-items:center;justify-content:center">K</span>Kobox</a>
+<a href="PegatinaLogin.dc.html" aria-label="Cerrar sesión" class="bx press" style="width:50px;height:50px;background:var(--card,#fff);color:var(--ink,#111);display:flex;align-items:center;justify-content:center;padding:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></a>
+</header>
+<nav aria-label="Ruta" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><a href="PegatinaRetos.dc.html" class="bx press" style="min-height:44px;padding:0 16px;display:flex;align-items:center;background:var(--card,#fff);font-weight:700">← Retos</a><span class="lbl">Galería y diario</span></nav>
+<section style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-end;justify-content:space-between"><div><span class="lbl">30 días de guitarra</span><h1 class="h1" style="margin-top:8px">Tu progreso.</h1></div>
+<div role="tablist" aria-label="Vista" style="display:flex;gap:10px;flex-wrap:wrap"><sc-for list="{{tabs}}" as="t" hint-placeholder-count="3"><button type="button" role="tab" aria-selected="{{t.on}}" onClick="{{t.pick}}" class="chip press" style="background:{{t.bg}};color:{{t.fg}};box-shadow:{{t.sh}}">{{t.l}}</button></sc-for></div></section>
+
+<section style="display:{{showPhotos}};flex-direction:column;gap:20px">
+<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><span class="lbl" style="margin-right:6px">Semana</span><sc-for list="{{weeks}}" as="w" hint-placeholder-count="4"><button type="button" aria-pressed="{{w.on}}" onClick="{{w.pick}}" class="chip press" style="min-height:40px;font-size:14px;background:{{w.bg}};color:#111">{{w.l}}</button></sc-for></div>
+<div style="display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start">
+<div style="flex:2 1 640px;display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:22px">
+<sc-for list="{{photos}}" as="p" hint-placeholder-count="8"><button type="button" aria-pressed="{{p.on}}" aria-label="{{p.aria}}" onClick="{{p.pick}}" class="hov" style="--r:{{p.r}};border:3px solid #111;border-radius:14px;background:#fff;box-shadow:{{p.sh}};padding:10px 10px 8px;transform:rotate({{p.r}});color:#111;text-align:left"><div style="height:140px;border:3px solid #111;border-radius:8px;background:repeating-linear-gradient(135deg,{{p.a}} 0 14px,{{p.b}} 14px 28px);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#111" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M3 8h4l2-3h6l2 3h4v11H3z"/><circle cx="12" cy="13" r="3.6"/></svg></div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px"><span class="lbl" style="font-size:12px">{{p.day}}</span><span class="mono" style="font-size:12px">{{p.date}}</span></div></button></sc-for>
+</div>
+<aside class="bx" style="flex:1 1 340px;background:#fff;padding:22px 24px;display:flex;flex-direction:column;gap:12px;color:#111" aria-live="polite">
+<div style="height:200px;border:3px solid #111;border-radius:12px;background:repeating-linear-gradient(135deg,{{sp.a}} 0 14px,{{sp.b}} 14px 28px);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#111" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M3 8h4l2-3h6l2 3h4v11H3z"/><circle cx="12" cy="13" r="3.6"/></svg></div>
+<span class="lbl">{{sp.l}}</span><h3 class="h3">{{sp.t}}</h3><p style="margin:0;font-size:17px;font-weight:500">{{sp.note}}</p><span class="mono" style="font-size:13px">{{sp.cap}}</span>
+</aside></div>
+</section>
+
+<section style="display:{{showCompare}};flex-direction:column;gap:24px">
+<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><span class="lbl" style="margin-right:6px">Comparar día 1 con</span><sc-for list="{{cmpOpts}}" as="w" hint-placeholder-count="4"><button type="button" aria-pressed="{{w.on}}" onClick="{{w.pick}}" class="chip press" style="min-height:40px;font-size:14px;background:{{w.bg}};color:#111">{{w.l}}</button></sc-for></div>
+<div style="display:flex;gap:28px;flex-wrap:wrap;align-items:stretch">
+<sc-for list="{{pair}}" as="c" hint-placeholder-count="2"><div class="bx" style="flex:1 1 380px;background:{{c.bg}};padding:20px 22px;display:flex;flex-direction:column;gap:12px;color:#111;transform:rotate({{c.r}})"><div style="display:flex;justify-content:space-between"><span class="lbl">{{c.tag}}</span><span class="mono" style="font-size:12px">{{c.date}}</span></div><div style="height:300px;border:3px solid #111;border-radius:12px;background:repeating-linear-gradient(135deg,{{c.a}} 0 14px,{{c.b}} 14px 28px);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#111" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M3 8h4l2-3h6l2 3h4v11H3z"/><circle cx="12" cy="13" r="3.6"/></svg></div><p style="margin:0;font-size:17px;font-weight:500">{{c.note}}</p></div></sc-for>
+</div>
+<div class="bx" style="background:#7BE0A4;padding:18px 24px;color:#111;font-size:20px;font-weight:700">{{delta}}</div>
+</section>
+
+<section style="display:{{showDiary}};flex-direction:column;gap:20px">
+<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center"><label class="lbl" for="q">Buscar en tus notas</label><input id="q" type="search" class="in" style="max-width:420px" placeholder="Prueba: acorde, metrónomo, canción…" value="{{q}}" onChange="{{setQ}}"><span class="mono" style="font-size:13px">{{found}}</span></div>
+<sc-for list="{{entries}}" as="e" hint-placeholder-count="5"><article class="bx" style="background:#fff;padding:18px 22px;display:flex;gap:20px;flex-wrap:wrap;align-items:center;color:#111"><div style="flex:0 0 66px;height:66px;border:3px solid #111;border-radius:12px;background:{{e.bg}};display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700"><span style="letter-spacing:0">{{e.n}}</span></div><div style="flex:1 1 380px"><div style="display:flex;gap:10px;flex-wrap:wrap"><span class="lbl">{{e.t}}</span><span class="mono" style="font-size:12px">{{e.meta}}</span></div><p style="margin:4px 0 0;font-size:17px;font-weight:500">{{e.note}}</p></div></article></sc-for>
+<div style="display:{{emptyShow}};border:3px dashed #111;border-radius:14px;padding:26px;font-weight:700;font-size:18px">Nada con esa palabra todavía. Prueba con otra.</div>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":1150}}'>
+class Component extends DCLogic {
+  hm(m) { const h = Math.floor(m / 60), r = m % 60; if (h === 0) return r + ' min'; return r === 0 ? h + ' h' : h + ' h ' + r + ' min'; }
+  renderVals() {
+    const st = this.state || {};
+    const tab = st.tab || 'photos';
+    const week = st.week ?? 0;
+    const selP = st.selP ?? 7;
+    const cmp = st.cmp ?? 12;
+    const q = (st.q || '').trim();
+    const DAYS = [[30, 3, "Primer día: aprendí a sostener la guitarra y afinar con la app. Las cuerdas duelen en los dedos.", 1], [0, 0, "", 0], [35, 3, "Acordes Em y Am. Me cuesta que no suenen las cuerdas apagadas.", 1], [30, 4, "Cambio Em a Am sin mirar. Aún lento pero ya sale.", 0], [45, 4, "Escala de Do mayor y ritmo básico abajo-abajo-arriba.", 2], [30, 3, "Me frustré con el acorde F. Voy a practicarlo en versión corta.", 0], [40, 5, "¡Toqué una canción completa con 4 acordes! Se escucha feo pero es mía.", 2], [30, 4, "Repaso de acordes y metrónomo a 60 bpm.", 0], [60, 5, "Sesión larga: rasgueo con el patrón de la bossa. Callos nuevos.", 1], [30, 4, "Cambios de G a C más fluidos. Grabé un video corto.", 1], [35, 4, "Arpegio básico con p-i-m-a. Quiero seguir con esto mañana.", 1]];
+    const mo = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    const dateOf = (n) => { const d = new Date(2026, 8, 29 + n); return d.getDate() + ' ' + mo[d.getMonth()]; };
+    const moods = ['', 'Mal día', 'Regular', 'Bien', 'Muy bien', '¡Genial!'];
+    const tints = [['#FFE9A8', '#FFF'], ['#BFE3FF', '#FFF'], ['#FFC2DA', '#FFF'], ['#BFF2D6', '#FFF']];
+    const caps = ['Mano izquierda, acorde C', 'Partitura del día', 'Captura de la app', 'Video corto de 20 s'];
+    const all = [];
+    DAYS.forEach((d, i) => { for (let k = 0; k < d[3]; k++) all.push({ n: i + 1, k }); });
+    const wk = (n) => Math.floor((n - 1) / 7);
+    const list = all.filter((p) => week === 0 || wk(p.n) === week - 1);
+    const rot = ['-1.2deg', '1deg', '-.6deg', '1.4deg'];
+    const photos = list.map((p, i) => { const on = selP === p.n && (p.k === 0); return { day: 'Día ' + p.n, date: dateOf(p.n), r: rot[i % 4], a: tints[(p.n + p.k) % 4][0], b: '#fff', on: selP === p.n, sh: selP === p.n ? '7px 7px 0 #111' : '6px 6px 0 #111', aria: 'Foto del día ' + p.n, pick: () => this.setState({ selP: p.n }) }; });
+    const sd = DAYS[selP - 1] || DAYS[0];
+    const sp = { l: 'Día ' + selP + ' · ' + dateOf(selP), t: this.hm(sd[0]) + ' · ' + moods[sd[1]], note: sd[2], cap: caps[selP % 4], a: tints[selP % 4][0], b: '#fff' };
+    const wlabels = ['Todas', 'Semana 1', 'Semana 2'];
+    const first = DAYS[0];
+    const cands = [7, 9, 12];
+    const second = DAYS[Math.min(cmp, 11) - 1];
+    const pair = [
+      { tag: 'Día 1', date: dateOf(1), note: first[2], a: '#FFE9A8', b: '#fff', bg: '#FFF4D6', r: '-1deg' },
+      { tag: 'Día ' + cmp, date: dateOf(cmp), note: cmp === 12 ? 'Hoy: aún sin nota. Sube una foto para completar la comparación.' : second[2], a: '#BFF2D6', b: '#fff', bg: '#FFD84D', r: '1deg' }
+    ];
+    const totalMin = DAYS.slice(0, Math.min(cmp, 11)).reduce((a, d) => a + d[0], 0);
+    const ql = q.toLowerCase();
+    const matchesAll = DAYS.map((d, i) => ({ d, n: i + 1 })).filter((x) => x.d[2] && (!ql || x.d[2].toLowerCase().includes(ql))).reverse();
+    const matches = matchesAll.slice(0, 6);
+    return {
+      tabs: [['photos', 'Fotos'], ['compare', 'Día 1 vs hoy'], ['diary', 'Diario']].map(([k, l]) => ({ l, on: tab === k, bg: tab === k ? '#111' : '#fff', fg: tab === k ? '#FFF4D6' : '#111', sh: tab === k ? '4px 4px 0 #FFD84D' : 'none', pick: () => this.setState({ tab: k }) })),
+      showPhotos: tab === 'photos' ? 'flex' : 'none', showCompare: tab === 'compare' ? 'flex' : 'none', showDiary: tab === 'diary' ? 'flex' : 'none',
+      weeks: wlabels.map((l, i) => ({ l, on: week === i, bg: week === i ? '#FFD84D' : '#fff', pick: () => this.setState({ week: i }) })),
+      photos, sp,
+      cmpOpts: cands.map((n) => ({ l: n === 12 ? 'Hoy (día 12)' : 'Día ' + n, on: cmp === n, bg: cmp === n ? '#FFD84D' : '#fff', pick: () => this.setState({ cmp: n }) })),
+      pair, delta: 'Entre estos dos días acumulaste ' + this.hm(totalMin) + ' de práctica y ' + (cmp - 1) + ' días de camino.',
+      q, setQ: (e) => this.setState({ q: e.target.value }),
+      found: matchesAll.length + (matchesAll.length === 1 ? ' nota' : ' notas') + (matchesAll.length > 6 ? ' · mostrando las 6 más recientes' : ''),
+      emptyShow: matchesAll.length ? 'none' : 'block',
+      entries: matches.map(({ d, n }) => ({ n: String(n), t: 'Día ' + n + ' · ' + dateOf(n), meta: this.hm(d[0]) + ' · ' + moods[d[1]], note: d[2], bg: ['#7BE0A4', '#FFD84D', '#FF8FB8', '#7CC4FF'][n % 4] }))
+    };
+  }
+}
+</script>
+</body>
+</html>

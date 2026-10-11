@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Pegatina — Crear reto</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF4D6}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px solid var(--ink,#111);outline-offset:3px}
+.bx{border:3px solid var(--bd,#111);border-radius:14px;box-shadow:6px 6px 0 var(--sh,#111)}
+.mono{font-family:'Space Mono',monospace}
+.lbl{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.02em}
+.h1{margin:0;font-size:84px;line-height:.95;font-weight:700;letter-spacing:-.05em}
+.h2{margin:0;font-size:38px;line-height:1.05;font-weight:700;letter-spacing:-.03em}
+.h3{margin:0;font-size:28px;line-height:1.1;font-weight:700;letter-spacing:-.03em}
+.chip{min-height:44px;padding:0 18px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700;font-size:15px;background:var(--card,#fff);color:var(--ink,#111)}
+.btn{min-height:56px;padding:0 28px;font-size:20px;font-weight:700;color:#111;display:inline-flex;align-items:center;justify-content:center}
+.in{min-height:48px;padding:0 14px;border:3px solid var(--bd,#111);border-radius:12px;font-size:16px;background:var(--card,#fff);color:var(--ink,#111);width:100%;box-sizing:border-box}
+.in::placeholder{color:#6b6b6b}
+.hov{transition:transform .12s,box-shadow .12s}
+.hov:hover{transform:translate(-2px,-2px) rotate(var(--r,0deg));box-shadow:9px 9px 0 var(--sh,#111)}
+.press:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--sh,#111)}
+@media (prefers-reduced-motion:reduce){.hov{transition:none}}
+</style>
+</helmet>
+<div style="background:var(--bg,#FFF4D6);color:var(--ink,#111);font-family:'Space Grotesk',system-ui,sans-serif;font-size:16px;line-height:1.4;min-height:1430px;padding:28px 48px 64px;box-sizing:border-box;display:flex;flex-direction:column;gap:32px;">
+<header style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+<a href="PegatinaPanel.dc.html" class="bx" style="background:var(--a1,#FFD84D);color:#111;padding:6px 18px;font-size:30px;font-weight:700;transform:rotate(-2deg);letter-spacing:-.02em">oficio!</a>
+<nav aria-label="Principal" style="display:flex;gap:8px;flex:1;flex-wrap:wrap"><a href="PegatinaPanel.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Hoy</a><a href="PegatinaRetos.dc.html" aria-current="page" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;background:var(--ink,#111);color:var(--paper,#FFF4D6);font-weight:700">Retos</a><a href="PegatinaTimer.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Tomate</a><a href="PegatinaStats.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Números</a><a href="PegatinaLogros.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Logros</a><a href="PegatinaTienda.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Tienda</a><a href="PegatinaAvisos.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Avisos</a><a href="PegatinaAjustes.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Ajustes</a></nav>
+<a href="PegatinaAjustes.dc.html" aria-label="Perfil de Kobox" class="bx" style="background:var(--a3,#7BE0A4);color:#111;padding:6px 16px 6px 8px;min-height:44px;box-sizing:border-box;display:flex;align-items:center;gap:10px;font-weight:700"><span aria-hidden="true" style="width:32px;height:32px;border-radius:50%;background:#111;color:var(--a3,#7BE0A4);display:flex;align-items:center;justify-content:center">K</span>Kobox</a>
+<a href="PegatinaLogin.dc.html" aria-label="Cerrar sesión" class="bx press" style="width:50px;height:50px;background:var(--card,#fff);color:var(--ink,#111);display:flex;align-items:center;justify-content:center;padding:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></a>
+</header>
+<nav aria-label="Ruta" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><a href="PegatinaRetos.dc.html" class="bx press" style="min-height:44px;padding:0 16px;display:flex;align-items:center;background:var(--card,#fff);font-weight:700">← Retos</a><span class="lbl">Nuevo reto</span></nav>
+<h1 class="h1">Crea tu reto.</h1>
+<section style="display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start">
+<form class="bx" onSubmit="{{noop}}" style="flex:2 1 640px;background:#fff;padding:30px;display:flex;flex-direction:column;gap:26px;color:#111">
+<div style="display:flex;flex-direction:column;gap:8px"><label class="lbl" for="rn">Nombre del reto</label><input id="rn" type="text" class="in" style="font-size:22px;font-weight:700" value="{{name}}" onChange="{{setName}}"></div>
+<div style="display:flex;flex-direction:column;gap:8px"><span class="lbl">Habilidad vinculada</span><div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{skills}}" as="s" hint-placeholder-count="4"><button type="button" aria-pressed="{{s.on}}" onClick="{{s.pick}}" class="chip press" style="background:{{s.bg}};color:#111;box-shadow:{{s.sh}}">{{s.label}}</button></sc-for></div><span class="mono" style="font-size:13px">{{linkNote}}</span></div>
+<div style="display:flex;flex-direction:column;gap:8px"><span class="lbl">Duración</span><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><sc-for list="{{durs}}" as="d" hint-placeholder-count="6"><button type="button" aria-pressed="{{d.on}}" onClick="{{d.pick}}" class="chip press" style="background:{{d.bg}};color:#111;box-shadow:{{d.sh}}">{{d.label}}</button></sc-for><label class="lbl" for="cd" style="margin-left:8px">Otra</label><input id="cd" type="number" min="3" max="365" class="in" style="width:100px" value="{{daysVal}}" onChange="{{setDays}}"></div></div>
+<div style="display:flex;flex-direction:column;gap:8px"><span class="lbl">Meta diaria</span><div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{mins}}" as="m" hint-placeholder-count="5"><button type="button" aria-pressed="{{m.on}}" onClick="{{m.pick}}" class="chip press" style="background:{{m.bg}};color:#111;box-shadow:{{m.sh}}">{{m.label}}</button></sc-for></div></div>
+<div style="display:flex;gap:28px;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:8px;flex:1 1 260px"><span class="lbl">Días de gracia</span><div style="display:flex;gap:8px"><sc-for list="{{graces}}" as="g" hint-placeholder-count="4"><button type="button" aria-pressed="{{g.on}}" onClick="{{g.pick}}" class="chip press" style="background:{{g.bg}};color:#111;box-shadow:{{g.sh}}">{{g.label}}</button></sc-for></div><span class="mono" style="font-size:13px">Fallas permitidas sin romper la racha.</span></div>
+<div style="display:flex;flex-direction:column;gap:8px;flex:1 1 260px"><span class="lbl">Empieza</span><div style="display:flex;gap:8px"><sc-for list="{{starts}}" as="g" hint-placeholder-count="3"><button type="button" aria-pressed="{{g.on}}" onClick="{{g.pick}}" class="chip press" style="background:{{g.bg}};color:#111;box-shadow:{{g.sh}}">{{g.label}}</button></sc-for></div></div></div>
+<div style="display:flex;gap:20px;align-items:flex-end;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:8px"><label class="lbl" for="rt">Hora del recordatorio</label><input id="rt" type="time" class="in" style="width:170px" value="{{time}}" onChange="{{setTime}}"></div>
+<div style="display:flex;align-items:center;gap:12px;min-height:48px"><button type="button" role="switch" aria-checked="{{remind}}" aria-label="Recordarme cada día" onClick="{{flipRemind}}" style="width:72px;height:40px;border:3px solid #111;border-radius:999px;background:{{track}};position:relative;padding:0"><span style="position:absolute;top:3px;left:{{knob}};width:28px;height:28px;border:3px solid #111;border-radius:50%;background:#fff;box-sizing:content-box;margin:-3px 0 0 -3px;width:28px"></span></button><span style="font-weight:700">Recordarme cada día</span></div></div>
+<div style="display:flex;flex-direction:column;gap:8px"><span class="lbl">Color</span><div style="display:flex;gap:12px"><sc-for list="{{colors}}" as="c" hint-placeholder-count="5"><button type="button" aria-pressed="{{c.on}}" aria-label="{{c.name}}" onClick="{{c.pick}}" style="width:48px;height:48px;border:3px solid #111;border-radius:12px;background:{{c.hex}};box-shadow:{{c.sh}};padding:0"></button></sc-for></div></div>
+<div style="display:flex;flex-direction:column;gap:8px"><label class="lbl" for="why">Mi porqué</label><textarea id="why" rows="3" class="in" style="padding:12px 14px;resize:vertical;line-height:1.4" value="{{why}}" onChange="{{setWhy}}"></textarea><span class="mono" style="font-size:13px">Se lo recordarás a tu yo del día 15, cuando cueste.</span></div>
+<div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap"><a href="PegatinaRetos.dc.html" class="bx press btn" style="background:#fff;font-size:18px">Cancelar</a><button type="button" onClick="{{create}}" class="bx press btn" style="background:{{color}};font-size:20px;min-height:60px;padding:0 36px">{{cta}}</button></div>
+</form>
+<aside style="flex:1 1 340px;display:flex;flex-direction:column;gap:26px">
+<div class="bx" style="background:{{color}};padding:26px 28px;transform:rotate(1.5deg);color:#111"><span class="lbl">Tu reto en números</span><div style="font-size:30px;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin-top:6px">{{name}}</div><div style="font-size:64px;font-weight:700;letter-spacing:-.05em;line-height:1.05"><span style="letter-spacing:0">{{total}}</span></div><span class="mono" style="font-size:13px">{{calc}}</span></div>
+<div class="bx" style="background:#fff;padding:20px 24px;display:flex;flex-direction:column;gap:10px;color:#111"><sc-for list="{{facts}}" as="f" hint-placeholder-count="4"><div style="display:flex;justify-content:space-between;gap:12px;font-weight:700;border-bottom:3px dashed #111;padding-bottom:8px"><span class="mono">{{f.k}}</span><span style="text-align:right">{{f.v}}</span></div></sc-for></div>
+<div class="bx" style="background:{{noteBg}};padding:18px 22px;color:#111;font-weight:500">{{tip}}</div>
+</aside>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":1430}}'>
+class Component extends DCLogic {
+  hm(m) { const h = Math.floor(m / 60), r = m % 60; if (h === 0) return r + ' min'; return r === 0 ? h + ' h' : h + ' h ' + r + ' min'; }
+  renderVals() {
+    const st = this.state || {};
+    const name = st.name ?? '30 días de guitarra';
+    const skill = st.skill ?? 0;
+    const days = st.days ?? 30;
+    const min = st.min ?? 30;
+    const grace = st.grace ?? 2;
+    const start = st.start ?? 0;
+    const remind = st.remind ?? true;
+    const time = st.time || '19:00';
+    const colorId = st.colorId ?? 0;
+    const why = st.why ?? 'Quiero tocar una canción completa para mi familia en Navidad.';
+    const created = !!st.created;
+    const pal = [['Ámbar', '#FFD84D'], ['Verde', '#7BE0A4'], ['Rosa', '#FF8FB8'], ['Cielo', '#7CC4FF'], ['Naranja', '#FF9F5A']];
+    const color = pal[colorId][1];
+    const skillNames = ['Guitarra', 'Piano', 'Inglés', 'Dibujo', 'Nueva habilidad'];
+    const mo = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    const startDate = new Date(2026, 9, 11 + (start === 0 ? 0 : start === 1 ? 1 : 1 + ((8 - new Date(2026, 9, 12).getDay()) % 7 || 7)));
+    const end = new Date(startDate.getTime() + (days - 1) * 86400000);
+    const fd = (d) => d.getDate() + ' ' + mo[d.getMonth()] + ' ' + d.getFullYear();
+    const totalMin = days * min;
+    const pct = ((totalMin / 60) / 10000) * 100;
+    const sh = (on) => (on ? '4px 4px 0 #111' : 'none');
+    const opt = (arr, cur, fmt, key) => arr.map((v) => ({ label: fmt(v), on: cur === v, bg: cur === v ? color : '#fff', sh: sh(cur === v), pick: () => this.setState({ [key]: v }) }));
+    return {
+      noop: (e) => e && e.preventDefault && e.preventDefault(),
+      name, color, why, time, remind, daysVal: String(days),
+      track: remind ? '#7BE0A4' : '#fff', knob: remind ? '35px' : '3px',
+      cta: created ? '¡Reto creado!' : 'Empezar reto',
+      skills: skillNames.map((l, i) => ({ label: l, on: skill === i, bg: skill === i ? color : '#fff', sh: sh(skill === i), pick: () => this.setState({ skill: i }) })),
+      linkNote: skill === 4 ? 'Crearemos una habilidad nueva con tu reto.' : 'Las horas del reto suman a las 10.000 h de ' + skillNames[skill] + '.',
+      durs: opt([7, 14, 21, 30, 60, 100], days, (v) => v + ' días', 'days'),
+      mins: opt([15, 30, 45, 60, 90], min, (v) => v + ' min', 'min'),
+      graces: opt([0, 1, 2, 3], grace, (v) => String(v), 'grace'),
+      starts: ['Hoy', 'Mañana', 'Lunes'].map((l, i) => ({ label: l, on: start === i, bg: start === i ? color : '#fff', sh: sh(start === i), pick: () => this.setState({ start: i }) })),
+      colors: pal.map(([n, h], i) => ({ name: n, hex: h, on: i === colorId, sh: i === colorId ? '5px 5px 0 #111' : 'none', pick: () => this.setState({ colorId: i }) })),
+      setName: (e) => this.setState({ name: e.target.value }),
+      setWhy: (e) => this.setState({ why: e.target.value }),
+      setTime: (e) => this.setState({ time: e.target.value }),
+      setDays: (e) => this.setState({ days: Math.max(3, Math.min(365, parseInt(e.target.value, 10) || 30)) }),
+      flipRemind: () => this.setState({ remind: !remind }),
+      create: () => this.setState({ created: true }),
+      total: this.hm(totalMin),
+      calc: days + ' días × ' + min + ' min',
+      facts: [
+        { k: 'Empieza', v: fd(startDate) },
+        { k: 'Termina', v: fd(end) },
+        { k: 'Aporta', v: (pct < 0.1 ? '< 0,1' : pct.toFixed(2).replace('.', ',')) + ' % de las 10.000 h' },
+        { k: 'Aviso', v: remind ? 'Cada día a las ' + time : 'Sin aviso' }
+      ],
+      noteBg: created ? '#7BE0A4' : '#FFF4D6',
+      tip: created ? 'Listo. Tu primer día ya está esperándote en la pestaña Retos.' : (min >= 60 ? 'Ojo: ' + min + ' min al día es mucho para un reto de ' + days + ' días. Mejor una meta que cumplas incluso en un mal día.' : 'Buen ritmo. Un reto corto y constante gana a uno heroico que abandonas en la primera semana.')
+    };
+  }
+}
+</script>
+</body>
+</html>

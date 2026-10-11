@@ -1,0 +1,20 @@
+rules_version = '2';
+
+// Firebase Storage rules (separate from firestore.rules — deploy with
+// `firebase deploy --only storage`). Firebase Storage must also be enabled
+// for the project in the Firebase console first; it is not on by default
+// the way Firestore/Auth are. See README "Deploy" / "Known limitations".
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Retos (challenges) diary photos: challenge-photos/{uid}/{challengeId}/{dayNumber}/{filename}
+    // Only the owning uid can read or write its own photos.
+    match /challenge-photos/{uid}/{allPaths=**} {
+      allow read, delete: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null
+        && request.auth.uid == uid
+        && request.resource.size < 8 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+  }
+}

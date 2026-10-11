@@ -49,7 +49,7 @@ export interface Skill {
   createdAt: number;
 }
 
-export type SessionSource = "timer" | "manual";
+export type SessionSource = "timer" | "manual" | "challenge";
 
 export interface PracticeSession {
   id: string;
@@ -61,6 +61,8 @@ export interface PracticeSession {
   note: string | null;
   pomodoros: number;
   source: SessionSource;
+  /** Set when source === "challenge": the challenge this day's diary entry belongs to. */
+  challengeId?: string | null;
   createdAt: number;
 }
 
@@ -142,5 +144,57 @@ export interface CoinLedgerEntry {
   userId: string;
   delta: number;
   reason: string;
+  createdAt: number;
+}
+
+// ---------------------------------------------------------------------------
+// Retos (challenges) — see lib/challenge.ts for the pure day/streak math and
+// lib/firestore/challenges.ts for the Firestore access layer.
+// ---------------------------------------------------------------------------
+
+export type ChallengeStatus = "active" | "completed" | "paused" | "abandoned";
+
+export const CHALLENGE_COLORS = ["#FFD84D", "#7BE0A4", "#FF8FB8", "#7CC4FF", "#FF9F5A"] as const;
+
+export const MAX_ACTIVE_CHALLENGES = 3;
+
+/** `challenges/{id}`: one "aprende algo en X días" challenge, linked to a skill. */
+export interface Challenge {
+  id: string;
+  userId: string;
+  skillId: string;
+  name: string;
+  /** "Mi porqué" — free text motivation shown back to the user mid-challenge. */
+  why: string;
+  totalDays: number;
+  dailyGoalMin: number;
+  graceDaysAllowed: number;
+  /** Denormalized count, kept in sync by lib/firestore/challenges.ts whenever
+   * a day is saved — see saveChallengeDay's recomputation step. */
+  graceDaysUsed: number;
+  color: string;
+  startedAt: number; // epoch ms, local midnight of day 1
+  reminderTime: string; // "HH:mm"
+  reminderEnabled: boolean;
+  status: ChallengeStatus;
+  createdAt: number;
+  completedAt: number | null;
+}
+
+/** `challengeDays/{challengeId}_{dayNumber}`: one diary entry per day of a challenge. */
+export interface ChallengeDay {
+  id: string;
+  userId: string;
+  challengeId: string;
+  dayNumber: number; // 1-based
+  date: string; // "yyyy-MM-dd"
+  durationMin: number;
+  note: string;
+  tags: string[];
+  photoUrls: string[];
+  mood: number | null; // 1-5
+  difficulty: number | null; // 1-5
+  /** The `sessions` doc this day's practice time created (source: "challenge"). */
+  sessionId: string | null;
   createdAt: number;
 }

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Pegatina — Detalle del reto</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF4D6}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px solid var(--ink,#111);outline-offset:3px}
+.bx{border:3px solid var(--bd,#111);border-radius:14px;box-shadow:6px 6px 0 var(--sh,#111)}
+.mono{font-family:'Space Mono',monospace}
+.lbl{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.02em}
+.h1{margin:0;font-size:84px;line-height:.95;font-weight:700;letter-spacing:-.05em}
+.h2{margin:0;font-size:38px;line-height:1.05;font-weight:700;letter-spacing:-.03em}
+.h3{margin:0;font-size:28px;line-height:1.1;font-weight:700;letter-spacing:-.03em}
+.chip{min-height:44px;padding:0 18px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700;font-size:15px;background:var(--card,#fff);color:var(--ink,#111)}
+.btn{min-height:56px;padding:0 28px;font-size:20px;font-weight:700;color:#111;display:inline-flex;align-items:center;justify-content:center}
+.in{min-height:48px;padding:0 14px;border:3px solid var(--bd,#111);border-radius:12px;font-size:16px;background:var(--card,#fff);color:var(--ink,#111);width:100%;box-sizing:border-box}
+.in::placeholder{color:#6b6b6b}
+.hov{transition:transform .12s,box-shadow .12s}
+.hov:hover{transform:translate(-2px,-2px) rotate(var(--r,0deg));box-shadow:9px 9px 0 var(--sh,#111)}
+.press:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--sh,#111)}
+@media (prefers-reduced-motion:reduce){.hov{transition:none}}
+</style>
+</helmet>
+<div style="background:var(--bg,#FFF4D6);color:var(--ink,#111);font-family:'Space Grotesk',system-ui,sans-serif;font-size:16px;line-height:1.4;min-height:1720px;padding:28px 48px 64px;box-sizing:border-box;display:flex;flex-direction:column;gap:32px;">
+<header style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+<a href="PegatinaPanel.dc.html" class="bx" style="background:var(--a1,#FFD84D);color:#111;padding:6px 18px;font-size:30px;font-weight:700;transform:rotate(-2deg);letter-spacing:-.02em">oficio!</a>
+<nav aria-label="Principal" style="display:flex;gap:8px;flex:1;flex-wrap:wrap"><a href="PegatinaPanel.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Hoy</a><a href="PegatinaRetos.dc.html" aria-current="page" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;background:var(--ink,#111);color:var(--paper,#FFF4D6);font-weight:700">Retos</a><a href="PegatinaTimer.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Tomate</a><a href="PegatinaStats.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Números</a><a href="PegatinaLogros.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Logros</a><a href="PegatinaTienda.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Tienda</a><a href="PegatinaAvisos.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Avisos</a><a href="PegatinaAjustes.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Ajustes</a></nav>
+<a href="PegatinaAjustes.dc.html" aria-label="Perfil de Kobox" class="bx" style="background:var(--a3,#7BE0A4);color:#111;padding:6px 16px 6px 8px;min-height:44px;box-sizing:border-box;display:flex;align-items:center;gap:10px;font-weight:700"><span aria-hidden="true" style="width:32px;height:32px;border-radius:50%;background:#111;color:var(--a3,#7BE0A4);display:flex;align-items:center;justify-content:center">K</span>Kobox</a>
+<a href="PegatinaLogin.dc.html" aria-label="Cerrar sesión" class="bx press" style="width:50px;height:50px;background:var(--card,#fff);color:var(--ink,#111);display:flex;align-items:center;justify-content:center;padding:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></a>
+</header>
+<nav aria-label="Ruta" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><a href="PegatinaRetos.dc.html" class="bx press" style="min-height:44px;padding:0 16px;display:flex;align-items:center;background:var(--card,#fff);font-weight:700">← Retos</a><span class="lbl">Reto activo</span></nav>
+<section style="display:flex;gap:32px;flex-wrap:wrap;align-items:stretch">
+<div class="bx" style="flex:2 1 640px;background:#FFD84D;padding:30px 34px;color:#111;display:flex;flex-direction:column;gap:16px;transform:rotate(-.6deg)">
+<span class="lbl">Reto · Guitarra</span>
+<h1 class="h1" style="font-size:64px">30 días de guitarra.</h1>
+<p style="margin:0;font-size:20px;font-weight:500"><b>Mi porqué:</b> tocar una canción completa para mi familia en Navidad.</p>
+<div style="display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap;margin-top:auto"><div style="font-size:92px;font-weight:700;letter-spacing:-.05em;line-height:.9"><span style="letter-spacing:0">Día 12</span></div><span class="mono" style="font-weight:700;font-size:16px;padding-bottom:8px">de 30 · 40 % del camino</span></div>
+<div role="progressbar" aria-label="Avance" aria-valuemin="0" aria-valuemax="100" aria-valuenow="40" style="height:26px;border:3px solid #111;border-radius:999px;background:#FFF4D6;overflow:hidden"><div style="height:100%;width:40%;background:#FF8FB8;border-right:3px solid #111;box-sizing:border-box"></div></div>
+</div>
+<div style="flex:1 1 340px;display:grid;grid-template-columns:1fr 1fr;gap:20px">
+<sc-for list="{{kpis}}" as="k" hint-placeholder-count="4"><div class="bx" style="background:{{k.bg}};padding:16px 18px;color:#111;display:flex;flex-direction:column;gap:2px"><span class="lbl" style="font-size:12px">{{k.l}}</span><span style="font-size:34px;font-weight:700;letter-spacing:-.04em;line-height:1.05"><span style="letter-spacing:0">{{k.v}}</span></span><span class="mono" style="font-size:12px">{{k.s}}</span></div></sc-for>
+</div>
+</section>
+<section style="display:flex;gap:16px;flex-wrap:wrap">
+<a href="PegatinaTimer.dc.html" class="bx press btn" style="background:#7BE0A4;font-size:22px;min-height:64px;padding:0 34px">Practicar hoy · 30 min</a>
+<a href="PegatinaRetoDia.dc.html" class="bx press btn" style="background:#fff;font-size:20px;min-height:64px">Escribir el diario de hoy</a>
+<a href="PegatinaRetoGaleria.dc.html" class="bx press btn" style="background:#fff;font-size:20px;min-height:64px">Galería</a>
+</section>
+<section style="display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start">
+<div style="flex:2 1 640px;display:flex;flex-direction:column;gap:18px">
+<h2 class="h2">Tu mes, día a día.</h2>
+<div role="list" aria-label="Días del reto" style="display:grid;grid-template-columns:repeat(10,1fr);gap:10px">
+<sc-for list="{{cells}}" as="c" hint-placeholder-count="30"><button type="button" role="listitem" aria-label="{{c.aria}}" aria-pressed="{{c.on}}" onClick="{{c.pick}}" style="aspect-ratio:1/1;min-height:56px;border:3px solid #111;border-radius:12px;background:{{c.bg}};box-shadow:{{c.sh}};color:{{c.fg}};font-weight:700;font-size:20px;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;line-height:1.05"><span>{{c.n}}</span><span style="font-size:15px">{{c.mark}}</span></button></sc-for>
+</div>
+<div style="display:flex;gap:16px;flex-wrap:wrap" aria-label="Leyenda"><sc-for list="{{legend}}" as="l" hint-placeholder-count="5"><span style="display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:500"><span style="width:20px;height:20px;border:3px solid #111;border-radius:6px;background:{{l.bg}}"></span>{{l.t}}</span></sc-for></div>
+</div>
+<aside class="bx" style="flex:1 1 340px;background:#fff;padding:24px 26px;display:flex;flex-direction:column;gap:12px;color:#111;min-height:250px" aria-live="polite">
+<span class="lbl">{{sel.l}}</span><h3 class="h3">{{sel.t}}</h3><p style="margin:0;font-size:17px;font-weight:500">{{sel.note}}</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><span class="chip" style="min-height:34px;display:inline-flex;align-items:center;font-size:14px;background:{{sel.bg}}">{{sel.time}}</span><span class="chip" style="min-height:34px;display:inline-flex;align-items:center;font-size:14px">{{sel.mood}}</span><span class="chip" style="min-height:34px;display:inline-flex;align-items:center;font-size:14px;display:{{sel.photoShow}}">{{sel.photos}}</span></div>
+<a href="PegatinaRetoDia.dc.html" class="bx press btn" style="background:#FFD84D;min-height:46px;font-size:16px;margin-top:auto">{{sel.cta}}</a>
+</aside>
+</section>
+<section style="display:flex;flex-direction:column;gap:20px">
+<h2 class="h2">Diario reciente.</h2>
+<sc-for list="{{feed}}" as="e" hint-placeholder-count="4"><article class="bx" style="background:#fff;padding:18px 22px;display:flex;gap:22px;flex-wrap:wrap;align-items:center;color:#111"><div style="flex:0 0 74px;height:74px;border:3px solid #111;border-radius:12px;background:{{e.bg}};display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700"><span style="letter-spacing:0">{{e.n}}</span></div><div style="flex:1 1 360px"><div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><span class="lbl">{{e.t}}</span><span class="mono" style="font-size:12px">{{e.meta}}</span></div><p style="margin:4px 0 0;font-size:17px;font-weight:500">{{e.note}}</p></div><div style="display:flex;gap:8px;display:{{e.thumbShow}}"><sc-for list="{{e.thumbs}}" as="p" hint-placeholder-count="2"><div style="width:64px;height:64px;border:3px solid #111;border-radius:10px;background:repeating-linear-gradient(135deg,{{p.a}} 0 14px,{{p.b}} 14px 28px)"></div></sc-for></div></article></sc-for>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":1720}}'>
+class Component extends DCLogic {
+  hm(m) { const h = Math.floor(m / 60), r = m % 60; if (h === 0) return r + ' min'; return r === 0 ? h + ' h' : h + ' h ' + r + ' min'; }
+  renderVals() {
+    const st = this.state || {};
+    const sel = st.sel ?? 12;
+    const DAYS = [[30, 3, "Primer día: aprendí a sostener la guitarra y afinar con la app. Las cuerdas duelen en los dedos.", 1], [0, 0, "", 0], [35, 3, "Acordes Em y Am. Me cuesta que no suenen las cuerdas apagadas.", 1], [30, 4, "Cambio Em a Am sin mirar. Aún lento pero ya sale.", 0], [45, 4, "Escala de Do mayor y ritmo básico abajo-abajo-arriba.", 2], [30, 3, "Me frustré con el acorde F. Voy a practicarlo en versión corta.", 0], [40, 5, "¡Toqué una canción completa con 4 acordes! Se escucha feo pero es mía.", 2], [30, 4, "Repaso de acordes y metrónomo a 60 bpm.", 0], [60, 5, "Sesión larga: rasgueo con el patrón de la bossa. Callos nuevos.", 1], [30, 4, "Cambios de G a C más fluidos. Grabé un video corto.", 1], [35, 4, "Arpegio básico con p-i-m-a. Quiero seguir con esto mañana.", 1]];
+    const today = 12;
+    const mo = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    const dateOf = (n) => { const d = new Date(2026, 8, 29 + n); return d.getDate() + ' ' + mo[d.getMonth()]; };
+    const moods = ['', 'Mal día', 'Regular', 'Bien', 'Muy bien', '¡Genial!'];
+    const state = (n) => { if (n > today) return 'future'; if (n === today) return 'today'; const d = DAYS[n - 1]; if (d[0] === 0) return 'grace'; return 'done'; };
+    const sty = { done: ['#7BE0A4', '#111', '✓'], today: ['#FFD84D', '#111', 'hoy'], grace: ['#7CC4FF', '#111', 'gracia'], future: ['#E9E4D4', '#6b6b6b', ''], miss: ['#FF8FB8', '#111', '✕'] };
+    const cells = Array.from({ length: 30 }, (_, i) => { const n = i + 1; const s = state(n); const c = sty[s]; return { n: String(n), mark: c[2], bg: c[0], fg: c[1], on: sel === n, sh: sel === n ? '5px 5px 0 #111' : 'none', aria: 'Día ' + n + ', ' + (s === 'done' ? 'hecho' : s === 'today' ? 'hoy' : s === 'grace' ? 'día de gracia' : 'pendiente'), pick: () => this.setState({ sel: n }) }; });
+    const s = state(sel);
+    const d = DAYS[sel - 1] || [0, 0, '', 0];
+    const selInfo = s === 'future'
+      ? { l: 'Día ' + sel + ' · ' + dateOf(sel), t: 'Todavía no llega', note: 'Se abre ese día. Mientras tanto, tu yo de hoy tiene trabajo por hacer.', time: 'Meta 30 min', mood: 'Sin nota', photos: '', photoShow: 'none', bg: '#E9E4D4', cta: 'Ver el día de hoy' }
+      : s === 'today'
+        ? { l: 'Día 12 · ' + dateOf(12) + ' · hoy', t: 'Te falta practicar', note: 'Aún no hay tiempo ni nota. Practica 30 minutos y cuéntate qué aprendiste.', time: '0 / 30 min', mood: 'Sin ánimo', photos: '', photoShow: 'none', bg: '#FFF4D6', cta: 'Escribir diario de hoy' }
+        : s === 'grace'
+          ? { l: 'Día ' + sel + ' · ' + dateOf(sel), t: 'Día de gracia usado', note: 'No practicaste, pero tu racha sigue viva. Te quedan 1 de 2 días de gracia.', time: '0 min', mood: 'Sin nota', photos: '', photoShow: 'none', bg: '#7CC4FF', cta: 'Añadir nota igual' }
+          : { l: 'Día ' + sel + ' · ' + dateOf(sel), t: this.hm(d[0]) + ' de práctica', note: d[2], time: this.hm(d[0]), mood: moods[d[1]], photos: d[3] + (d[3] === 1 ? ' foto' : ' fotos'), photoShow: d[3] ? 'inline-flex' : 'none', bg: '#7BE0A4', cta: 'Abrir el día ' + sel };
+    const feed = [11, 10, 9, 7].map((n) => { const e = DAYS[n - 1]; return { n: String(n), t: 'Día ' + n + ' · ' + dateOf(n), meta: this.hm(e[0]) + ' · ' + moods[e[1]], note: e[2], bg: ['#7BE0A4', '#FFD84D', '#FF8FB8', '#7CC4FF'][n % 4], thumbShow: e[3] ? 'flex' : 'none', thumbs: Array.from({ length: e[3] }, (_, i) => ({ a: ['#FFE9A8', '#BFE3FF', '#FFC2DA'][(n + i) % 3], b: '#fff' })) }; });
+    return {
+      cells, sel: selInfo, feed,
+      legend: [{ bg: '#7BE0A4', t: 'Hecho' }, { bg: '#FFD84D', t: 'Hoy' }, { bg: '#7CC4FF', t: 'Día de gracia' }, { bg: '#FF8FB8', t: 'Perdido' }, { bg: '#E9E4D4', t: 'Por venir' }],
+      kpis: [
+        { l: 'Racha', v: '9 días', s: 'Récord del reto', bg: '#FF8FB8' },
+        { l: 'Invertido', v: '6 h 5 min', s: 'de 15 h previstas', bg: '#7CC4FF' },
+        { l: 'Días de gracia', v: '1 / 2', s: 'te queda 1', bg: '#FFF4D6' },
+        { l: 'Termina', v: '29 oct', s: 'faltan 18 días', bg: '#7BE0A4' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
