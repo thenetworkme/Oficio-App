@@ -66,3 +66,18 @@ export function formatShortDateEs(date: Date): string {
 export function formatTimeEs(date: Date): string {
   return dfFormat(date, "h:mm a", { locale: es }).toLowerCase();
 }
+
+const MONTH_ABBR_ES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+
+/**
+ * "2026-10-12" -> "12 oct". Parses the "yyyy-MM-dd" key directly instead of
+ * building a `Date` from it, so it can't be shifted a day by the browser's
+ * local timezone the way `new Date("yyyy-MM-dd")` (parsed as UTC midnight)
+ * can be when read back with local getters. Used for heatmap tooltips.
+ */
+export function formatDayMonthFromKey(dateKey: string): string {
+  const [, m, d] = dateKey.split("-");
+  const day = Number(d);
+  const month = MONTH_ABBR_ES[Number(m) - 1] ?? "";
+  return `${day} ${month}`;
+}
