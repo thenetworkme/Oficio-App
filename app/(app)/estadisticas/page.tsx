@@ -4,11 +4,13 @@ import { useMemo, useState } from "react";
 import { Card, CardHeading } from "@/components/ui/card";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { MonthlyHoursChart, type MonthDatum } from "@/components/stats/MonthlyHoursChart";
+import { ConsistencyHeatmap } from "@/components/dashboard/ConsistencyHeatmap";
 import { useAppData } from "@/lib/hooks/useAppData";
 import { resolveSkillColor } from "@/lib/skill-color";
 import { formatDecimal, formatInt, formatMinutes, formatPercent } from "@/lib/format";
-import { hoursPerWeek, projectTimeRemaining, formatProjection } from "@/lib/projection";
+import { hoursPerWeek, projectTimeRemaining, formatProjection, recentWeeklyPace, projectTenThousandHours } from "@/lib/projection";
 import { computeBestStreak } from "@/lib/streak";
+import { buildSkillDailyMinutes } from "@/lib/heatmap";
 
 const MONTH_NAMES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 const TIME_SLOTS = [
@@ -19,7 +21,7 @@ const TIME_SLOTS = [
 ];
 
 export default function EstadisticasPage() {
-  const { skills, sessions, dailyMinutes } = useAppData();
+  const { skills, sessions, dailyMinutes, timezone } = useAppData();
   const [skillId, setSkillId] = useState<string | null>(null);
   const activeSkill = skills.find((s) => s.id === skillId) ?? skills[0];
 
@@ -77,6 +79,10 @@ export default function EstadisticasPage() {
   const altPace = hoursPerWeek(180, activeSkill.daysPerWeek);
   const remaining = Math.max(0, activeSkill.goalHours - hours);
 
+  const skillDailyMinutes = buildSkillDailyMinutes(sessions, activeSkill.id, timezone);
+  const actualPace = recentWeeklyPace(sessions, activeSkill.id);
+  const masteryProjection = projectTenThousandHours(hours, actualPace);
+
   return (
     <>
       <header className="flex flex-wrap items-end justify-between gap-4">
@@ -128,6 +134,24 @@ export default function EstadisticasPage() {
         </div>
         <ProgressBar pct={(hours / activeSkill.goalHours) * 100} color={resolveSkillColor(activeSkill.color)} height={14} ariaLabel={`${activeSkill.name}: ${formatInt(hours)} de ${formatInt(activeSkill.goalHours)} horas`} />
       </section>
+
+      <Card className="flex flex-col gap-4 p-5.5">
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
+          <CardHeading>Constancia · {activeSkill.name}</CardHeading>
+          <span className="text-[13px] text-muted">Últimas 13 semanas</span>
+        </div>
+        <ConsistencyHeatmap
+          dailyMinutes={skillDailyMinutes}
+          timezone={timezone}
+          weeks={13}
+          scaleMinutes={Math.max(30, activeSkill.dailyGoalMin * 2)}
+          accentColor={resolveSkillColor(activeSkill.color)}
+          ariaLabel={`Mapa de constancia diaria de ${activeSkill.name} en las últimas 13 semanas`}
+        />
+        <p className="m-0 text-[13px] text-muted">
+          Ritmo real (90 días): {formatDecimal(actualPace)} h/sem · {masteryProjection.message}
+        </p>
+      </Card>
 
       <section className="grid grid-cols-[repeat(auto-fit,minmax(min(440px,100%),1fr))] gap-4">
         <Card className="flex flex-col gap-5 p-5.5">

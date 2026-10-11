@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Card, CardHeading } from "@/components/ui/card";
 import { Mascot } from "@/components/mascot/Mascot";
 import { ConsistencyHeatmap } from "@/components/dashboard/ConsistencyHeatmap";
+import { TenThousandProjectionCard } from "@/components/dashboard/TenThousandProjectionCard";
 import { WeekBars, type DayTotal } from "@/components/dashboard/WeekBars";
 import { StampAlbumCard } from "@/components/skills/StampAlbumCard";
 import { useAppData } from "@/lib/hooks/useAppData";
@@ -18,7 +19,7 @@ const DAY_LABELS = ["L", "M", "X", "J", "V", "S", "D"];
 const DAY_NAMES_LONG = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
 
 export default function PanelPage() {
-  const { user, skills, dailyMinutes, timezone, todayKey, todayMinutes, weekMinutes, streak, loading } = useAppData();
+  const { user, skills, sessions, dailyMinutes, timezone, todayKey, todayMinutes, weekMinutes, streak, loading } = useAppData();
   const { pet, equipped, level, coins } = usePet();
   const [reminders, setReminders] = useState<Reminder[]>([]);
 
@@ -151,6 +152,8 @@ export default function PanelPage() {
           <CardHeading>Constancia</CardHeading>
           <ConsistencyHeatmap dailyMinutes={dailyMinutes} timezone={timezone} />
         </Card>
+
+        <TenThousandProjectionCard skills={skills} sessions={sessions} />
 
         <Card className="flex flex-col gap-2 p-6">
           <div className="flex flex-wrap items-baseline justify-between gap-3">
