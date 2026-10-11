@@ -2,16 +2,22 @@
 
 import {
   createUserWithEmailAndPassword,
+  deleteUser,
+  EmailAuthProvider,
   GoogleAuthProvider,
   onAuthStateChanged,
+  reauthenticateWithCredential,
+  reauthenticateWithPopup,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut as firebaseSignOut,
+  updatePassword as updateAuthPassword,
   updateProfile as updateAuthProfile,
   type User,
 } from "firebase/auth";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { getFirebaseAuth } from "@/lib/firebase";
+import { deleteAllUserData } from "@/lib/firestore/account";
 import { ensureProfile, watchProfile } from "@/lib/firestore/profiles";
 import type { Profile } from "@/lib/types";
 
@@ -23,6 +29,12 @@ interface AuthContextValue {
   signUpWithEmail: (email: string, password: string, displayName: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
+  /** True if the account can reauthenticate with a password (vs. Google-only). */
+  hasPasswordProvider: () => boolean;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
+  /** Reauthenticates (password or Google popup, as needed), deletes all of the
+   * user's Firestore data, then deletes the Firebase Auth account itself. */
+  deleteAccount: (currentPassword?: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -82,6 +94,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       },
       async signOut() {
         await firebaseSignOut(getFirebaseAuth());
+      },
+      hasPasswordProvider() {
+        return (user?.providerData ?? []).some((p) => p.providerId === "password");
+      },
+      async changePassword(currentPassword, newPassword) {
+        const current = getFirebaseAuth().currentUser;
+        if (!current?.email) throw new Error("No hay una sesión con correo activa.");
+        const credential = EmailAuthProvider.credential(current.email, currentPassword);
+        await reauthenticateWithCredential(current, credential);
+        await updateAuthPassword(current, newPassword);
+      },
+      async deleteAccount(currentPassword) {
+        const current = getFirebaseAuth().currentUser;
+        if (!current) throw new Error("No hay una sesión activa.");
+        const usesPassword = (current.providerData ?? []).some((p) => p.providerId === "password");
+        if (usesPassword) {
+          if (!current.email || !currentPassword) throw new Error("Falta la contraseña actual.");
+          await reauthenticateWithCredential(current, EmailAuthProvider.credential(current.email, currentPassword));
+        } else {
+          await reauthenticateWithPopup(current, new GoogleAuthProvider());
+        }
+        await deleteAllUserData(current.uid);
+        await deleteUser(current);
       },
     }),
     [user, profile, authLoading, profileLoading],

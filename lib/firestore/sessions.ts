@@ -101,6 +101,13 @@ export async function listSessionsSince(userId: string, sinceMs: number): Promis
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as PracticeSession);
 }
 
+/** Every session the user has ever logged, oldest first (used for CSV export). */
+export async function listAllSessions(userId: string): Promise<PracticeSession[]> {
+  const q = query(sessionsCol(), where("userId", "==", userId), orderBy("startedAt", "asc"));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as PracticeSession);
+}
+
 export function watchSessionsSince(userId: string, sinceMs: number, cb: (sessions: PracticeSession[]) => void) {
   const q = query(
     sessionsCol(),

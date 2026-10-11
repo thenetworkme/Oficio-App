@@ -40,6 +40,11 @@ export async function listAchievementsForSkill(skillId: string): Promise<Achieve
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Achievement);
 }
 
+export async function listAchievementsForUser(userId: string): Promise<Achievement[]> {
+  const snap = await getDocs(query(achievementsCol(), where("userId", "==", userId)));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Achievement);
+}
+
 export function watchAchievementsForUser(userId: string, cb: (items: Achievement[]) => void) {
   const q = query(achievementsCol(), where("userId", "==", userId));
   return onSnapshot(q, (snap) => {

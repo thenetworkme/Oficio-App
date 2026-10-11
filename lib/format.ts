@@ -53,6 +53,11 @@ export function formatDateEs(date: Date): string {
   return dfFormat(date, "d 'de' MMMM 'de' yyyy", { locale: es });
 }
 
+/** 2025-03-01 -> "marzo de 2025" */
+export function formatMonthYearEs(date: Date): string {
+  return dfFormat(date, "MMMM 'de' yyyy", { locale: es });
+}
+
 /** short weekday + day, e.g. "Vie 9 oct" */
 export function formatShortDateEs(date: Date): string {
   return dfFormat(date, "EEE d MMM", { locale: es }).replace(".", "");

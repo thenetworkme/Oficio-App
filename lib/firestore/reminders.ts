@@ -1,4 +1,4 @@
-import { addDoc, collection, deleteDoc, doc, onSnapshot, orderBy, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, orderBy, query, updateDoc, where } from "firebase/firestore";
 import { getDb } from "@/lib/firebase";
 import type { Reminder } from "@/lib/types";
 
@@ -31,6 +31,12 @@ export async function updateReminder(id: string, patch: Partial<NewReminderInput
 
 export async function deleteReminder(id: string) {
   await deleteDoc(doc(getDb(), "reminders", id));
+}
+
+export async function listReminders(userId: string): Promise<Reminder[]> {
+  const q = query(remindersCol(), where("userId", "==", userId), orderBy("createdAt", "asc"));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Reminder);
 }
 
 export function watchReminders(userId: string, cb: (reminders: Reminder[]) => void) {
