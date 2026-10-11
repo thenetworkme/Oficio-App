@@ -137,76 +137,92 @@
   --radius-chip: 999px;
 }
 
-html,
-body {
-  min-height: 100%;
-}
+/*
+ * These "reset"-style rules must live in @layer base. Tailwind v4 wraps all
+ * of its own output in cascade layers (@layer theme, base, components,
+ * utilities), and CSS Cascade Layers give UNLAYERED styles priority over
+ * ANY layered style regardless of selector specificity. Plain, unlayered
+ * `a { color: inherit }` was silently beating every `text-*` utility (even
+ * `text-paper`/`text-ink-solid` classes added specifically to fix contrast)
+ * on every <a>/<Link> in the app — e.g. the active sidebar nav item's text
+ * was invisible because `a { color: inherit }` pulled `body`'s --ink color
+ * regardless of the `text-paper` class also on that link. Putting these in
+ * @layer base restores normal cascade/specificity behavior so a utility
+ * class on the element correctly overrides the base default, matching
+ * Tailwind's own documented convention for custom base styles.
+ */
+@layer base {
+  html,
+  body {
+    min-height: 100%;
+  }
 
-body {
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--font-sans), system-ui, sans-serif;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 1.4;
-  -webkit-font-smoothing: antialiased;
-}
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans), system-ui, sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+  }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 
-button,
-input,
-select,
-textarea {
-  font-family: inherit;
-}
+  button,
+  input,
+  select,
+  textarea {
+    font-family: inherit;
+  }
 
-button {
-  cursor: pointer;
-}
+  button {
+    cursor: pointer;
+  }
 
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible,
-[tabindex]:focus-visible {
-  outline: 4px solid var(--ink);
-  outline-offset: 3px;
-}
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 4px solid var(--ink);
+    outline-offset: 3px;
+  }
 
-input::placeholder,
-textarea::placeholder {
-  color: var(--muted);
-  opacity: 0.85;
-}
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--muted);
+    opacity: 0.85;
+  }
 
-input[type="date"],
-input[type="time"] {
-  color-scheme: dark;
-}
+  input[type="date"],
+  input[type="time"] {
+    color-scheme: dark;
+  }
 
-[data-theme="pegatina"] input[type="date"],
-[data-theme="pegatina"] input[type="time"],
-[data-theme="latte"] input[type="date"],
-[data-theme="latte"] input[type="time"] {
-  color-scheme: light;
-}
+  [data-theme="pegatina"] input[type="date"],
+  [data-theme="pegatina"] input[type="time"],
+  [data-theme="latte"] input[type="date"],
+  [data-theme="latte"] input[type="time"] {
+    color-scheme: light;
+  }
 
-.font-num {
-  font-family: var(--font-mono), monospace;
-}
+  .font-num {
+    font-family: var(--font-mono), monospace;
+  }
 
-.label-xs {
-  font-family: var(--font-mono), monospace;
-  font-weight: 700;
-  font-size: 12px;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--muted);
+  .label-xs {
+    font-family: var(--font-mono), monospace;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
 }
 
 /* --- Pegatina "sticker" structural look: box + hard shadow + hover/press --- */
