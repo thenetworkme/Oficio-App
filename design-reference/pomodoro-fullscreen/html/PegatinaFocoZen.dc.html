@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Pegatina — Foco modo zen</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF4D6}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px solid var(--ink,#111);outline-offset:3px}
+.bx{border:3px solid var(--bd,#111);border-radius:14px;box-shadow:6px 6px 0 var(--sh,#111)}
+.mono{font-family:'Space Mono',monospace}
+.lbl{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.02em}
+.h1{margin:0;font-size:84px;line-height:.95;font-weight:700;letter-spacing:-.05em}
+.h2{margin:0;font-size:38px;line-height:1.05;font-weight:700;letter-spacing:-.03em}
+.h3{margin:0;font-size:28px;line-height:1.1;font-weight:700;letter-spacing:-.03em}
+.chip{min-height:44px;padding:0 18px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700;font-size:15px;background:var(--card,#fff);color:var(--ink,#111)}
+.btn{min-height:56px;padding:0 28px;font-size:20px;font-weight:700;color:#111;display:inline-flex;align-items:center;justify-content:center}
+.in{min-height:48px;padding:0 14px;border:3px solid var(--bd,#111);border-radius:12px;font-size:16px;background:var(--card,#fff);color:var(--ink,#111);width:100%;box-sizing:border-box}
+.in::placeholder{color:#6b6b6b}
+.hov{transition:transform .12s,box-shadow .12s}
+.hov:hover{transform:translate(-2px,-2px) rotate(var(--r,0deg));box-shadow:9px 9px 0 var(--sh,#111)}
+.press:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--sh,#111)}
+@media (prefers-reduced-motion:reduce){.hov{transition:none}}
+</style>
+</helmet>
+<div style="background:var(--bg,#FFF4D6);color:var(--ink,#111);font-family:'Space Grotesk',system-ui,sans-serif;font-size:16px;line-height:1.4;min-height:860px;padding:28px 48px 64px;box-sizing:border-box;display:flex;flex-direction:column;gap:32px;background:#111;padding:28px 48px 40px;--ink:#FFF4D6;--bg:#111">
+
+
+<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;color:#FFF4D6"><span class="mono" style="font-weight:700;font-size:15px;opacity:.75">Guitarra · tomate 2 de 4</span><span style="flex:1"></span>
+<a href="PegatinaFoco.dc.html" class="chip press" style="display:inline-flex;align-items:center;background:transparent;color:#FFF4D6;border-color:#FFF4D6">Salir del modo zen</a></div>
+<main style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px">
+<div role="timer" aria-label="Tiempo restante" style="font-size:430px;line-height:.85;font-weight:700;letter-spacing:-.06em;color:#FFF4D6;font-variant-numeric:tabular-nums"><span style="letter-spacing:-.03em">{{time}}</span></div>
+<span class="mono" style="color:#FFF4D6;opacity:.6;font-size:16px">{{hint}}</span>
+</main>
+<div style="display:flex;gap:16px;justify-content:center"><button type="button" onClick="{{toggle}}" class="chip press" style="min-height:52px;font-size:18px;background:transparent;color:#FFF4D6;border-color:#FFF4D6;padding:0 30px">{{toggleText}}</button></div>
+<div role="progressbar" aria-label="Progreso" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{pct}}" style="height:12px;border-radius:999px;background:#2b2b2b;overflow:hidden"><div style="height:100%;width:{{pct}}%;background:#FF8FB8"></div></div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"start":{"editor":"int","default":1122,"min":1,"max":5400,"unit":"s"},"total":{"editor":"int","default":1500,"min":60,"max":5400,"unit":"s"},"$preview":{"width":1360,"height":860}}'>
+class Component extends DCLogic {
+  componentDidMount() { this.t = setInterval(() => this.tick(), 1000); }
+  componentWillUnmount() { clearInterval(this.t); }
+  tick() { const s = this.state || {}; if (s.running === false) return; const left = (s.left ?? this.props.start ?? 1122) - 1; this.setState({ left: left > 0 ? left : 0, running: left > 0 }); }
+  fmt(left) { return String(Math.floor(left / 60)).padStart(2, '0') + ':' + String(left % 60).padStart(2, '0'); }
+  uri(svg) { return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg); }
+
+  renderVals() {
+    const s = this.state || {};
+    const total = this.props.total ?? 1500;
+    const left = s.left ?? this.props.start ?? 1122;
+    const running = s.running !== false && left > 0;
+    return { time: this.fmt(left), pct: Math.max(0, Math.min(100, Math.round((1 - left / total) * 100))), toggleText: left <= 0 ? 'Listo' : (running ? 'Pausa' : 'Seguir'), toggle: () => this.setState({ running: !running, left }), hint: running ? 'Solo tú y el tiempo. Sin notificaciones.' : 'En pausa. Respira.' };
+  }
+}
+</script>
+</body>
+</html>

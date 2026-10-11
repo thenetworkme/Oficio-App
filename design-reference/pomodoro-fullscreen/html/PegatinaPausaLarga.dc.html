@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Pegatina — Descanso largo (pantalla completa)</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF4D6}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px solid var(--ink,#111);outline-offset:3px}
+.bx{border:3px solid var(--bd,#111);border-radius:14px;box-shadow:6px 6px 0 var(--sh,#111)}
+.mono{font-family:'Space Mono',monospace}
+.lbl{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.02em}
+.h1{margin:0;font-size:84px;line-height:.95;font-weight:700;letter-spacing:-.05em}
+.h2{margin:0;font-size:38px;line-height:1.05;font-weight:700;letter-spacing:-.03em}
+.h3{margin:0;font-size:28px;line-height:1.1;font-weight:700;letter-spacing:-.03em}
+.chip{min-height:44px;padding:0 18px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700;font-size:15px;background:var(--card,#fff);color:var(--ink,#111)}
+.btn{min-height:56px;padding:0 28px;font-size:20px;font-weight:700;color:#111;display:inline-flex;align-items:center;justify-content:center}
+.in{min-height:48px;padding:0 14px;border:3px solid var(--bd,#111);border-radius:12px;font-size:16px;background:var(--card,#fff);color:var(--ink,#111);width:100%;box-sizing:border-box}
+.in::placeholder{color:#6b6b6b}
+.hov{transition:transform .12s,box-shadow .12s}
+.hov:hover{transform:translate(-2px,-2px) rotate(var(--r,0deg));box-shadow:9px 9px 0 var(--sh,#111)}
+.press:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--sh,#111)}
+@media (prefers-reduced-motion:reduce){.hov{transition:none}}
+</style>
+</helmet>
+<div style="background:var(--bg,#FFF4D6);color:var(--ink,#111);font-family:'Space Grotesk',system-ui,sans-serif;font-size:16px;line-height:1.4;min-height:860px;padding:28px 48px 64px;box-sizing:border-box;display:flex;flex-direction:column;gap:32px;background:#DDEBFF;padding:28px 48px 40px">
+
+
+<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+<span class="chip" style="display:inline-flex;align-items:center;background:#7CC4FF">Descanso largo · ciclo completo</span>
+<span class="chip" style="display:inline-flex;align-items:center;gap:10px"><span style="font-weight:700">4 de 4 tomates</span><span aria-hidden="true" style="display:flex;gap:5px"><sc-for list="{{dots}}" as="d" hint-placeholder-count="4"><span style="width:16px;height:16px;border:3px solid #111;border-radius:50%;background:{{d.bg}}"></span></sc-for></span></span>
+<span style="flex:1"></span>
+<a href="PegatinaTimer.dc.html" class="chip press" style="display:inline-flex;align-items:center;background:#FF8FB8;color:#111" aria-label="Salir de pantalla completa">Salir ✕</a>
+</div>
+<main style="flex:1;display:flex;gap:40px;flex-wrap:wrap;align-items:center;justify-content:center">
+<div style="flex:1 1 560px;display:flex;flex-direction:column;gap:22px;align-items:flex-start">
+<span class="lbl" style="font-size:18px">Te lo ganaste</span>
+<div role="timer" aria-label="Tiempo de descanso restante" style="font-size:250px;line-height:.9;font-weight:700;letter-spacing:-.06em;text-shadow:9px 9px 0 #7CC4FF;font-variant-numeric:tabular-nums"><span style="letter-spacing:-.03em">{{time}}</span></div>
+<div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:560px"><sc-for list="{{tips}}" as="t" hint-placeholder-count="3"><button type="button" aria-pressed="{{t.on}}" onClick="{{t.pick}}" class="bx press" style="display:flex;align-items:center;gap:14px;background:{{t.bg}};color:#111;text-align:left;padding:12px 18px;font-size:20px;font-weight:700;min-height:56px"><span aria-hidden="true" style="flex:0 0 28px;height:28px;border:3px solid #111;border-radius:8px;background:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:16px">{{t.mark}}</span>{{t.l}}</button></sc-for></div>
+</div>
+
+</main>
+<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-content:space-between">
+<div class="bx" style="background:#fff;padding:12px 22px;font-size:18px;font-weight:700;color:#111">Siguiente: Guitarra · 25 min · tomate 1 del nuevo ciclo</div>
+<div style="display:flex;gap:14px;flex-wrap:wrap"><button type="button" onClick="{{plus}}" class="bx press btn" style="background:#fff;font-size:20px;min-height:64px">+ 2 min</button><a href="PegatinaFoco.dc.html" class="bx press btn" style="background:#FFD84D;font-size:22px;min-height:64px;min-width:220px">Saltar descanso</a></div>
+</div>
+<div role="progressbar" aria-label="Progreso del descanso" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{pct}}" style="height:30px;border:3px solid #111;border-radius:999px;background:#fff;overflow:hidden;box-shadow:6px 6px 0 #111"><div style="height:100%;width:{{pct}}%;background:#7CC4FF;border-right:3px solid #111;box-sizing:border-box"></div></div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"start":{"editor":"int","default":600,"min":1,"max":5400,"unit":"s"},"total":{"editor":"int","default":900,"min":60,"max":5400,"unit":"s"},"$preview":{"width":1360,"height":860}}'>
+class Component extends DCLogic {
+  componentDidMount() { this.t = setInterval(() => this.tick(), 1000); }
+  componentWillUnmount() { clearInterval(this.t); }
+  tick() { const s = this.state || {}; if (s.running === false) return; const left = (s.left ?? this.props.start ?? 1122) - 1; this.setState({ left: left > 0 ? left : 0, running: left > 0 }); }
+  fmt(left) { return String(Math.floor(left / 60)).padStart(2, '0') + ':' + String(left % 60).padStart(2, '0'); }
+  uri(svg) { return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg); }
+  buildSvg(kind, o) {
+    o = o || {};
+    const mood = o.mood || 'idle';
+    const hat = o.hat || null, cape = o.cape || null, acc = o.acc || null, bg = o.bg || null;
+    const dog = kind === 'dog';
+    const L = '#111', W = 5;
+    const st = 'stroke="' + L + '" stroke-width="' + W + '" stroke-linejoin="round" stroke-linecap="round"';
+    const st3 = 'stroke="' + L + '" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"';
+    const P = dog
+      ? { main: o.color || '#F2B45B', dark: '#B8742E', cream: '#FFF1D6' }
+      : { skin: o.skin || '#F0B98A', hair: '#2B2B2B', top: o.color || '#FFD84D', topD: '#E9A81C', pants: '#7CC4FF' };
+    const G = dog
+      ? { hatY: 62, hatS: 1, neckY: 166, eyeL: [92, 100], eyeR: [148, 100], capeTop: 160, capeSh: [80, 160], capeBot: [38, 202], pivot: [120, 160] }
+      : { hatY: 60, hatS: 1.02, neckY: 160, eyeL: [100, 108], eyeR: [140, 108], capeTop: 154, capeSh: [74, 166], capeBot: [34, 206], pivot: [120, 156] };
+    const out = [];
+    const add = (s) => out.push(s);
+    if (bg) add('<rect x="4" y="4" width="232" height="252" rx="34" fill="' + bg + '" ' + st + '/>');
+    add('<ellipse cx="120" cy="' + (dog ? 246 : 253) + '" rx="' + (dog ? 74 : 62) + '" ry="9" fill="rgba(17,17,17,.2)"/>');
+
+    // ---------- CAPES (behind the body)
+    const capePath = 'M' + G.capeSh[0] + ' ' + G.capeTop + ' L' + G.capeBot[0] + ' ' + (dog ? 240 : 246) + ' Q120 ' + (dog ? 256 : 262) + ' ' + G.capeBot[1] + ' ' + (dog ? 240 : 246) + ' L' + G.capeSh[1] + ' ' + G.capeTop + ' Z';
+    if (cape === 'red') add('<path d="' + capePath + '" fill="#FF4D4D" ' + st + '/><path d="M' + (G.capeBot[0] + 14) + ' ' + (dog ? 232 : 238) + ' Q120 250 ' + (G.capeBot[1] - 14) + ' ' + (dog ? 232 : 238) + '" fill="none" stroke="#C93030" stroke-width="4" stroke-linecap="round"/>');
+    if (cape === 'star') add('<path d="' + capePath + '" fill="#2B3A8C" ' + st + '/><g fill="#FFD84D"><circle cx="58" cy="214" r="5"/><circle cx="182" cy="208" r="5"/><circle cx="84" cy="236" r="4"/><circle cx="158" cy="234" r="4"/><circle cx="120" cy="244" r="3.5"/></g>');
+    if (cape === 'master') add('<path d="' + capePath + '" fill="#FFD84D" ' + st + '/><path d="M' + (G.capeBot[0] + 8) + ' ' + (dog ? 226 : 232) + ' Q120 244 ' + (G.capeBot[1] - 8) + ' ' + (dog ? 226 : 232) + '" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round"/><g fill="#FF8FB8" stroke="#111" stroke-width="3"><circle cx="70" cy="' + (dog ? 226 : 232) + '" r="5"/><circle cx="170" cy="' + (dog ? 226 : 232) + '" r="5"/></g>');
+
+    // ---------- BODY
+    const happy = mood === 'celebrate';
+    if (dog) {
+      const tail = happy
+        ? 'M164 208 C204 214 224 164 204 136 C196 124 182 134 190 148 C198 166 190 188 164 192 Z'
+        : 'M164 214 C198 218 212 186 198 164 C192 154 180 160 184 172 C188 188 178 198 164 198 Z';
+      add('<path d="' + tail + '" fill="' + P.main + '" ' + st + '/>');
+      add('<ellipse cx="120" cy="198" rx="52" ry="46" fill="' + P.main + '" ' + st + '/>');
+      add('<ellipse cx="120" cy="210" rx="30" ry="30" fill="' + P.cream + '"/>');
+      add('<ellipse cx="72" cy="238" rx="19" ry="10" fill="' + P.main + '" ' + st + '/><ellipse cx="168" cy="238" rx="19" ry="10" fill="' + P.main + '" ' + st + '/>');
+      if (happy) {
+        add('<g transform="rotate(-38 92 196)"><rect x="80" y="150" width="24" height="52" rx="12" fill="' + P.main + '" ' + st + '/><ellipse cx="92" cy="152" rx="13" ry="9" fill="' + P.cream + '" ' + st + '/></g>');
+        add('<g transform="rotate(38 148 196)"><rect x="136" y="150" width="24" height="52" rx="12" fill="' + P.main + '" ' + st + '/><ellipse cx="148" cy="152" rx="13" ry="9" fill="' + P.cream + '" ' + st + '/></g>');
+      } else {
+        add('<rect x="90" y="204" width="26" height="36" rx="13" fill="' + P.main + '" ' + st + '/><ellipse cx="103" cy="238" rx="15" ry="9" fill="' + P.cream + '" ' + st + '/>');
+        add('<rect x="124" y="204" width="26" height="36" rx="13" fill="' + P.main + '" ' + st + '/><ellipse cx="137" cy="238" rx="15" ry="9" fill="' + P.cream + '" ' + st + '/>');
+      }
+      add('<path d="M82 164 Q120 184 158 164 L156 180 Q120 200 84 180 Z" fill="#FF8FB8" ' + st + '/><circle cx="120" cy="192" r="8" fill="#FFD84D" ' + st3 + '/>');
+    } else {
+      add('<rect x="90" y="224" width="25" height="24" rx="8" fill="' + P.pants + '" ' + st + '/><rect x="125" y="224" width="25" height="24" rx="8" fill="' + P.pants + '" ' + st + '/>');
+      add('<ellipse cx="98" cy="248" rx="19" ry="8" fill="#fff" ' + st + '/><ellipse cx="142" cy="248" rx="19" ry="8" fill="#fff" ' + st + '/>');
+      const arm = (side) => {
+        const sx = side === 'l' ? 1 : -1;
+        const px = side === 'l' ? 78 : 162;
+        const body = 'M' + px + ' 172 C' + (px - 22 * sx) + ' 180 ' + (px - 26 * sx) + ' 208 ' + (px - 20 * sx) + ' 222 C' + (px - 12 * sx) + ' 230 ' + (px - 2 * sx) + ' 226 ' + (px) + ' 214 L' + (px + 4 * sx) + ' 178 Z';
+        const hand = '<circle cx="' + (px - 20 * sx) + '" cy="226" r="10" fill="' + P.skin + '" ' + st + '/>';
+        const g = '<path d="' + body + '" fill="' + P.top + '" ' + st + '/>' + hand;
+        return happy ? '<g transform="rotate(' + (side === 'l' ? 150 : -150) + ' ' + px + ' 172)">' + g + '</g>' : g;
+      };
+      add('<path d="M74 170 C74 156 96 150 120 150 C144 150 166 156 166 170 L170 222 C150 230 90 230 70 222 Z" fill="' + P.top + '" ' + st + '/>');
+      add('<path d="M94 200 L146 200 L150 220 C132 226 108 226 90 220 Z" fill="' + P.topD + '" ' + st3 + '/>');
+      add('<path d="M90 154 Q120 176 150 154 L150 166 Q120 188 90 166 Z" fill="' + P.topD + '" ' + st3 + '/><path d="M112 176 L112 196 M128 176 L128 196" stroke="#fff" stroke-width="4" stroke-linecap="round"/>');
+      add(arm('l'));
+      add(arm('r'));
+      add('<rect x="108" y="140" width="24" height="20" rx="8" fill="' + P.skin + '" ' + st + '/>');
+    }
+    // neck accessories (on the body)
+    if (acc === 'scarf') add('<g transform="translate(120 ' + G.neckY + ')"><path d="M-46 -6 Q0 16 46 -6 L50 14 Q0 36 -50 14 Z" fill="#FF4D4D" ' + st + '/><path d="M22 20 L42 58 L14 54 Z" fill="#FF4D4D" ' + st + '/><path d="M-30 6 L-24 18 M-8 14 L-4 26" stroke="#C93030" stroke-width="4" stroke-linecap="round"/></g>');
+    if (acc === 'bow') add('<g transform="translate(120 ' + (G.neckY + 12) + ')"><path d="M0 0 L-30 -17 L-30 17 Z" fill="#FF8FB8" ' + st + '/><path d="M0 0 L30 -17 L30 17 Z" fill="#FF8FB8" ' + st + '/><circle r="9" fill="#FFD84D" ' + st + '/></g>');
+    if (cape === 'master') add('<circle cx="120" cy="' + (G.neckY + 14) + '" r="9" fill="#FF8FB8" ' + st3 + '/>');
+    if (cape === 'red' || cape === 'star') add('<path d="M96 ' + (G.neckY + 6) + ' Q120 ' + (G.neckY + 22) + ' 144 ' + (G.neckY + 6) + '" fill="none" stroke="' + (cape === 'red' ? '#C93030' : '#FFD84D') + '" stroke-width="7" stroke-linecap="round"/>');
+
+    // ---------- HEAD (tilts when sleepy)
+    const tilt = mood === 'sleepy' ? ' transform="rotate(-7 ' + G.pivot[0] + ' ' + G.pivot[1] + ')"' : '';
+    add('<g' + tilt + '>');
+    const eyes = (lx, ly, rx, ry, rr, hr) => {
+      if (mood === 'celebrate') return '<path d="M' + (lx - 11) + ' ' + (ly + 3) + ' Q' + lx + ' ' + (ly - 14) + ' ' + (lx + 11) + ' ' + (ly + 3) + '" fill="none" stroke="#111" stroke-width="5.5" stroke-linecap="round"/><path d="M' + (rx - 11) + ' ' + (ry + 3) + ' Q' + rx + ' ' + (ry - 14) + ' ' + (rx + 11) + ' ' + (ry + 3) + '" fill="none" stroke="#111" stroke-width="5.5" stroke-linecap="round"/>';
+      if (mood === 'sleepy') return '<path d="M' + (lx - 11) + ' ' + (ly - 2) + ' Q' + lx + ' ' + (ly + 9) + ' ' + (lx + 11) + ' ' + (ly - 2) + '" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round"/><path d="M' + (rx - 11) + ' ' + (ry - 2) + ' Q' + rx + ' ' + (ry + 9) + ' ' + (rx + 11) + ' ' + (ry - 2) + '" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round"/>';
+      return '<ellipse cx="' + lx + '" cy="' + ly + '" rx="' + rr + '" ry="' + (rr + 2.5) + '" fill="#111"/><ellipse cx="' + rx + '" cy="' + ry + '" rx="' + rr + '" ry="' + (rr + 2.5) + '" fill="#111"/><circle cx="' + (lx - 2.6) + '" cy="' + (ly - 4.4) + '" r="' + hr + '" fill="#fff"/><circle cx="' + (rx - 2.6) + '" cy="' + (ry - 4.4) + '" r="' + hr + '" fill="#fff"/><circle cx="' + (lx + 3) + '" cy="' + (ly + 4) + '" r="1.6" fill="#fff" opacity=".7"/><circle cx="' + (rx + 3) + '" cy="' + (ry + 4) + '" r="1.6" fill="#fff" opacity=".7"/>';
+    };
+    if (dog) {
+      // ears behind head edge, face on top
+      add('<path d="M66 66 C36 60 24 96 32 134 C38 154 62 150 72 128 C78 108 78 82 66 66 Z" fill="' + P.dark + '" ' + st + '/>');
+      add('<path d="M174 66 C204 60 216 96 208 134 C202 154 178 150 168 128 C162 108 162 82 174 66 Z" fill="' + P.dark + '" ' + st + '/>');
+      add('<ellipse cx="120" cy="104" rx="64" ry="54" fill="' + P.main + '" ' + st + '/>');
+      add('<path d="M120 54 C108 68 105 86 111 104 L129 104 C135 86 132 68 120 54 Z" fill="' + P.cream + '"/>');
+      add('<ellipse cx="120" cy="130" rx="32" ry="24" fill="' + P.cream + '" ' + st + '/>');
+      add('<circle cx="76" cy="124" r="9" fill="#FF8FB8" opacity=".6"/><circle cx="164" cy="124" r="9" fill="#FF8FB8" opacity=".6"/>');
+      add(eyes(92, 100, 148, 100, 8, 3));
+      if (mood === 'idle') add('<path d="M82 84 Q92 78 102 84 M138 84 Q148 78 158 84" fill="none" stroke="#111" stroke-width="4" stroke-linecap="round"/>');
+      add('<path d="M108 116 Q120 108 132 116 Q130 127 120 129 Q110 127 108 116 Z" fill="#111" ' + st3 + '/><ellipse cx="116" cy="115" rx="4" ry="2" fill="#fff" opacity=".6"/>');
+      if (happy) add('<path d="M102 136 Q120 168 138 136 Z" fill="#7A1F2E" ' + st3 + '/><path d="M110 152 Q120 144 130 152 Q120 164 110 152 Z" fill="#FF8FB8"/><path d="M120 129 L120 137" stroke="#111" stroke-width="4" stroke-linecap="round"/>');
+      else if (mood === 'sleepy') add('<path d="M120 129 L120 136 M108 140 Q120 146 132 140" fill="none" stroke="#111" stroke-width="4" stroke-linecap="round"/>');
+      else add('<path d="M120 129 L120 136 M104 137 Q112 146 120 136 Q128 146 136 137" fill="none" stroke="#111" stroke-width="4" stroke-linecap="round"/><path d="M114 143 Q120 158 127 143 Z" fill="#FF8FB8" ' + st3 + '/>');
+    } else {
+      add('<circle cx="64" cy="112" r="11" fill="' + P.skin + '" ' + st + '/><circle cx="176" cy="112" r="11" fill="' + P.skin + '" ' + st + '/>');
+      add('<ellipse cx="120" cy="100" rx="57" ry="55" fill="' + P.skin + '" ' + st + '/>');
+      add('<circle cx="84" cy="126" r="9" fill="#FF8FB8" opacity=".55"/><circle cx="156" cy="126" r="9" fill="#FF8FB8" opacity=".55"/>');
+      add(eyes(100, 108, 140, 108, 7.4, 2.8));
+      if (mood === 'idle') add('<path d="M89 94 Q100 88 111 93 M129 93 Q140 88 151 94" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round"/>');
+      add('<path d="M117 119 Q120 123 124 119" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"/>');
+      if (happy) add('<path d="M102 127 Q120 156 138 127 Z" fill="#7A1F2E" ' + st3 + '/><path d="M110 141 Q120 133 130 141 Q120 152 110 141 Z" fill="#FF8FB8"/>');
+      else if (mood === 'sleepy') add('<path d="M112 132 Q120 137 128 132" fill="none" stroke="#111" stroke-width="4" stroke-linecap="round"/>');
+      else add('<path d="M106 128 Q120 142 134 128" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round"/>');
+      // hair
+      add('<path d="M62 102 C52 50 88 30 122 30 C156 30 190 52 178 102 C172 88 164 78 154 70 C134 84 100 84 84 70 C74 80 66 90 62 102 Z" fill="' + P.hair + '" ' + st + '/>');
+      add('<path d="M106 32 C100 18 116 10 128 18 C122 20 122 26 128 32" fill="' + P.hair + '" ' + st3 + '/>');
+      add('<path d="M96 54 Q108 46 124 46" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".35"/>');
+    }
+    // glasses / monocle
+    if (acc === 'glass') add('<g stroke="#111" stroke-width="4.5" fill="rgba(124,196,255,.35)"><circle cx="' + G.eyeL[0] + '" cy="' + G.eyeL[1] + '" r="17"/><circle cx="' + G.eyeR[0] + '" cy="' + G.eyeR[1] + '" r="17"/><path d="M' + (G.eyeL[0] + 17) + ' ' + G.eyeL[1] + ' L' + (G.eyeR[0] - 17) + ' ' + G.eyeR[1] + '" fill="none"/></g>');
+    if (acc === 'mono') add('<g stroke="#111" stroke-width="4.5" fill="rgba(255,255,255,.3)"><circle cx="' + G.eyeR[0] + '" cy="' + G.eyeR[1] + '" r="18"/><path d="M' + (G.eyeR[0] + 14) + ' ' + (G.eyeR[1] + 14) + ' Q' + (G.eyeR[0] + 26) + ' ' + (G.eyeR[1] + 36) + ' ' + (G.eyeR[0] + 12) + ' ' + (G.eyeR[1] + 58) + '" fill="none" stroke-width="3"/></g>');
+    // hats
+    const hs = 'translate(120 ' + G.hatY + ') scale(' + G.hatS + ')';
+    if (hat === 'cap') add('<g transform="' + hs + '"><path d="M-52 4 C-52 -42 -24 -58 0 -58 C26 -58 52 -42 52 4 Z" fill="#7CC4FF" ' + st + '/><path d="M8 -2 C34 -10 68 -8 80 6 C68 18 30 14 8 8 Z" fill="#4AA3E8" ' + st + '/><circle cx="0" cy="-60" r="6" fill="#FFD84D" ' + st3 + '/></g>');
+    if (hat === 'chef') add('<g transform="' + hs + '"><circle cx="-28" cy="-34" r="23" fill="#fff" ' + st + '/><circle cx="28" cy="-34" r="23" fill="#fff" ' + st + '/><circle cx="0" cy="-48" r="27" fill="#fff" ' + st + '/><rect x="-44" y="-12" width="88" height="26" rx="8" fill="#fff" ' + st + '/></g>');
+    if (hat === 'top') add('<g transform="' + hs + '"><path d="M-40 0 L-36 -70 Q0 -80 36 -70 L40 0 Z" fill="#2B2B2B" ' + st + '/><rect x="-38" y="-28" width="76" height="16" fill="#FFD84D" ' + st3 + '/><ellipse cx="0" cy="0" rx="60" ry="11" fill="#2B2B2B" ' + st + '/></g>');
+    if (hat === 'wiz') add('<g transform="' + hs + '"><path d="M-46 0 L-4 -100 Q8 -104 12 -94 L46 0 Z" fill="#8E7CFF" ' + st + '/><ellipse cx="0" cy="0" rx="64" ry="12" fill="#8E7CFF" ' + st + '/><g fill="#FFD84D"><circle cx="-6" cy="-52" r="5"/><circle cx="14" cy="-30" r="4"/><circle cx="-20" cy="-22" r="3.5"/></g></g>');
+    if (hat === 'crown') add('<g transform="' + hs + '"><path d="M-50 6 L-54 -46 L-27 -22 L0 -60 L27 -22 L54 -46 L50 6 Z" fill="#FFD84D" ' + st + '/><circle cx="0" cy="-12" r="6" fill="#FF8FB8" ' + st3 + '/><circle cx="-30" cy="-6" r="4.5" fill="#7CC4FF" ' + st3 + '/><circle cx="30" cy="-6" r="4.5" fill="#7BE0A4" ' + st3 + '/></g>');
+    if (mood === 'sleepy') add('<text x="176" y="52" font-family="Space Grotesk,Arial,sans-serif" font-weight="700" font-size="30" fill="#111">Z</text><text x="198" y="30" font-family="Space Grotesk,Arial,sans-serif" font-weight="700" font-size="22" fill="#111">z</text>');
+    add('</g>');
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -50 240 312" width="240" height="312" role="img" aria-label="' + (dog ? 'Chispa, el perro' : 'Nico, el personaje') + '">' + out.join('') + '</svg>';
+  }
+
+  renderVals() {
+    const s = this.state || {};
+    const total = s.total ?? this.props.total ?? 900;
+    const left = s.left ?? this.props.start ?? 600;
+    const checked = s.checked || [];
+    const tips = ["Camina 5 minutos", "Come algo y toma agua", "Diez minutos sin pantallas"];
+    return {
+      time: this.fmt(left), pct: Math.max(0, Math.min(100, Math.round((1 - left / total) * 100))),
+      dots: [0, 1, 2, 3].map((i) => ({ bg: '#FF8FB8' })),
+      tips: tips.map((l, i) => { const on = checked.includes(i); return { l, on, mark: on ? '✓' : '', bg: on ? '#7CC4FF' : '#fff', pick: () => this.setState({ checked: on ? checked.filter((x) => x !== i) : checked.concat([i]), left, total }) }; }),
+      plus: () => this.setState({ total: total + 120, left: left + 120 }),
+      dog: this.uri(this.buildSvg('dog', { mood: 'celebrate', hat: 'crown' })),
+      dogAlt: 'Chispa celebrando con una corona', dogSay: checked.length >= 3 ? '¡Descanso completo!' : 'Cuatro tomates. Eres una máquina.'
+    };
+  }
+}
+</script>
+</body>
+</html>
