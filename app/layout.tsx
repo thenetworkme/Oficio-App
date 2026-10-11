@@ -3,6 +3,7 @@ import { Space_Grotesk, Space_Mono } from "next/font/google";
 import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister";
 import { ThemeScript } from "@/components/theme/ThemeScript";
 import { AuthProvider } from "@/lib/auth/AuthProvider";
+import { SoundProvider } from "@/lib/sound/SoundProvider";
 import { ThemeProvider } from "@/lib/theme/ThemeProvider";
 import "./globals.css";
 
@@ -39,7 +40,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen antialiased" suppressHydrationWarning>
         <ServiceWorkerRegister />
         <AuthProvider>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            <SoundProvider>{children}</SoundProvider>
+          </ThemeProvider>
         </AuthProvider>
       </body>
     </html>

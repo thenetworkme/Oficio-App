@@ -16,8 +16,18 @@ export interface Profile {
   pomodoroShortMin: number;
   pomodoroLongMin: number;
   dailyMinForStreak: number;
+  /** UI click/start/pause/complete feedback sounds (lib/sound/engine.ts). */
+  soundEffectsEnabled: boolean;
+  /** 0-1 linear volume for UI feedback sounds. */
+  soundEffectsVolume: number;
+  /** Ambient background loop (lib/sound/ambient.ts), played while the Pomodoro runs. */
+  ambientSoundId: AmbientSoundId;
+  /** 0-1 linear volume for the ambient loop. */
+  ambientVolume: number;
   createdAt: number; // epoch ms
 }
+
+export type AmbientSoundId = "none" | "rain" | "waves" | "lofi";
 
 export const DEFAULT_PROFILE: Omit<Profile, "uid" | "createdAt"> = {
   displayName: null,
@@ -30,6 +40,10 @@ export const DEFAULT_PROFILE: Omit<Profile, "uid" | "createdAt"> = {
   pomodoroShortMin: 5,
   pomodoroLongMin: 15,
   dailyMinForStreak: 30,
+  soundEffectsEnabled: true,
+  soundEffectsVolume: 0.6,
+  ambientSoundId: "none",
+  ambientVolume: 0.5,
 };
 
 export interface Skill {
