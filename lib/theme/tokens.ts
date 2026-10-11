@@ -17,6 +17,7 @@ export interface ThemeDef {
   on: string;
   track: string;
   sel: string;
+  danger: string;
   accents: AccentOption[];
 }
 
@@ -34,6 +35,7 @@ export const THEMES: ThemeDef[] = [
     on: "#111311",
     track: "#262B26",
     sel: "#1F231F",
+    danger: "#F07A5C",
     accents: [
       ["Ámbar", "#F0A93B"],
       ["Agua", "#4FC1AC"],
@@ -54,6 +56,7 @@ export const THEMES: ThemeDef[] = [
     on: "#11111b",
     track: "#313244",
     sel: "#313244",
+    danger: "#f38ba8",
     accents: [
       ["Mauve", "#cba6f7"],
       ["Peach", "#fab387"],
@@ -76,6 +79,7 @@ export const THEMES: ThemeDef[] = [
     on: "#181926",
     track: "#363a4f",
     sel: "#363a4f",
+    danger: "#ed8796",
     accents: [
       ["Mauve", "#c6a0f6"],
       ["Peach", "#f5a97f"],
@@ -98,6 +102,7 @@ export const THEMES: ThemeDef[] = [
     on: "#232634",
     track: "#414559",
     sel: "#414559",
+    danger: "#e78284",
     accents: [
       ["Mauve", "#ca9ee6"],
       ["Peach", "#ef9f76"],
@@ -120,6 +125,7 @@ export const THEMES: ThemeDef[] = [
     on: "#eff1f5",
     track: "#ccd0da",
     sel: "#ccd0da",
+    danger: "#d20f39",
     accents: [
       ["Mauve", "#8839ef"],
       ["Blue", "#1e66f5"],
@@ -142,6 +148,7 @@ export const THEMES: ThemeDef[] = [
     on: "#2e3440",
     track: "#434c5e",
     sel: "#434c5e",
+    danger: "#bf616a",
     accents: [
       ["Frost", "#88c0d0"],
       ["Amarillo", "#ebcb8b"],
@@ -164,6 +171,7 @@ export const THEMES: ThemeDef[] = [
     on: "#1d2021",
     track: "#3c3836",
     sel: "#3c3836",
+    danger: "#fb4934",
     accents: [
       ["Amarillo", "#fabd2f"],
       ["Aqua", "#8ec07c"],
@@ -186,6 +194,7 @@ export const THEMES: ThemeDef[] = [
     on: "#191724",
     track: "#26233a",
     sel: "#26233a",
+    danger: "#eb6f92",
     accents: [
       ["Rose", "#ebbcba"],
       ["Iris", "#c4a7e7"],

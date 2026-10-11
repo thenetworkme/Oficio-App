@@ -19,6 +19,7 @@
   --on: #111311;
   --track: #262b26;
   --sel: #1f231f;
+  --danger: #f07a5c;
   --accent: #f0a93b;
   --a2: #4fc1ac;
   --a3: #b5a1f0;
@@ -33,6 +34,7 @@
   --on: #11111b;
   --track: #313244;
   --sel: #313244;
+  --danger: #f38ba8;
   --accent: #cba6f7;
   --a2: #fab387;
   --a3: #94e2d5;
@@ -47,6 +49,7 @@
   --on: #181926;
   --track: #363a4f;
   --sel: #363a4f;
+  --danger: #ed8796;
   --accent: #c6a0f6;
   --a2: #f5a97f;
   --a3: #8bd5ca;
@@ -61,6 +64,7 @@
   --on: #232634;
   --track: #414559;
   --sel: #414559;
+  --danger: #e78284;
   --accent: #ca9ee6;
   --a2: #ef9f76;
   --a3: #81c8be;
@@ -75,6 +79,7 @@
   --on: #eff1f5;
   --track: #ccd0da;
   --sel: #ccd0da;
+  --danger: #d20f39;
   --accent: #8839ef;
   --a2: #1e66f5;
   --a3: #179299;
@@ -89,6 +94,7 @@
   --on: #2e3440;
   --track: #434c5e;
   --sel: #434c5e;
+  --danger: #bf616a;
   --accent: #88c0d0;
   --a2: #ebcb8b;
   --a3: #a3be8c;
@@ -103,6 +109,7 @@
   --on: #1d2021;
   --track: #3c3836;
   --sel: #3c3836;
+  --danger: #fb4934;
   --accent: #fabd2f;
   --a2: #8ec07c;
   --a3: #d3869b;
@@ -117,6 +124,7 @@
   --on: #191724;
   --track: #26233a;
   --sel: #26233a;
+  --danger: #eb6f92;
   --accent: #ebbcba;
   --a2: #c4a7e7;
   --a3: #9ccfd8;
@@ -131,6 +139,7 @@
   --color-on: var(--on);
   --color-track: var(--track);
   --color-sel: var(--sel);
+  --color-danger: var(--danger);
   --color-accent: var(--accent);
   --color-a2: var(--a2);
   --color-a3: var(--a3);
