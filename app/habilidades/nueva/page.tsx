@@ -236,7 +236,14 @@ export default function NewSkillPage() {
                       <span
                         className="absolute top-3 size-5 rounded-full transition-transform"
                         style={{
-                          transform: remind ? "translateX(28px)" : "translateX(4px)",
+                          // Explicit base `left` (not just a bare `top-3` with
+                          // no left/right at all) — without it the browser's
+                          // "auto" static-position fallback doesn't align
+                          // with the track, so translateX(28px) (tuned for a
+                          // wider track in an earlier design iteration) sent
+                          // the thumb past the track's right edge entirely.
+                          left: 3,
+                          transform: remind ? "translateX(23px)" : "translateX(0px)",
                           background: remind ? "var(--ink-solid)" : "var(--ink)",
                         }}
                       />
