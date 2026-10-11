@@ -87,7 +87,7 @@ export default function NewSkillPage() {
             <circle cx="14" cy="14" r="11" stroke="var(--line)" strokeWidth="3" />
             <path d="M14 3a11 11 0 0 1 9.5 5.5" stroke="var(--accent)" strokeWidth="3" strokeLinecap="round" />
           </svg>
-          <span className="text-2xl font-extrabold tracking-tight">Oficio</span>
+          <span className="text-2xl font-bold tracking-tight">Oficio</span>
         </div>
         <Link href="/" className="min-h-11 inline-flex items-center text-sm text-muted">
           Cancelar y volver al panel
@@ -108,7 +108,7 @@ export default function NewSkillPage() {
 
         <div className="flex flex-wrap items-start gap-6">
           <section className="flex min-w-0 flex-[3_1_480px] flex-col gap-7 rounded-card border border-line bg-card p-8">
-            <h1 className="m-0 text-[36px] font-extrabold leading-tight tracking-tight">{STEP_TITLES[step - 1]}</h1>
+            <h1 className="m-0 text-[36px] font-bold leading-tight tracking-tight">{STEP_TITLES[step - 1]}</h1>
 
             {step === 1 && (
               <div className="flex flex-col gap-6.5">

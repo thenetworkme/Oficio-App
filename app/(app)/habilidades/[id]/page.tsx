@@ -62,7 +62,7 @@ export default function SkillDetailPage() {
           </span>
           <div className="flex items-center gap-3.5">
             <span className="size-4 rounded-full" style={{ background: color }} />
-            <h1 className="m-0 text-[44px] font-extrabold leading-tight tracking-tight">{skill.name}</h1>
+            <h1 className="m-0 text-[44px] font-bold leading-tight tracking-tight">{skill.name}</h1>
           </div>
         </div>
         <div className="flex flex-wrap gap-2.5">

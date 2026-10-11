@@ -82,7 +82,7 @@ export default function EstadisticasPage() {
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div className="flex flex-col gap-1">
           <span className="label-xs">Estadísticas</span>
-          <h1 className="m-0 text-4xl font-extrabold leading-tight tracking-tight">Lo que mides, mejora.</h1>
+          <h1 className="m-0 text-4xl font-bold leading-tight tracking-tight">Lo que mides, mejora.</h1>
         </div>
       </header>
 

@@ -46,14 +46,14 @@ function Stepper({
   onChange: (v: number) => void;
 }) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line py-2">
+    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-ink py-2">
       <span className="font-semibold">{label}</span>
       <div className="flex items-center gap-2.5">
         <button
           type="button"
           aria-label={`Restar a ${label}`}
           onClick={() => onChange(Math.max(min, value - 5))}
-          className="flex size-11 items-center justify-center rounded-full border border-muted text-text"
+          className="flex size-11 items-center justify-center rounded-full border-[3px] border-ink bg-card text-ink"
         >
           <Minus size={18} aria-hidden="true" />
         </button>
@@ -62,7 +62,7 @@ function Stepper({
           type="button"
           aria-label={`Sumar a ${label}`}
           onClick={() => onChange(Math.min(max, value + 5))}
-          className="flex size-11 items-center justify-center rounded-full border border-muted text-text"
+          className="flex size-11 items-center justify-center rounded-full border-[3px] border-ink bg-card text-ink"
         >
           <Plus size={18} aria-hidden="true" />
         </button>
@@ -101,7 +101,7 @@ function ChangePasswordDialog({ open, onOpenChange }: { open: boolean; onOpenCha
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent aria-describedby={undefined}>
         <div className="flex flex-col gap-5">
-          <DialogTitle className="m-0 text-2xl font-extrabold">Cambiar contraseña</DialogTitle>
+          <DialogTitle className="m-0 text-2xl font-bold">Cambiar contraseña</DialogTitle>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="cp-current">Contraseña actual</Label>
             <Input id="cp-current" type="password" value={current} onChange={(e) => setCurrent(e.target.value)} autoComplete="current-password" />
@@ -153,7 +153,7 @@ function DeleteAccountDialog({ open, onOpenChange }: { open: boolean; onOpenChan
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent aria-describedby={undefined}>
         <div className="flex flex-col gap-5">
-          <DialogTitle className="m-0 text-2xl font-extrabold text-danger">Eliminar cuenta</DialogTitle>
+          <DialogTitle className="m-0 text-2xl font-bold text-danger">Eliminar cuenta</DialogTitle>
           <p className="m-0 text-muted">
             Esto borra permanentemente todas tus habilidades, sesiones, logros y recordatorios. No se puede deshacer.
           </p>
@@ -177,7 +177,7 @@ function DeleteAccountDialog({ open, onOpenChange }: { open: boolean; onOpenChan
           <Button
             onClick={submit}
             disabled={!canSubmit || busy}
-            className="border border-danger bg-transparent text-danger hover:brightness-100 hover:bg-danger/10"
+            variant="danger"
           >
             {busy ? "Eliminando…" : "Eliminar cuenta para siempre"}
           </Button>
@@ -270,13 +270,13 @@ export function PerfilPanel() {
           <div className="flex flex-wrap items-center gap-4.5">
             <span
               aria-hidden="true"
-              className="flex size-18 shrink-0 items-center justify-center rounded-full text-[32px] font-extrabold"
-              style={{ background: "var(--accent)", color: "var(--on)" }}
+              className="flex size-18 shrink-0 items-center justify-center rounded-full text-[32px] font-bold"
+              style={{ background: "var(--a1)", color: "var(--ink)" }}
             >
               {initialOf(displayName, user.email)}
             </span>
             <div className="flex min-w-[200px] flex-1 flex-col gap-0.5">
-              <span className="text-2xl font-extrabold tracking-tight">{displayName || user.email}</span>
+              <span className="text-2xl font-bold tracking-tight">{displayName || user.email}</span>
               <span className="text-sm text-muted">
                 {user.email}
                 {memberSinceMs ? ` · Miembro desde ${formatMonthYearEs(new Date(memberSinceMs))}` : ""}
@@ -287,15 +287,15 @@ export function PerfilPanel() {
             </Button>
           </div>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(min(150px,100%),1fr))] gap-3">
-            <div className="flex flex-col gap-0.5 rounded-xl border border-line p-3.5">
+            <div className="flex flex-col gap-0.5 rounded-xl border-[3px] border-ink p-3.5">
               <span className="label-xs">Horas totales</span>
-              <span className="font-num text-2xl font-medium text-accent">{formatInt(totalHours)} h</span>
+              <span className="font-num text-2xl font-bold text-ink">{formatInt(totalHours)} h</span>
             </div>
-            <div className="flex flex-col gap-0.5 rounded-xl border border-line p-3.5">
+            <div className="flex flex-col gap-0.5 rounded-xl border-[3px] border-ink p-3.5">
               <span className="label-xs">Habilidades</span>
               <span className="font-num text-2xl font-medium">{skills.length}</span>
             </div>
-            <div className="flex flex-col gap-0.5 rounded-xl border border-line p-3.5">
+            <div className="flex flex-col gap-0.5 rounded-xl border-[3px] border-ink p-3.5">
               <span className="label-xs">Mejor racha</span>
               <span className="font-num text-2xl font-medium">{bestStreak} días</span>
             </div>
@@ -314,8 +314,7 @@ export function PerfilPanel() {
               <Input id="p-mail" type="email" value={user.email ?? ""} readOnly className="flex-1 basis-56 text-muted" />
               {user.emailVerified ? (
                 <span
-                  className="label-xs rounded-chip border px-2.5 py-1"
-                  style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
+                  className="label-xs rounded-chip border-[3px] border-ink bg-a3 px-2.5 py-1 text-ink"
                 >
                   Verificado
                 </span>
@@ -333,7 +332,7 @@ export function PerfilPanel() {
                 id="p-tz"
                 value={timezone}
                 onChange={(e) => setTimezone(e.target.value)}
-                className="box-border min-h-[46px] w-full rounded-button border border-line bg-bg px-3 text-[15px]"
+                className="box-border min-h-[46px] w-full rounded-button border-[3px] border-ink bg-card px-3 text-[15px]"
               >
                 {timezoneOptions.map((tz) => (
                   <option key={tz} value={tz}>
@@ -349,7 +348,7 @@ export function PerfilPanel() {
                 value="es"
                 disabled
                 title="Muy pronto más idiomas"
-                className="box-border min-h-[46px] w-full rounded-button border border-line bg-bg px-3 text-[15px] text-muted"
+                className="box-border min-h-[46px] w-full rounded-button border-[3px] border-ink bg-card px-3 text-[15px] text-muted"
               >
                 <option value="es">Español</option>
               </select>
@@ -369,7 +368,7 @@ export function PerfilPanel() {
                   aria-pressed={dailyMin === m}
                   onClick={() => setDailyMin(m)}
                   className="font-num min-h-11 rounded-button border px-4"
-                  style={{ borderColor: dailyMin === m ? "var(--accent)" : "var(--line)", background: dailyMin === m ? "var(--track)" : "transparent" }}
+                  style={{ borderColor: dailyMin === m ? "var(--a1)" : "var(--ink)", background: dailyMin === m ? "var(--card)" : "transparent" }}
                 >
                   {m} min
                 </button>
@@ -415,14 +414,14 @@ export function PerfilPanel() {
           </Button>
         </Card>
 
-        <Card className="flex flex-col gap-3 p-5.5" style={{ borderColor: "var(--danger)" }}>
+        <Card className="flex flex-col gap-3 p-5.5" style={{ borderColor: "var(--danger)", boxShadow: "6px 6px 0 var(--danger)" }}>
           <CardHeading className="text-danger">Zona de riesgo</CardHeading>
           <p className="m-0 text-sm text-muted">
             Eliminar tu cuenta borra todas tus habilidades, sesiones y logros. No se puede deshacer.
           </p>
           <div>
             <Button
-              className="border border-danger bg-transparent font-bold text-danger hover:brightness-100 hover:bg-danger/10"
+              variant="danger" className="font-bold"
               onClick={() => setDeleteDialogOpen(true)}
             >
               Eliminar cuenta

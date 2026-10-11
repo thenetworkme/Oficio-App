@@ -19,25 +19,22 @@ export default function AjustesPage() {
     <>
       <header className="flex flex-col gap-1">
         <span className="label-xs">Ajustes · {current.label}</span>
-        <h1 className="m-0 text-4xl font-extrabold leading-tight tracking-tight">{current.title}</h1>
+        <h1 className="m-0 text-4xl font-bold leading-tight tracking-tight">{current.title}</h1>
       </header>
 
-      <div
-        role="group"
-        aria-label="Secciones de ajustes"
-        className="flex w-fit flex-wrap gap-1.5 rounded-2xl border border-line bg-card p-1.5"
-      >
+      <div role="group" aria-label="Secciones de ajustes" className="flex w-fit flex-wrap gap-2.5">
         {TABS.map((t) => (
           <button
             key={t.id}
             type="button"
             aria-pressed={tab === t.id}
             onClick={() => setTab(t.id)}
-            className="min-h-11 rounded-button px-5.5 text-[15px] font-semibold"
-            style={{
-              background: tab === t.id ? "var(--accent)" : "transparent",
-              color: tab === t.id ? "var(--on)" : "var(--text)",
-            }}
+            className="bx press min-h-13 px-6 text-[18px] font-bold"
+            style={
+              tab === t.id
+                ? { background: "var(--a1)", boxShadow: "2px 2px 0 var(--shadow)", transform: "translate(4px,4px)" }
+                : { background: "var(--card)" }
+            }
           >
             {t.label}
           </button>

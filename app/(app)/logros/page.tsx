@@ -83,7 +83,7 @@ export default function LogrosPage() {
     <>
       <header className="flex flex-col gap-1">
         <span className="label-xs">Logros e hitos</span>
-        <h1 className="m-0 text-4xl font-extrabold leading-tight tracking-tight">Cada hora deja huella.</h1>
+        <h1 className="m-0 text-4xl font-bold leading-tight tracking-tight">Cada hora deja huella.</h1>
       </header>
 
       <div role="group" aria-label="Habilidad" className="flex flex-wrap gap-2">

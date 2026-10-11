@@ -94,7 +94,7 @@ export default function RecordatoriosPage() {
     <>
       <header className="flex flex-col gap-1">
         <span className="label-xs">Recordatorios</span>
-        <h1 className="m-0 text-4xl font-extrabold leading-tight tracking-tight">La disciplina se agenda.</h1>
+        <h1 className="m-0 text-4xl font-bold leading-tight tracking-tight">La disciplina se agenda.</h1>
       </header>
 
       {notifStatus !== "granted" && notifStatus !== "unsupported" && (
