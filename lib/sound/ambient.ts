@@ -1,19 +1,66 @@
 /**
- * Looping ambient background sound, synthesized entirely with Web Audio
- * nodes — no <audio> tags, no files. Only one ambient sound plays at a
- * time; starting a new one stops whatever was playing. Never call
- * startAmbient() outside a user gesture (a click handler) — browsers block
- * audio that starts any other way, and this module relies on that gesture
- * rather than fighting it.
+ * Looping ambient background sound. "Rain" and "waves" play real recordings
+ * (public/sounds/ambient/*.mp3 — see CREDITS.md in that folder) decoded and
+ * looped through Web Audio, because the earlier fully-synthesized versions
+ * of those two sounded unconvincing (user feedback). "Lofi" is still a
+ * synthesized pad (not flagged as a problem, and a convincing lofi loop is
+ * much harder to source cleanly licensed than ambient noise). Only one
+ * ambient sound plays at a time; starting a new one stops whatever was
+ * playing. Never call startAmbient() outside a user gesture (a click
+ * handler) — browsers block audio that starts any other way, and this
+ * module relies on that gesture rather than fighting it. Loading a
+ * recording is async (fetch + decode), but the AudioContext itself is
+ * still created/resumed synchronously inside the gesture via getCtx(), so
+ * the context unlocks immediately even though playback starts a moment
+ * later once decoding finishes.
  */
 
 export type AmbientKind = "rain" | "waves" | "lofi";
+
+const RECORDED_SOUND_URL: Record<"rain" | "waves", string> = {
+  rain: "/sounds/ambient/rain.mp3",
+  waves: "/sounds/ambient/waves.mp3",
+};
 
 let ctx: AudioContext | null = null;
 let masterGain: GainNode | null = null;
 let activeKind: AmbientKind | null = null;
 let cleanupFns: (() => void)[] = [];
 let currentVolume = 0.5;
+/** Bumped by every startAmbient()/stopAmbient() call so an in-flight async
+ * decode from a superseded call can detect it's stale and bail out instead
+ * of starting playback after something else has already taken over. */
+let generation = 0;
+const bufferCache = new Map<string, Promise<AudioBuffer>>();
+
+async function loadBuffer(audio: AudioContext, kind: "rain" | "waves"): Promise<AudioBuffer> {
+  const url = RECORDED_SOUND_URL[kind];
+  let pending = bufferCache.get(url);
+  if (!pending) {
+    pending = fetch(url)
+      .then((res) => {
+        if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
+        return res.arrayBuffer();
+      })
+      .then((data) => audio.decodeAudioData(data));
+    bufferCache.set(url, pending);
+    // Don't cache a failed fetch/decode — let the next attempt retry.
+    pending.catch(() => bufferCache.delete(url));
+  }
+  return pending;
+}
+
+function startRecording(audio: AudioContext, master: GainNode, buffer: AudioBuffer): () => void {
+  const source = audio.createBufferSource();
+  source.buffer = buffer;
+  source.loop = true;
+  source.connect(master);
+  source.start();
+  return () => {
+    source.stop();
+    source.disconnect();
+  };
+}
 
 function getCtx(): AudioContext | null {
   if (typeof window === "undefined") return null;
@@ -31,126 +78,6 @@ function getMaster(audio: AudioContext): GainNode {
     masterGain.connect(audio.destination);
   }
   return masterGain;
-}
-
-/** Builds a looping buffer of white noise, `seconds` long. */
-function makeNoiseBuffer(audio: AudioContext, seconds: number): AudioBuffer {
-  const buffer = audio.createBuffer(1, Math.floor(audio.sampleRate * seconds), audio.sampleRate);
-  const data = buffer.getChannelData(0);
-  for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
-  return buffer;
-}
-
-function startRain(audio: AudioContext, master: GainNode): () => void {
-  const noise = audio.createBufferSource();
-  noise.buffer = makeNoiseBuffer(audio, 4);
-  noise.loop = true;
-
-  // Band-limit the hiss into something closer to steady rainfall.
-  const bandpass = audio.createBiquadFilter();
-  bandpass.type = "bandpass";
-  bandpass.frequency.value = 2200;
-  bandpass.Q.value = 0.6;
-
-  const lowpass = audio.createBiquadFilter();
-  lowpass.type = "lowpass";
-  lowpass.frequency.value = 3200;
-
-  const bedGain = audio.createGain();
-  bedGain.gain.value = 0.55;
-
-  noise.connect(bandpass);
-  bandpass.connect(lowpass);
-  lowpass.connect(bedGain);
-  bedGain.connect(master);
-  noise.start();
-
-  // Occasional subtle "drop" impulses layered on top: short, randomly
-  // timed, randomly pitched clicks through their own bandpass.
-  let dropTimer: ReturnType<typeof setTimeout> | null = null;
-  function scheduleDrop() {
-    const delay = 150 + Math.random() * 500;
-    dropTimer = setTimeout(() => {
-      const now = audio.currentTime;
-      const drop = audio.createOscillator();
-      drop.type = "sine";
-      drop.frequency.value = 900 + Math.random() * 1200;
-      const dropFilter = audio.createBiquadFilter();
-      dropFilter.type = "highpass";
-      dropFilter.frequency.value = 1500;
-      const dropGain = audio.createGain();
-      dropGain.gain.setValueAtTime(0.0001, now);
-      dropGain.gain.linearRampToValueAtTime(0.09, now + 0.002);
-      dropGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
-      drop.connect(dropFilter);
-      dropFilter.connect(dropGain);
-      dropGain.connect(master);
-      drop.start(now);
-      drop.stop(now + 0.08);
-      scheduleDrop();
-    }, delay);
-  }
-  scheduleDrop();
-
-  return () => {
-    if (dropTimer) clearTimeout(dropTimer);
-    noise.stop();
-    noise.disconnect();
-    bandpass.disconnect();
-    lowpass.disconnect();
-    bedGain.disconnect();
-  };
-}
-
-function startWaves(audio: AudioContext, master: GainNode): () => void {
-  const noise = audio.createBufferSource();
-  noise.buffer = makeNoiseBuffer(audio, 6);
-  noise.loop = true;
-
-  const lowpass = audio.createBiquadFilter();
-  lowpass.type = "lowpass";
-  lowpass.frequency.value = 900;
-
-  const bedGain = audio.createGain();
-  bedGain.gain.value = 0.5;
-
-  // Slow LFO modulating the filter cutoff to create a swell/recede rhythm.
-  const lfo = audio.createOscillator();
-  lfo.type = "sine";
-  lfo.frequency.value = 0.12; // ~8s per cycle
-  const lfoDepth = audio.createGain();
-  lfoDepth.gain.value = 600;
-  lfo.connect(lfoDepth);
-  lfoDepth.connect(lowpass.frequency);
-
-  // A second LFO (gain) so the loudness swells with the brightness.
-  const ampLfo = audio.createOscillator();
-  ampLfo.type = "sine";
-  ampLfo.frequency.value = 0.12;
-  const ampDepth = audio.createGain();
-  ampDepth.gain.value = 0.22;
-  ampLfo.connect(ampDepth);
-  ampDepth.connect(bedGain.gain);
-
-  noise.connect(lowpass);
-  lowpass.connect(bedGain);
-  bedGain.connect(master);
-  noise.start();
-  lfo.start();
-  ampLfo.start();
-
-  return () => {
-    noise.stop();
-    lfo.stop();
-    ampLfo.stop();
-    noise.disconnect();
-    lowpass.disconnect();
-    bedGain.disconnect();
-    lfo.disconnect();
-    lfoDepth.disconnect();
-    ampLfo.disconnect();
-    ampDepth.disconnect();
-  };
 }
 
 function startLofi(audio: AudioContext, master: GainNode): () => void {
@@ -223,21 +150,41 @@ function startLofi(audio: AudioContext, master: GainNode): () => void {
 
 /** Stops whatever ambient sound is currently playing, if any. */
 export function stopAmbient(): void {
+  generation++; // cancels any in-flight recording load from a previous call
   for (const fn of cleanupFns) fn();
   cleanupFns = [];
   activeKind = null;
 }
 
-/** Starts the given ambient loop. Only call this from a user gesture (click handler). */
+/**
+ * Starts the given ambient loop. Only call this from a user gesture (click
+ * handler) — the AudioContext itself is created/resumed synchronously
+ * within this call (via getCtx()) so it unlocks immediately, even for
+ * "rain"/"waves" where actual playback starts a moment later once the
+ * recording has been fetched and decoded (cached after the first load).
+ */
 export function startAmbient(kind: AmbientKind): void {
   const audio = getCtx();
   if (!audio) return;
   stopAmbient();
+  const myGeneration = generation;
   const master = getMaster(audio);
-  const stop =
-    kind === "rain" ? startRain(audio, master) : kind === "waves" ? startWaves(audio, master) : startLofi(audio, master);
-  cleanupFns = [stop];
   activeKind = kind;
+
+  if (kind === "lofi") {
+    cleanupFns = [startLofi(audio, master)];
+    return;
+  }
+
+  loadBuffer(audio, kind)
+    .then((buffer) => {
+      if (generation !== myGeneration) return; // superseded by a newer start/stop call
+      cleanupFns = [startRecording(audio, master, buffer)];
+    })
+    .catch((err) => {
+      console.error(`[ambient] failed to load "${kind}" recording`, err);
+      if (generation === myGeneration) activeKind = null;
+    });
 }
 
 /** Sets the ambient master volume (0-1), live, even while playing. */
