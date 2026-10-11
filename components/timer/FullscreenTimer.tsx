@@ -1,8 +1,11 @@
 "use client";
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { Volume2, VolumeX } from "lucide-react";
 import { useState } from "react";
+import { AmbientPicker } from "@/components/sound/AmbientPicker";
 import { ProgressBar } from "@/components/ui/progress-bar";
+import { useSound } from "@/lib/sound/SoundProvider";
 import type { Skill } from "@/lib/types";
 
 /**
@@ -28,6 +31,63 @@ import type { Skill } from "@/lib/types";
 
 const SHORT_BREAK_TIPS = ["Estira las muñecas 30 s", "Toma un vaso de agua", "Mira algo lejano 20 s"];
 const LONG_BREAK_TIPS = ["Camina 5 minutos", "Come algo y toma agua", "Diez minutos sin pantallas"];
+
+/**
+ * Sound control for the fullscreen views: a speaker icon that both shows
+ * whether UI effects are muted and toggles a small popover with the real
+ * effects mute switch plus the same AmbientPicker (Silencio/Lluvia/Olas/
+ * Lofi + volume) used on the normal Temporizador screen and in Ajustes —
+ * reused as-is rather than reimplemented, so there's exactly one place that
+ * knows how to change/mute the ambient sound. Collapsed by default so it
+ * doesn't clutter the giant time display; the whole point of focus mode.
+ */
+function SoundControl({ zen = false }: { zen?: boolean }) {
+  const sound = useSound();
+  const [open, setOpen] = useState(false);
+
+  const iconButtonClass = zen
+    ? "press flex size-11 items-center justify-center rounded-chip border-[3px]"
+    : "bx press flex size-11 items-center justify-center rounded-chip border-ink";
+  const iconButtonStyle = zen
+    ? { background: "transparent", color: "#FFF4D6", borderColor: "#FFF4D6" }
+    : undefined;
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        aria-label="Sonido"
+        title="Sonido"
+        className={iconButtonClass}
+        style={iconButtonStyle}
+      >
+        {sound.soundEffectsEnabled ? <Volume2 size={19} aria-hidden="true" /> : <VolumeX size={19} aria-hidden="true" />}
+      </button>
+      {open && (
+        <div className="bx absolute right-0 top-[calc(100%+10px)] z-10 flex w-[280px] flex-col gap-4 p-4.5 text-ink">
+          <button
+            type="button"
+            onClick={() => sound.setSoundEffectsEnabled(!sound.soundEffectsEnabled)}
+            className="bx press flex min-h-11 items-center justify-center gap-2.5 bg-card text-[14px] font-bold"
+          >
+            {sound.soundEffectsEnabled ? (
+              <>
+                <Volume2 size={18} aria-hidden="true" /> Efectos activados
+              </>
+            ) : (
+              <>
+                <VolumeX size={18} aria-hidden="true" /> Efectos silenciados
+              </>
+            )}
+          </button>
+          <AmbientPicker label="Sonido ambiente" />
+        </div>
+      )}
+    </div>
+  );
+}
 
 function fmt(totalSeconds: number): string {
   const s = Math.max(0, Math.round(totalSeconds));
@@ -224,6 +284,7 @@ function FocusView({
           </span>
         </span>
         <span className="flex-1" />
+        <SoundControl />
         <button type="button" onClick={onToggleZen} className="bx press min-h-11 rounded-chip border-[3px] border-ink bg-card px-4.5 text-[15px] font-bold">
           Modo zen
         </button>
@@ -325,6 +386,7 @@ function BreakView({
           </span>
         </span>
         <span className="flex-1" />
+        <SoundControl />
         <ExitChip onClick={onExit}>Salir ✕</ExitChip>
       </div>
 
@@ -410,6 +472,7 @@ function ZenView({
           {skill?.name ?? "Sin habilidad"} · tomate {currentTomato} de 4
         </span>
         <span className="flex-1" />
+        <SoundControl zen />
         <ExitChip onClick={onExit} zen>
           Salir del modo zen
         </ExitChip>
