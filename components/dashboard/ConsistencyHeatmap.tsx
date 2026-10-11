@@ -40,8 +40,8 @@ export function ConsistencyHeatmap({
   }, [dailyMinutes, timezone, scaleMinutes, weeks]);
 
   function colorFor(level: number) {
-    if (level === 0) return "var(--track)";
-    return `color-mix(in srgb, var(--accent) ${LEVEL_MIX[level]}%, var(--track))`;
+    if (level === 0) return "var(--card)";
+    return `color-mix(in srgb, var(--a1) ${LEVEL_MIX[level]}%, var(--card))`;
   }
 
   return (

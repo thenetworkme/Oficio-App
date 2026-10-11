@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { Pause, Play, RotateCcw, SkipForward } from "lucide-react";
 import { Card, CardHeading } from "@/components/ui/card";
 import { Chip } from "@/components/ui/chip";
 import { SessionSaveDialog } from "@/components/timer/SessionSaveDialog";
@@ -15,13 +14,14 @@ import { resolveSkillColor } from "@/lib/skill-color";
 import { formatMinutes, formatTimeEs } from "@/lib/format";
 import { dateKeyInTz } from "@/lib/tz";
 
-const RING_CIRCUMFERENCE = 2 * Math.PI * 150;
-
 const MODE_TABS: { id: PomodoroMode; label: string }[] = [
   { id: "focus", label: "Enfoque" },
-  { id: "short", label: "Descanso corto" },
-  { id: "long", label: "Descanso largo" },
+  { id: "short", label: "Corto" },
+  { id: "long", label: "Largo" },
 ];
+
+const MODE_FRUIT: Record<PomodoroMode, string> = { focus: "var(--a2)", short: "var(--a3)", long: "#7CC4FF" };
+const MODE_LABEL: Record<PomodoroMode, string> = { focus: "Modo enfoque", short: "Respira", long: "Descanso largo" };
 
 export default function TemporizadorPage() {
   const { user, skills, profile, sessions, timezone, todayKey } = useAppData();
@@ -30,7 +30,6 @@ export default function TemporizadorPage() {
   const [now, setNow] = useState(() => Date.now());
   const [intention, setIntentionLocal] = useState(store.intention);
 
-  // Sync configured durations from the profile once loaded.
   useEffect(() => {
     if (!profile) return;
     store.setDurations({
@@ -41,18 +40,8 @@ export default function TemporizadorPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile?.pomodoroFocusMin, profile?.pomodoroShortMin, profile?.pomodoroLongMin]);
 
-  // Tick every second while running, purely to re-render; the actual
-  // remaining time is always derived from Date.now(), never decremented.
-  // Uses useLayoutEffect (not useEffect) so `now` is refreshed synchronously,
-  // before paint, the instant `running` flips to true: while paused the
-  // interval below is torn down, so `now` goes stale; without this, resuming
-  // after any real pause would briefly (until the next 1s tick) compute
-  // `remaining` against that stale `now` instead of the fresh `startedAt`
-  // that start() just set, showing a wrong, inflated time.
   useLayoutEffect(() => {
     if (!store.running) return;
-    // Synchronous on purpose: this must land before paint (see comment
-    // above), which is exactly what useLayoutEffect + a sync setState gives.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setNow(Date.now());
     const id = setInterval(() => setNow(Date.now()), 1000);
@@ -70,9 +59,8 @@ export default function TemporizadorPage() {
 
   const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
   const ss = String(remaining % 60).padStart(2, "0");
-  const ringColor = store.mode === "focus" ? "var(--accent)" : "var(--a2)";
-  const dashOffset = total > 0 ? RING_CIRCUMFERENCE * (1 - remaining / total) : 0;
   const filled = cycleDotsFilled(store.completedFocusCount, store.mode);
+  const n = Math.min(filled + (store.mode === "focus" ? 1 : 0), 4);
 
   const selectedSkill = skills.find((s) => s.id === store.skillId) ?? skills[0] ?? null;
 
@@ -105,122 +93,80 @@ export default function TemporizadorPage() {
       skillColor: resolveSkillColor(skill.color),
       startedAt: skill.createdAt,
     });
+    return result;
   }
 
   return (
     <>
-      <header className="flex flex-col gap-1">
-        <span className="label-xs">Pomodoro</span>
-        <h1 className="m-0 text-4xl font-extrabold leading-tight tracking-tight">Una cosa a la vez.</h1>
-      </header>
+      <div className="label-xs -mb-2 font-bold">
+        Tomate {n} de 4 · {selectedSkill?.name ?? "—"}
+      </div>
 
-      <div className="flex flex-wrap items-start gap-6">
-        <section aria-label="Temporizador" className="flex min-w-0 flex-[2_1_480px] flex-col items-center gap-7 rounded-card border border-line bg-card p-7">
-          <div role="group" aria-label="Modo" className="flex flex-wrap justify-center gap-1.5 rounded-2xl border border-line bg-bg p-1.5">
+      <div className="flex flex-wrap items-center justify-center gap-10">
+        <div className="relative flex items-center justify-center">
+          <div
+            className="bx flex size-[320px] flex-col items-center justify-center gap-1 rounded-full sm:size-[400px]"
+            style={{ background: MODE_FRUIT[store.mode], boxShadow: "10px 10px 0 var(--shadow)" }}
+          >
+            <span role="timer" className="font-num text-[88px] font-bold leading-none tracking-tight sm:text-[120px]">
+              {mm}:{ss}
+            </span>
+            <span className="label-xs font-bold">{MODE_LABEL[store.mode]}</span>
+          </div>
+          <div className="bx absolute -right-3 top-10 px-4 py-2 text-[18px] font-bold" style={{ background: "var(--a1)", transform: "rotate(8deg)" }}>
+            {store.running ? "¡Sin distraerte!" : remaining === total ? "¡A darle!" : "En pausa"}
+          </div>
+        </div>
+
+        <div className="flex min-w-[300px] flex-1 flex-col gap-5">
+          <div role="group" aria-label="Modo" className="flex flex-wrap gap-2.5">
             {MODE_TABS.map((t) => (
               <button
                 key={t.id}
                 type="button"
                 aria-pressed={store.mode === t.id}
                 onClick={() => store.setMode(t.id)}
-                className="min-h-11 rounded-button px-5 text-[15px] font-semibold"
-                style={{
-                  background: store.mode === t.id ? "var(--track)" : "transparent",
-                  color: store.mode === t.id ? "var(--text)" : "var(--muted)",
-                }}
+                className="bx press min-h-12 px-4.5 text-[16px] font-bold"
+                style={
+                  store.mode === t.id
+                    ? { background: "var(--a1)", boxShadow: "2px 2px 0 var(--shadow)", transform: "translate(4px,4px)" }
+                    : { background: "var(--card)" }
+                }
               >
                 {t.label}
               </button>
             ))}
           </div>
 
-          <div className="relative flex aspect-square w-80 max-w-full items-center justify-center">
-            <svg viewBox="0 0 320 320" width="100%" height="100%" className="absolute inset-0 -rotate-90" aria-hidden="true">
-              <circle cx="160" cy="160" r="150" fill="none" stroke="var(--track)" strokeWidth="10" />
-              <circle
-                cx="160"
-                cy="160"
-                r="150"
-                fill="none"
-                stroke={ringColor}
-                strokeWidth="10"
-                strokeLinecap="round"
-                strokeDasharray={RING_CIRCUMFERENCE}
-                strokeDashoffset={dashOffset}
-              />
-            </svg>
-            <div className="relative flex flex-col items-center gap-1.5">
-              <span role="timer" className="font-num text-[72px] font-medium leading-none tracking-tight">
-                {mm}:{ss}
-              </span>
-              <span className="text-[15px] text-muted">
-                {store.mode === "focus" ? "Enfoque profundo" : store.mode === "short" ? "Descanso corto" : "Descanso largo"}
-              </span>
-            </div>
-          </div>
+          <button
+            type="button"
+            onClick={store.running ? store.pause : store.start}
+            className="bx press min-h-[84px] text-[28px] font-bold"
+            style={{ background: "var(--ink)", color: "var(--paper)", boxShadow: "6px 6px 0 var(--a2)" }}
+          >
+            {store.running ? "Pausa" : "Dale"}
+          </button>
 
-          <div className="flex items-center gap-5">
-            <button
-              type="button"
-              aria-label="Reiniciar"
-              onClick={store.reset}
-              className="flex size-13 items-center justify-center rounded-full border border-line"
-            >
-              <RotateCcw size={22} aria-hidden="true" />
+          <div className="flex gap-3">
+            <button type="button" onClick={store.reset} className="bx press min-h-13 flex-1 bg-card text-[16px] font-bold">
+              Reiniciar
             </button>
-            <button
-              type="button"
-              aria-label={store.running ? "Pausar" : "Iniciar"}
-              onClick={store.running ? store.pause : store.start}
-              className="flex size-20 items-center justify-center rounded-full"
-              style={{ background: ringColor, color: "var(--on)" }}
-            >
-              {store.running ? <Pause size={30} fill="currentColor" aria-hidden="true" /> : <Play size={30} fill="currentColor" aria-hidden="true" />}
-            </button>
-            <button
-              type="button"
-              aria-label="Saltar al siguiente"
-              onClick={store.skip}
-              className="flex size-13 items-center justify-center rounded-full border border-line"
-            >
-              <SkipForward size={22} aria-hidden="true" />
+            <button type="button" onClick={store.skip} className="bx press min-h-13 flex-1 bg-card text-[16px] font-bold">
+              Saltar
             </button>
           </div>
 
-          <div className="flex items-center gap-3 text-sm text-muted">
-            <div role="img" aria-label={`Pomodoro ${Math.min(filled + (store.mode === "focus" ? 1 : 0), 4)} de 4`} className="flex gap-2">
-              {[0, 1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="size-3.5 rounded-full border-2"
-                  style={{
-                    background: i < filled ? "var(--accent)" : "transparent",
-                    borderColor: i < filled ? "var(--accent)" : "var(--line)",
-                  }}
-                />
-              ))}
-            </div>
-            <span>Pomodoro {Math.min(filled + (store.mode === "focus" ? 1 : 0), 4)} de 4</span>
-          </div>
-        </section>
-
-        <aside className="flex min-w-0 flex-[1_1_320px] flex-col gap-4">
-          <Card className="flex flex-col gap-4 p-5.5">
-            <CardHeading>¿Qué vas a practicar?</CardHeading>
+          <Card className="flex flex-col gap-3 p-4.5">
+            <CardHeading className="text-[18px]">¿Qué vas a practicar?</CardHeading>
             <div role="group" aria-label="Habilidad" className="flex flex-wrap gap-2">
               {skills.map((s) => (
-                <Chip
-                  key={s.id}
-                  pressed={store.skillId === s.id}
-                  dotColor={resolveSkillColor(s.color)}
-                  onClick={() => store.setSkill(s.id)}
-                >
+                <Chip key={s.id} pressed={store.skillId === s.id} dotColor={resolveSkillColor(s.color)} onClick={() => store.setSkill(s.id)}>
                   {s.name}
                 </Chip>
               ))}
             </div>
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="intencion" className="text-[13px] text-muted">
+              <label htmlFor="intencion" className="label-xs">
                 Intención de esta sesión
               </label>
               <input
@@ -232,36 +178,33 @@ export default function TemporizadorPage() {
                   store.setIntention(e.target.value);
                 }}
                 placeholder="Ej. Terminar el módulo de autenticación"
-                className="box-border w-full min-h-[46px] rounded-button border border-line bg-bg px-3.5 text-[15px] placeholder:text-muted"
+                className="box-border w-full min-h-12 rounded-button border-[3px] border-ink bg-card px-3.5 text-[15px] placeholder:text-muted"
               />
             </div>
           </Card>
 
-          <Card className="flex flex-col gap-1.5 p-5.5">
-            <CardHeading className="mb-1">Sesiones de hoy</CardHeading>
-            {todaySessions.length === 0 ? (
-              <p className="py-3 text-sm text-muted">Aún no registras sesiones hoy.</p>
-            ) : (
-              todaySessions.map((s) => {
+          <div className="flex gap-2.5" aria-label="Tomates de hoy">
+            {[0, 1, 2, 3].map((i) => (
+              <span key={i} className="size-9 rounded-full border-[3px] border-ink" style={{ background: i < filled ? "var(--a2)" : "var(--card)" }} />
+            ))}
+          </div>
+
+          {todaySessions.length > 0 && (
+            <Card className="flex flex-col gap-1 p-4.5">
+              <CardHeading className="mb-1 text-[16px]">Sesiones de hoy</CardHeading>
+              {todaySessions.map((s) => {
                 const skill = skills.find((sk) => sk.id === s.skillId);
                 return (
-                  <div key={s.id} className="flex flex-wrap items-center gap-3 border-t border-line py-3">
+                  <div key={s.id} className="flex flex-wrap items-center gap-3 border-t-2 border-dashed border-ink py-2.5">
                     <span className="font-num min-w-16 text-[13px] text-muted">{formatTimeEs(new Date(s.startedAt))}</span>
-                    <span className="min-w-[100px] flex-1 font-semibold">{skill?.name ?? "—"}</span>
+                    <span className="min-w-[100px] flex-1 font-bold">{skill?.name ?? "—"}</span>
                     <span className="font-num text-sm">{formatMinutes(s.durationMin)}</span>
                   </div>
                 );
-              })
-            )}
-          </Card>
-
-          <Card className="flex flex-col gap-1 p-4.5 px-5.5">
-            <span className="label-xs">Ciclo configurado</span>
-            <span className="font-num text-[15px]">
-              {store.durations.focusMin} · {store.durations.shortMin} · {store.durations.longMin} min
-            </span>
-          </Card>
-        </aside>
+              })}
+            </Card>
+          )}
+        </div>
       </div>
 
       <SessionSaveDialog

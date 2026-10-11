@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Play } from "lucide-react";
 import { Card, CardHeading } from "@/components/ui/card";
+import { Mascot } from "@/components/mascot/Mascot";
 import { ConsistencyHeatmap } from "@/components/dashboard/ConsistencyHeatmap";
 import { WeekBars, type DayTotal } from "@/components/dashboard/WeekBars";
-import { SkillProgressCard } from "@/components/skills/SkillProgressCard";
+import { StampAlbumCard } from "@/components/skills/StampAlbumCard";
 import { useAppData } from "@/lib/hooks/useAppData";
-import { formatDateEs, formatInt, formatMinutes } from "@/lib/format";
+import { usePet } from "@/lib/hooks/usePet";
+import { formatInt, formatMinutesLong } from "@/lib/format";
 import { dateKeyInTz } from "@/lib/tz";
 import { watchReminders } from "@/lib/firestore/reminders";
 import type { Reminder } from "@/lib/types";
@@ -16,16 +17,9 @@ import type { Reminder } from "@/lib/types";
 const DAY_LABELS = ["L", "M", "X", "J", "V", "S", "D"];
 const DAY_NAMES_LONG = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
 
-function greetingHeadline() {
-  const h = new Date().getHours();
-  if (h < 12) return "Una mañana productiva.";
-  if (h < 19) return "Una hora más cerca.";
-  return "Cierra el día con práctica.";
-}
-
 export default function PanelPage() {
-  const { user, skills, sessions, dailyMinutes, timezone, todayKey, todayMinutes, weekMinutes, totalHours, loading } =
-    useAppData();
+  const { user, skills, dailyMinutes, timezone, todayKey, todayMinutes, weekMinutes, streak, loading } = useAppData();
+  const { pet, equipped, level, coins } = usePet();
   const [reminders, setReminders] = useState<Reminder[]>([]);
 
   useEffect(() => {
@@ -36,7 +30,7 @@ export default function PanelPage() {
   const weekDays: DayTotal[] = (() => {
     const out: DayTotal[] = [];
     const today = new Date();
-    const dow = today.getDay(); // 0 Sun..6 Sat
+    const dow = today.getDay();
     const mondayOffset = (dow + 6) % 7;
     for (let i = 0; i < 7; i++) {
       const d = new Date(today);
@@ -49,122 +43,131 @@ export default function PanelPage() {
 
   const todayGoalMin = skills.reduce((acc, s) => acc + s.dailyGoalMin, 0) || 180;
   const weekGoalMin = todayGoalMin * 7;
+  const minutesLeftToday = Math.max(0, todayGoalMin - todayMinutes);
 
   return (
     <>
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div className="flex flex-col gap-1">
-          <span className="label-xs">{formatDateEs(new Date())}</span>
-          <h1 className="m-0 text-4xl font-extrabold leading-tight tracking-tight">{greetingHeadline()}</h1>
-        </div>
-        <div className="flex flex-wrap gap-2.5">
-          <Link
-            href="/registrar"
-            className="inline-flex min-h-12 items-center rounded-button border border-line px-5 font-semibold"
-          >
-            Registrar horas
-          </Link>
-          <Link
-            href="/temporizador"
-            className="inline-flex min-h-12 items-center gap-2.5 rounded-button bg-accent px-6 text-[16px] font-bold text-on"
-          >
-            <Play size={18} fill="currentColor" aria-hidden="true" />
-            Iniciar sesión
-          </Link>
-        </div>
-      </header>
-
-      <section aria-label="Resumen" className="grid grid-cols-[repeat(auto-fit,minmax(min(200px,100%),1fr))] gap-4">
-        <Card className="flex flex-col gap-1.5 p-5">
-          <span className="label-xs">Hoy</span>
-          <span className="font-num text-[30px] font-medium">{formatMinutes(todayMinutes)}</span>
-          <span className="text-[13px] text-muted">Meta diaria: {formatMinutes(todayGoalMin)}</span>
-        </Card>
-        <Card className="flex flex-col gap-1.5 p-5">
-          <span className="label-xs">Esta semana</span>
-          <span className="font-num text-[30px] font-medium">{formatMinutes(weekMinutes)}</span>
-          <span className="text-[13px] text-muted">Meta semanal: {formatMinutes(weekGoalMin)}</span>
-        </Card>
-        <Card className="flex flex-col gap-1.5 p-5">
-          <span className="label-xs">Total acumulado</span>
-          <span className="font-num text-[30px] font-medium">{formatInt(totalHours)} h</span>
-          <span className="text-[13px] text-muted">
-            En {skills.length} {skills.length === 1 ? "habilidad" : "habilidades"}
-          </span>
-        </Card>
-      </section>
-
-      <section aria-labelledby="h-skills" className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <h2 id="h-skills" className="m-0 text-xl font-bold">
-            Mis habilidades
-          </h2>
-          <div className="flex flex-wrap gap-5">
-            <Link href="/habilidades/nueva" className="min-h-11 inline-flex items-center text-sm font-semibold">
-              + Nueva habilidad
+      <section className="flex flex-wrap items-stretch gap-8">
+        <div className="flex min-w-0 flex-[2_1_480px] flex-col justify-center gap-5 py-2">
+          <h1 className="m-0 text-[64px] font-bold leading-[0.95] tracking-tight sm:text-[88px]">
+            {streak} {streak === 1 ? "día" : "días"}
+            <br />
+            seguidos
+            <span className="text-a2" style={{ WebkitTextStroke: "3px var(--ink)" }}>
+              .
+            </span>
+          </h1>
+          <p className="m-0 max-w-[520px] text-[18px] sm:text-[22px]">
+            Hoy llevas{" "}
+            <b className="bg-a1 px-1.5" style={{ color: "var(--ink)" }}>
+              {formatMinutesLong(todayMinutes)}
+            </b>
+            . {minutesLeftToday > 0 ? `Faltan ${minutesLeftToday} para no romper la racha.` : "¡Meta de hoy cumplida!"}
+          </p>
+          <div className="flex flex-wrap gap-4">
+            <Link
+              href="/temporizador"
+              className="bx hov press inline-flex min-h-14 items-center px-7 text-[18px] font-bold sm:text-[22px]"
+              style={{ background: "var(--a2)", "--r": "-1deg" } as React.CSSProperties}
+            >
+              Empezar un tomate →
             </Link>
-            <Link href="/estadisticas" className="min-h-11 inline-flex items-center text-sm text-muted">
-              Ver estadísticas →
+            <Link href="/registrar" className="bx hov press inline-flex min-h-14 items-center bg-card px-6 text-[16px] font-bold sm:text-[18px]">
+              + Horas a mano
             </Link>
           </div>
+        </div>
+
+        <Link
+          href="/tienda"
+          aria-label={`Ir a la tienda de ${pet?.name ?? "Tomi"}`}
+          className="bx hov flex flex-[1_1_250px] max-w-[300px] flex-col gap-2.5 self-center p-3.5"
+          style={{ "--r": "-1.5deg", transform: "rotate(-1.5deg)" } as React.CSSProperties}
+        >
+          <div className="relative">
+            <Mascot size={230} hat={equipped.hat} cape={equipped.cape} acc={equipped.acc} bg={equipped.bg} />
+            <div className="bx absolute -right-3.5 -top-3 px-3 py-1.5 text-[13px] font-bold" style={{ background: "var(--a2)", transform: "rotate(6deg)" }}>
+              ¡Racha {streak}!
+            </div>
+          </div>
+          <div className="flex justify-between font-bold">
+            <span>
+              {pet?.name ?? "Tomi"} · Nv. {level}
+            </span>
+            <span className="font-num text-[13px]">{formatInt(coins)} $ →</span>
+          </div>
+        </Link>
+
+        <div
+          className="bx flex min-w-0 flex-[1_1_300px] flex-col gap-3 p-6"
+          style={{ background: "var(--a3)", transform: "rotate(1.5deg)" }}
+        >
+          <span className="label-xs font-bold text-ink">Esta semana</span>
+          <div className="font-num text-[56px] font-bold leading-none tracking-tight sm:text-[72px]">
+            {formatInt(weekMinutes / 60)}
+            <span className="text-[22px] sm:text-[28px]"> / {formatInt(weekGoalMin / 60)} h</span>
+          </div>
+          <WeekBars days={weekDays} />
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4.5">
+        <div className="flex flex-wrap items-baseline gap-3.5">
+          <h2 className="m-0 text-[32px] font-bold tracking-tight sm:text-[38px]">Tu álbum de sellos</h2>
+          <span className="font-num text-[14px]">1 sello = 100 horas</span>
         </div>
         {!loading && skills.length === 0 ? (
           <Card className="p-7 text-center text-muted">
             Todavía no tienes habilidades.{" "}
-            <Link href="/habilidades/nueva" className="font-semibold text-text underline">
+            <Link href="/habilidades/nueva" className="font-bold text-ink underline">
               Crea la primera
             </Link>
             .
           </Card>
         ) : (
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(min(300px,100%),1fr))] gap-4">
+          <div className="flex flex-wrap gap-7">
             {skills.map((s) => (
-              <SkillProgressCard
-                key={s.id}
-                skill={s}
-                todayMinutes={sessions
-                  .filter((sess) => sess.skillId === s.id && dateKeyInTz(new Date(sess.startedAt), timezone) === todayKey)
-                  .reduce((acc, sess) => acc + sess.durationMin, 0)}
-              />
+              <StampAlbumCard key={s.id} skill={s} />
             ))}
+            <Link
+              href="/habilidades/nueva"
+              className="bx hov flex min-h-[220px] flex-[0_0_190px] flex-col items-center justify-center gap-2.5 bg-card p-6 text-center text-[22px] font-bold"
+              style={{ borderStyle: "dashed", "--r": "1deg" } as React.CSSProperties}
+            >
+              <span aria-hidden="true" className="text-[56px] leading-none">
+                +
+              </span>
+              Nueva habilidad
+            </Link>
           </div>
         )}
       </section>
 
-      <section className="grid grid-cols-[repeat(auto-fit,minmax(min(380px,100%),1fr))] gap-4">
-        <Card className="flex flex-col gap-5 p-5.5">
-          <CardHeading>Esta semana</CardHeading>
-          <WeekBars days={weekDays} />
-        </Card>
-        <Card className="flex flex-col gap-5 p-5.5">
-          <div className="flex flex-wrap items-baseline justify-between gap-3">
-            <CardHeading>Constancia</CardHeading>
-            <span className="text-[13px] text-muted">Últimas 14 semanas</span>
-          </div>
+      <section className="grid grid-cols-[repeat(auto-fit,minmax(min(380px,100%),1fr))] gap-5">
+        <Card className="flex flex-col gap-4 p-6">
+          <CardHeading>Constancia</CardHeading>
           <ConsistencyHeatmap dailyMinutes={dailyMinutes} timezone={timezone} />
         </Card>
-      </section>
 
-      <section aria-labelledby="h-next" className="flex flex-col gap-2 rounded-card border border-line bg-card p-5.5">
-        <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <h2 id="h-next" className="m-0 text-lg font-bold">
-            Próximos recordatorios
-          </h2>
-          <Link href="/recordatorios" className="min-h-11 inline-flex items-center text-sm text-muted">
-            Gestionar →
-          </Link>
-        </div>
-        {reminders.length === 0 ? (
-          <p className="py-3 text-sm text-muted">No tienes recordatorios activos.</p>
-        ) : (
-          reminders.slice(0, 4).map((r) => (
-            <div key={r.id} className="flex flex-wrap items-center gap-4 border-t border-line py-3">
-              <span className="font-num min-w-[72px] text-sm text-accent">{r.timeOfDay}</span>
-              <span className="min-w-[180px] flex-1 font-semibold">{r.message || reminderDefaultTitle(r.kind)}</span>
-              <span className="text-[13px] text-muted">{reminderDaysLabel(r.days)}</span>
-            </div>
-          ))
-        )}
+        <Card className="flex flex-col gap-2 p-6">
+          <div className="flex flex-wrap items-baseline justify-between gap-3">
+            <CardHeading>Próximos recordatorios</CardHeading>
+            <Link href="/recordatorios" className="min-h-11 inline-flex items-center text-sm font-bold underline">
+              Gestionar →
+            </Link>
+          </div>
+          {reminders.length === 0 ? (
+            <p className="py-3 text-sm text-muted">No tienes recordatorios activos.</p>
+          ) : (
+            reminders.slice(0, 4).map((r) => (
+              <div key={r.id} className="flex flex-wrap items-center gap-4 border-t-2 border-dashed border-ink py-3">
+                <span className="font-num min-w-[72px] text-sm font-bold">{r.timeOfDay}</span>
+                <span className="min-w-[180px] flex-1 font-bold">{r.message || reminderDefaultTitle(r.kind)}</span>
+                <span className="text-[13px] text-muted">{reminderDaysLabel(r.days)}</span>
+              </div>
+            ))
+          )}
+        </Card>
       </section>
     </>
   );

@@ -14,7 +14,7 @@ export interface CelebrationState {
 const INITIAL: CelebrationState = {
   open: false,
   skillName: "",
-  skillColor: "var(--accent)",
+  skillColor: "var(--a1)",
   hours: 1,
   achievedAt: null,
   startedAt: null,

@@ -23,7 +23,7 @@ function useConfetti(enabled: boolean) {
       seed = (seed * 9301 + 49297) % 233280;
       return seed / 233280;
     };
-    const palette = ["var(--accent)", "var(--text)", "var(--a2)", "var(--a3)"];
+    const palette = ["var(--a1)", "var(--ink)", "var(--a2)", "var(--a3)"];
     return Array.from({ length: 40 }, () => {
       const round = rand() > 0.6;
       const w = 6 + Math.round(rand() * 6);
@@ -109,7 +109,7 @@ export function CelebrationDialog({
           <span className="label-xs">Hito desbloqueado · {skillName}</span>
           <div className="relative flex size-[150px] items-center justify-center">
             <svg width="150" height="150" viewBox="0 0 150 150" fill="none" className="absolute inset-0 -rotate-90" aria-hidden="true">
-              <circle cx="75" cy="75" r="60" stroke="var(--track)" strokeWidth="8" />
+              <circle cx="75" cy="75" r="60" stroke="var(--card)" strokeWidth="8" />
               <circle
                 cx="75"
                 cy="75"
@@ -126,17 +126,17 @@ export function CelebrationDialog({
               <span className="text-[13px] text-muted">horas</span>
             </span>
           </div>
-          <DialogTitle className="m-0 text-[32px] font-extrabold leading-tight tracking-tight">
+          <DialogTitle className="m-0 text-[32px] font-bold leading-tight tracking-tight">
             {copy.title}
           </DialogTitle>
           <p className="m-0 max-w-[380px] text-[16px] text-muted">{copy.text}</p>
-          <div className="flex flex-wrap justify-center gap-2.5 text-[13px] text-muted">
+          <div className="flex flex-wrap justify-center gap-2.5 text-[13px] font-bold">
             {achievedAt && (
-              <span className="rounded-full border border-line px-3 py-1.5">{formatDateEs(new Date(achievedAt))}</span>
+              <span className="rounded-chip border-[3px] border-ink bg-card px-3 py-1.5">{formatDateEs(new Date(achievedAt))}</span>
             )}
-            {tookText && <span className="rounded-full border border-line px-3 py-1.5">{tookText}</span>}
+            {tookText && <span className="rounded-chip border-[3px] border-ink bg-card px-3 py-1.5">{tookText}</span>}
           </div>
-          <Button onClick={onClose} className="mt-1.5">
+          <Button onClick={onClose} className="mt-1.5" style={{ background: "var(--a1)" }}>
             Seguir practicando
           </Button>
         </div>
