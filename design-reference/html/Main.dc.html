@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Oficio — Panel</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#111311}
+a{color:inherit;text-decoration:none}
+a:focus-visible,button:focus-visible{outline:2px solid #F0A93B;outline-offset:2px}
+</style>
+</helmet>
+<div style="background:#111311;color:#ECE9E0;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:15px;line-height:1.45;display:flex;flex-wrap:wrap;align-items:stretch;min-height:1200px">
+
+<nav aria-label="Principal" style="flex:0 0 248px;box-sizing:border-box;padding:28px 20px;border-right:1px solid #2A2F2A;display:flex;flex-direction:column;gap:28px;flex-grow:1;max-width:100%">
+<div style="display:flex;align-items:center;gap:10px;padding:0 6px">
+<svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><circle cx="14" cy="14" r="11" stroke="#3A403A" stroke-width="3"/><path d="M14 3a11 11 0 0 1 9.5 5.5" stroke="{{accent}}" stroke-width="3" stroke-linecap="round"/></svg>
+<span style="font-size:24px;font-weight:800;letter-spacing:-0.02em">Oficio</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<a href="Main.dc.html" aria-current="page" style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 14px;border-radius:10px;background:#1F231F;color:#ECE9E0;font-weight:600">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+Panel</a>
+<a href="Timer.dc.html" style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 14px;border-radius:10px;color:#A3A89E">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg>
+Temporizador</a>
+<a href="Stats.dc.html" style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 14px;border-radius:10px;color:#A3A89E">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+Estadísticas</a>
+<a href="Achievements.dc.html" style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 14px;border-radius:10px;color:#A3A89E">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>
+Logros</a>
+<a href="Reminders.dc.html" style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 14px;border-radius:10px;color:#A3A89E">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17V11a6 6 0 1 1 12 0v6l2 2H4zM10 21h4"/></svg>
+Recordatorios</a>
+<a href="Settings.dc.html" style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 14px;border-radius:10px;color:#A3A89E">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h10M4 12h4M4 18h12"/><circle cx="17" cy="6" r="2.5"/><circle cx="11" cy="12" r="2.5"/><circle cx="19" cy="18" r="2.5"/></svg>
+Ajustes</a>
+</div>
+<div style="margin-top:auto;padding:14px;border:1px solid #2A2F2A;border-radius:12px;display:flex;flex-direction:column;gap:6px">
+<span style="font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#A3A89E">Racha</span>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:500;color:{{accent}}">12 días</span>
+<span style="color:#A3A89E;font-size:13px">Mínimo diario: 30 min</span>
+</div>
+</nav>
+
+<main style="flex:999 1 560px;min-width:0;box-sizing:border-box;padding:36px 40px 48px;display:flex;flex-direction:column;gap:32px;max-width:1112px">
+
+<header style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between">
+<div style="display:flex;flex-direction:column;gap:4px">
+<span style="font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:#A3A89E">Sábado 10 de octubre</span>
+<h1 style="margin:0;font-size:40px;line-height:1.1;font-weight:800;letter-spacing:-0.02em">Una hora más cerca.</h1>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:10px">
+<a href="LogHours.dc.html" style="display:inline-flex;align-items:center;min-height:48px;padding:0 20px;border-radius:12px;border:1px solid #3A403A;font-weight:600">Registrar horas</a>
+<a href="Timer.dc.html" style="display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 24px;border-radius:12px;background:{{accent}};color:#111311;font-weight:700;font-size:16px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg>
+Iniciar sesión</a>
+</div>
+</header>
+
+<section aria-label="Resumen" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:16px">
+<div style="background:#181B18;border:1px solid #2A2F2A;border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:6px">
+<span style="font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#A3A89E">Hoy</span>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:30px;font-weight:500">2h 35m</span>
+<span style="color:#A3A89E;font-size:13px">Meta diaria: 3h</span>
+</div>
+<div style="background:#181B18;border:1px solid #2A2F2A;border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:6px">
+<span style="font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#A3A89E">Esta semana</span>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:30px;font-weight:500">15h 05m</span>
+<span style="color:#A3A89E;font-size:13px">Meta semanal: 20h</span>
+</div>
+<div style="background:#181B18;border:1px solid #2A2F2A;border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:6px">
+<span style="font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#A3A89E">Total acumulado</span>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:30px;font-weight:500">1.692 h</span>
+<span style="color:#A3A89E;font-size:13px">En 3 habilidades</span>
+</div>
+</section>
+
+<section aria-labelledby="h-skills" style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap">
+<h2 id="h-skills" style="margin:0;font-size:22px;font-weight:700">Mis habilidades</h2>
+<div style="display:flex;flex-wrap:wrap;gap:8px 20px">
+<a href="NewSkill.dc.html" style="min-height:44px;display:inline-flex;align-items:center;color:#ECE9E0;font-size:14px;font-weight:600">+ Nueva habilidad</a>
+<a href="Stats.dc.html" style="min-height:44px;display:inline-flex;align-items:center;color:#A3A89E;font-size:14px">Ver estadísticas →</a>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:16px">
+<sc-for list="{{skills}}" as="s" hint-placeholder-count="3">
+<article style="background:#181B18;border:1px solid #2A2F2A;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:18px">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+<div style="display:flex;flex-direction:column;gap:2px">
+<h3 style="margin:0;font-size:20px;font-weight:700"><a href="Skill.dc.html">{{s.name}}</a></h3>
+<span style="color:#A3A89E;font-size:13px">Hoy: {{s.today}}</span>
+</div>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:13px;padding:4px 10px;border-radius:999px;border:1px solid #3A403A;color:#ECE9E0">{{s.pctLabel}}</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px">
+<span style="font-family:'IBM Plex Mono',monospace;font-size:34px;font-weight:500;color:{{s.color}}">{{s.hours}}</span>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#A3A89E">/ 10.000 h</span>
+</div>
+<div role="img" aria-label="{{s.aria}}" style="position:relative;height:10px;border-radius:999px;background:#262B26">
+<div style="position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:{{s.color}};width:{{s.pct}}"></div>
+<div style="position:absolute;left:1%;top:-3px;bottom:-3px;width:2px;background:#111311"></div>
+<div style="position:absolute;left:10%;top:-3px;bottom:-3px;width:2px;background:#111311"></div>
+<div style="position:absolute;left:50%;top:-3px;bottom:-3px;width:2px;background:#111311"></div>
+</div>
+<span style="color:#A3A89E;font-size:13px">{{s.next}}</span>
+</div>
+<a href="Timer.dc.html" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;border-radius:10px;border:1px solid #3A403A;font-weight:600">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg>
+Practicar ahora</a>
+</article>
+</sc-for>
+</div>
+</section>
+
+<section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(380px,100%),1fr));gap:16px">
+<div style="background:#181B18;border:1px solid #2A2F2A;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:20px">
+<h2 style="margin:0;font-size:18px;font-weight:700">Esta semana</h2>
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px;height:190px">
+<sc-for list="{{week}}" as="d" hint-placeholder-count="7">
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:8px;height:100%">
+<span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#A3A89E">{{d.label}}</span>
+<div style="width:100%;max-width:44px;border-radius:6px 6px 2px 2px;height:{{d.h}};background:{{d.bg}}"></div>
+<span style="font-size:13px;color:#A3A89E">{{d.day}}</span>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="background:#181B18;border:1px solid #2A2F2A;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+<h2 style="margin:0;font-size:18px;font-weight:700">Constancia</h2>
+<span style="color:#A3A89E;font-size:13px">Últimas 14 semanas</span>
+</div>
+<div role="img" aria-label="Mapa de actividad diaria de las últimas 14 semanas" style="display:grid;grid-template-rows:repeat(7,16px);grid-auto-flow:column;grid-auto-columns:16px;gap:4px;align-self:flex-start;max-width:100%;overflow-x:auto">
+<sc-for list="{{heat}}" as="c" hint-placeholder-count="98">
+<div style="width:16px;height:16px;border-radius:4px;background:{{c.bg}}"></div>
+</sc-for>
+</div>
+<div style="display:flex;align-items:center;gap:8px;color:#A3A89E;font-size:12px">
+<span>Menos</span>
+<div style="width:12px;height:12px;border-radius:3px;background:#262B26"></div>
+<div style="width:12px;height:12px;border-radius:3px;background:{{l1}}"></div>
+<div style="width:12px;height:12px;border-radius:3px;background:{{l2}}"></div>
+<div style="width:12px;height:12px;border-radius:3px;background:{{l3}}"></div>
+<div style="width:12px;height:12px;border-radius:3px;background:{{accent}}"></div>
+<span>Más</span>
+</div>
+</div>
+</section>
+
+<section aria-labelledby="h-next" style="background:#181B18;border:1px solid #2A2F2A;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+<h2 id="h-next" style="margin:0;font-size:18px;font-weight:700">Próximos recordatorios</h2>
+<a href="Reminders.dc.html" style="min-height:44px;display:inline-flex;align-items:center;color:#A3A89E;font-size:14px">Gestionar →</a>
+</div>
+<sc-for list="{{reminders}}" as="r" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;gap:16px;padding:12px 0;border-top:1px solid #2A2F2A;flex-wrap:wrap">
+<span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:{{accent}};min-width:72px">{{r.time}}</span>
+<span style="flex:1;min-width:180px;font-weight:600">{{r.title}}</span>
+<span style="color:#A3A89E;font-size:13px">{{r.meta}}</span>
+</div>
+</sc-for>
+</section>
+
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#F0A93B","options":["#F0A93B","#4FC1AC","#B5A1F0","#F07A5C"]},"$preview":{"width":1360,"height":1200}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent ?? '#F0A93B';
+    const mix = (p) => 'color-mix(in srgb, ' + accent + ' ' + p + '%, #262B26)';
+
+    const skills = [
+      { name: 'Programación', hours: '1.284', pct: '12.84%', pctLabel: '12,8 %', color: accent, today: '1h 35m', next: 'Próximo hito: 5.000 h · faltan 3.716 h' },
+      { name: 'Inglés', hours: '312', pct: '3.12%', pctLabel: '3,1 %', color: '#4FC1AC', today: '40m', next: 'Próximo hito: 1.000 h · faltan 688 h' },
+      { name: 'Guitarra', hours: '96', pct: '0.96%', pctLabel: '1,0 %', color: '#B5A1F0', today: '20m', next: 'Próximo hito: 100 h · faltan 4 h' }
+    ].map((s) => ({ ...s, aria: s.name + ': ' + s.hours + ' de 10.000 horas' }));
+
+    const mins = [140, 95, 185, 120, 210, 155, 0];
+    const days = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+    const fmt = (m) => (m === 0 ? '—' : Math.floor(m / 60) + 'h' + String(m % 60).padStart(2, '0'));
+    const week = mins.map((m, i) => ({
+      day: days[i],
+      label: fmt(m),
+      h: Math.max(3, Math.round((m / 210) * 120)) + 'px',
+      bg: i === 5 ? accent : (m === 0 ? '#262B26' : '#8A8F80')
+    }));
+
+    let seed = 11;
+    const rand = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+    const levels = [mix(0).replace(/color-mix.*/, '#262B26'), mix(30), mix(55), mix(78), accent];
+    const heat = [];
+    for (let i = 0; i < 98; i++) {
+      const w = Math.floor(i / 7);
+      const base = 0.45 + (w / 14) * 0.55;
+      const v = rand() * base * 1.25;
+      let lv = v < 0.2 ? 0 : v < 0.4 ? 1 : v < 0.6 ? 2 : v < 0.8 ? 3 : 4;
+      if (i === 97) lv = 0;
+      heat.push({ bg: levels[lv] });
+    }
+
+    const reminders = [
+      { time: 'Hoy 7:00 pm', title: 'Bloque de programación: 2 pomodoros', meta: 'Programación · diario' },
+      { time: 'Mañana 8:30 am', title: 'Práctica de inglés: conversación', meta: 'Inglés · L a V' },
+      { time: 'Dom 4:00 pm', title: 'Revisión semanal de horas', meta: 'Todas · semanal' }
+    ];
+
+    return { accent, skills, week, heat, reminders, l1: mix(30), l2: mix(55), l3: mix(78) };
+  }
+}
+</script>
+</body>
+</html>

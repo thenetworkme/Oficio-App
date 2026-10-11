@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Oficio — Registrar horas</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#111311}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid #F0A93B;outline-offset:2px}
+input::placeholder{color:#8A8F80}
+input[type="date"],input[type="time"]{color-scheme:dark}
+</style>
+</helmet>
+<div style="background:#111311;color:#ECE9E0;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:15px;line-height:1.45;display:flex;flex-wrap:wrap;align-items:stretch;min-height:980px">
+
+<nav aria-label="Principal" style="flex:0 0 248px;box-sizing:border-box;padding:28px 20px;border-right:1px solid #2A2F2A;display:flex;flex-direction:column;gap:28px;flex-grow:1;max-width:100%">
+<div style="display:flex;align-items:center;gap:10px;padding:0 6px">
+<svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><circle cx="14" cy="14" r="11" stroke="#3A403A" stroke-width="3"/><path d="M14 3a11 11 0 0 1 9.5 5.5" stroke="{{accent}}" stroke-width="3" stroke-linecap="round"/></svg>
+<span style="font-size:24px;font-weight:800;letter-spacing:-0.02em">Oficio</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<a href="Main.dc.html" style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 14px;border-radius:10px;color:#A3A89E">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+Panel</a>
+<a href="Timer.dc.html" aria-current="page" style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 14px;border-radius:10px;background:#1F231F;color:#ECE9E0;font-weight:600">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg>
+Temporizador</a>
+<a href="Stats.dc.html" style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 14px;border-radius:10px;color:#A3A89E">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+Estadísticas</a>
+<a href="Achievements.dc.html" style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 14px;border-radius:10px;color:#A3A89E">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>
+Logros</a>
+<a href="Reminders.dc.html" style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 14px;border-radius:10px;color:#A3A89E">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17V11a6 6 0 1 1 12 0v6l2 2H4zM10 21h4"/></svg>
+Recordatorios</a>
+<a href="Settings.dc.html" style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 14px;border-radius:10px;color:#A3A89E">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h10M4 12h4M4 18h12"/><circle cx="17" cy="6" r="2.5"/><circle cx="11" cy="12" r="2.5"/><circle cx="19" cy="18" r="2.5"/></svg>
+Ajustes</a>
+</div>
+<div style="margin-top:auto;padding:14px;border:1px solid #2A2F2A;border-radius:12px;display:flex;flex-direction:column;gap:6px">
+<span style="font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#A3A89E">Racha</span>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:500;color:{{accent}}">12 días</span>
+<span style="color:#A3A89E;font-size:13px">Mínimo diario: 30 min</span>
+</div>
+</nav>
+
+<main style="flex:999 1 560px;min-width:0;box-sizing:border-box;padding:36px 40px 48px;display:flex;flex-direction:column;gap:28px;max-width:1112px">
+
+<header style="display:flex;flex-direction:column;gap:4px">
+<span style="font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:#A3A89E">Registro manual</span>
+<h1 style="margin:0;font-size:40px;line-height:1.1;font-weight:800;letter-spacing:-0.02em">Que ninguna hora se pierda.</h1>
+</header>
+
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+<form aria-label="Registrar sesión" onSubmit="{{noop}}" style="flex:3 1 480px;min-width:0;background:#181B18;border:1px solid #2A2F2A;border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:26px">
+
+<div role="group" aria-label="Habilidad" style="display:flex;flex-direction:column;gap:10px">
+<span style="font-size:13px;color:#A3A89E">Habilidad</span>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<sc-for list="{{skillChips}}" as="k" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{k.pressed}}" onClick="{{k.pick}}" style="min-height:44px;padding:0 16px;border-radius:999px;border:1px solid {{k.border}};background:{{k.bg}};color:#ECE9E0;font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:8px">
+<span style="width:10px;height:10px;border-radius:50%;background:{{k.dot}}"></span>{{k.name}}</button>
+</sc-for>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr));gap:16px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<label for="l-date" style="font-size:13px;color:#A3A89E">Fecha</label>
+<input id="l-date" type="date" value="2026-10-10" style="box-sizing:border-box;width:100%;min-height:46px;padding:0 12px;border-radius:10px;border:1px solid #3A403A;background:#111311;color:#ECE9E0;font-family:'IBM Plex Mono',monospace;font-size:15px">
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<label for="l-time" style="font-size:13px;color:#A3A89E">Hora de inicio</label>
+<input id="l-time" type="time" value="19:00" style="box-sizing:border-box;width:100%;min-height:46px;padding:0 12px;border-radius:10px;border:1px solid #3A403A;background:#111311;color:#ECE9E0;font-family:'IBM Plex Mono',monospace;font-size:15px">
+</div>
+</div>
+
+<div role="group" aria-label="Duración" style="display:flex;flex-direction:column;gap:12px">
+<span style="font-size:13px;color:#A3A89E">Duración</span>
+<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+<button type="button" aria-label="Restar 15 minutos" onClick="{{minus}}" style="width:48px;height:48px;border-radius:50%;border:1px solid #3A403A;background:transparent;color:#ECE9E0;font-size:24px;line-height:1">−</button>
+<span role="status" style="font-family:'IBM Plex Mono',monospace;font-size:48px;font-weight:500;letter-spacing:-0.02em;min-width:190px;text-align:center">{{lenText}}</span>
+<button type="button" aria-label="Sumar 15 minutos" onClick="{{plus}}" style="width:48px;height:48px;border-radius:50%;border:1px solid #3A403A;background:transparent;color:#ECE9E0;font-size:24px;line-height:1">+</button>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<sc-for list="{{quick}}" as="q" hint-placeholder-count="6">
+<button type="button" aria-pressed="{{q.pressed}}" onClick="{{q.pick}}" style="min-height:44px;padding:0 16px;border-radius:10px;border:1px solid {{q.border}};background:{{q.bg}};color:#ECE9E0;font-family:'IBM Plex Mono',monospace;font-size:14px">{{q.label}}</button>
+</sc-for>
+</div>
+</div>
+
+<div role="group" aria-label="Calidad de la práctica" style="display:flex;flex-direction:column;gap:10px">
+<span style="font-size:13px;color:#A3A89E">¿Qué tan enfocado estuviste?</span>
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+<span style="font-size:13px;color:#A3A89E">Disperso</span>
+<sc-for list="{{quality}}" as="n" hint-placeholder-count="5">
+<button type="button" aria-pressed="{{n.pressed}}" aria-label="Calidad {{n.n}} de 5" onClick="{{n.pick}}" style="width:44px;height:44px;border-radius:50%;border:1px solid {{n.border}};background:{{n.bg}};color:{{n.color}};font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500">{{n.n}}</button>
+</sc-for>
+<span style="font-size:13px;color:#A3A89E">En flow</span>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:6px">
+<label for="l-note" style="font-size:13px;color:#A3A89E">Nota (opcional)</label>
+<input id="l-note" type="text" placeholder="Qué practicaste y qué te costó" style="box-sizing:border-box;width:100%;min-height:46px;padding:0 14px;border-radius:10px;border:1px solid #3A403A;background:#111311;color:#ECE9E0;font-family:inherit;font-size:15px">
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:flex-end">
+<a href="Main.dc.html" style="display:inline-flex;align-items:center;min-height:48px;padding:0 22px;border-radius:12px;border:1px solid #3A403A;font-weight:600">Cancelar</a>
+<a href="Skill.dc.html" style="display:inline-flex;align-items:center;min-height:48px;padding:0 26px;border-radius:12px;background:{{accent}};color:#111311;font-weight:700;font-size:16px">Guardar sesión</a>
+</div>
+</form>
+
+<aside aria-label="Resumen" style="flex:2 1 320px;min-width:0;display:flex;flex-direction:column;gap:16px">
+<div style="background:#181B18;border:1px solid #2A2F2A;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:18px">
+<h2 style="margin:0;font-size:18px;font-weight:700">Esta sesión sumará</h2>
+<div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+<span style="font-family:'IBM Plex Mono',monospace;font-size:40px;font-weight:500;color:{{skillColor}}">+{{lenText}}</span>
+<span style="color:#A3A89E">a {{skillName}}</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px;padding-top:16px;border-top:1px solid #2A2F2A">
+<span style="font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#A3A89E">Total acumulado</span>
+<div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
+<span style="font-family:'IBM Plex Mono',monospace;font-size:24px">{{newTotal}} h</span>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#A3A89E">antes {{oldTotal}} h</span>
+</div>
+</div>
+</div>
+
+<div style="background:#181B18;border:1px solid #2A2F2A;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px">
+<h2 style="margin:0;font-size:18px;font-weight:700">Hoy</h2>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#A3A89E">{{todayText}} / 3h</span>
+</div>
+<div style="height:10px;border-radius:999px;background:#262B26"><div style="height:100%;border-radius:999px;background:{{accent}};width:{{todayPct}}"></div></div>
+<span style="color:#A3A89E;font-size:14px">{{todayNote}}</span>
+</div>
+</aside>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#F0A93B","options":["#F0A93B","#4FC1AC","#B5A1F0","#F07A5C"]},"$preview":{"width":1360,"height":980}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent ?? '#F0A93B';
+    const st = this.state || {};
+    const skill = st.skill || 'prog';
+    const mins = st.mins ?? 90;
+    const q = st.q ?? 4;
+
+    const skills = {
+      prog: { name: 'Programación', color: accent, base: 1284 },
+      ing: { name: 'Inglés', color: '#4FC1AC', base: 312 },
+      gui: { name: 'Guitarra', color: '#B5A1F0', base: 96 }
+    };
+    const cur = skills[skill];
+
+    const hm = (m) => {
+      const h = Math.floor(m / 60);
+      const r = m % 60;
+      if (h === 0) return r + 'm';
+      if (r === 0) return h + 'h';
+      return h + 'h ' + String(r).padStart(2, '0') + 'm';
+    };
+    const num = (v) => {
+      const r = Math.round(v * 10) / 10;
+      const parts = r.toFixed(1).split('.');
+      const i = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      return parts[1] === '0' ? i : i + ',' + parts[1];
+    };
+
+    const skillChips = Object.keys(skills).map((id) => ({
+      name: skills[id].name,
+      dot: skills[id].color,
+      pressed: skill === id,
+      border: skill === id ? skills[id].color : '#3A403A',
+      bg: skill === id ? '#262B26' : 'transparent',
+      pick: () => this.setState({ skill: id })
+    }));
+
+    const quick = [15, 30, 45, 60, 90, 120, 180].map((v) => ({
+      label: hm(v),
+      pressed: mins === v,
+      border: mins === v ? accent : '#3A403A',
+      bg: mins === v ? '#262B26' : 'transparent',
+      pick: () => this.setState({ mins: v })
+    }));
+
+    const quality = [1, 2, 3, 4, 5].map((n) => ({
+      n,
+      pressed: q === n,
+      border: q === n ? accent : '#3A403A',
+      bg: q === n ? accent : 'transparent',
+      color: q === n ? '#111311' : '#ECE9E0',
+      pick: () => this.setState({ q: n })
+    }));
+
+    const today = 155 + mins;
+    const left = 180 - today;
+
+    return {
+      accent,
+      skillChips,
+      quick,
+      quality,
+      skillName: cur.name,
+      skillColor: cur.color,
+      lenText: hm(mins),
+      oldTotal: num(cur.base),
+      newTotal: num(cur.base + mins / 60),
+      todayText: hm(today),
+      todayPct: Math.min(100, (today / 180) * 100) + '%',
+      todayNote: left > 0 ? 'Te faltan ' + hm(left) + ' para tu meta diaria.' : 'Meta diaria cumplida. La racha de 12 días sigue en pie.',
+      minus: () => this.setState({ mins: Math.max(15, mins - 15) }),
+      plus: () => this.setState({ mins: Math.min(720, mins + 15) }),
+      noop: (e) => { if (e && e.preventDefault) e.preventDefault(); }
+    };
+  }
+}
+</script>
+</body>
+</html>

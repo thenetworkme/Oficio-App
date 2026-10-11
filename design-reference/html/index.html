@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oficio — diseño</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#111311;--card:#181B18;--line:#2A2F2A;--text:#ECE9E0;--muted:#A3A89E;--accent:#F0A93B}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:16px;line-height:1.45}
+  main{max-width:960px;margin:0 auto;padding:56px 24px 72px;display:flex;flex-direction:column;gap:32px}
+  h1{margin:0;font-size:44px;line-height:1.1;font-weight:800;letter-spacing:-0.02em}
+  p{margin:0;color:var(--muted)}
+  .eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:12px}
+  a{display:flex;flex-direction:column;gap:4px;min-height:44px;padding:18px 20px;background:var(--card);border:1px solid var(--line);border-radius:14px;color:inherit;text-decoration:none}
+  a:hover{border-color:var(--accent)}
+  a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .n{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent)}
+  .t{font-size:18px;font-weight:700}
+  .d{font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+<main>
+<header style="display:flex;flex-direction:column;gap:10px">
+<span class="eyebrow">Diseño de pantallas</span>
+<h1>Oficio</h1>
+<p>App web para llegar a las 10.000 horas, una a la vez. Elige una pantalla.</p>
+</header>
+<ul>
+<li><a href="Main.dc.html"><span class="n">01</span><span class="t">Panel</span><span class="d">Resumen, habilidades, semana y constancia</span></a></li>
+<li><a href="Timer.dc.html"><span class="n">02</span><span class="t">Temporizador Pomodoro</span><span class="d">Interactivo: iniciar, pausar, descansos</span></a></li>
+<li><a href="Stats.dc.html"><span class="n">03</span><span class="t">Estadísticas</span><span class="d">Proyección, horas por mes, reparto</span></a></li>
+<li><a href="Achievements.dc.html"><span class="n">04</span><span class="t">Logros e hitos</span><span class="d">Línea de tiempo y celebración con confeti</span></a></li>
+<li><a href="Reminders.dc.html"><span class="n">05</span><span class="t">Recordatorios</span><span class="d">Interruptores, días y protección de racha</span></a></li>
+<li><a href="Skill.dc.html"><span class="n">06</span><span class="t">Detalle de habilidad</span><span class="d">Progreso, hitos y sesiones recientes</span></a></li>
+<li><a href="LogHours.dc.html"><span class="n">07</span><span class="t">Registro manual de horas</span><span class="d">Interactivo, con vista previa de lo que suma</span></a></li>
+<li><a href="NewSkill.dc.html"><span class="n">08</span><span class="t">Crear habilidad</span><span class="d">Onboarding en 3 pasos con proyección</span></a></li>
+<li><a href="Settings.dc.html"><span class="n">09</span><span class="t">Ajustes de apariencia</span><span class="d">8 temas, incluido Catppuccin, y color de acento</span></a></li>
+</ul>
+</main>
+</body>
+</html>

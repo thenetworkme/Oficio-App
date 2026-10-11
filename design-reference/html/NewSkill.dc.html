@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Oficio — Nueva habilidad</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#111311}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid #F0A93B;outline-offset:2px}
+input::placeholder{color:#8A8F80}
+input[type="time"]{color-scheme:dark}
+</style>
+</helmet>
+<div style="background:#111311;color:#ECE9E0;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:15px;line-height:1.45;min-height:960px;display:flex;flex-direction:column">
+
+<header style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:24px 40px;border-bottom:1px solid #2A2F2A">
+<div style="display:flex;align-items:center;gap:10px">
+<svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><circle cx="14" cy="14" r="11" stroke="#3A403A" stroke-width="3"/><path d="M14 3a11 11 0 0 1 9.5 5.5" stroke="{{accent}}" stroke-width="3" stroke-linecap="round"/></svg>
+<span style="font-size:24px;font-weight:800;letter-spacing:-0.02em">Oficio</span>
+</div>
+<a href="Main.dc.html" style="min-height:44px;display:inline-flex;align-items:center;color:#A3A89E;font-size:14px">Cancelar y volver al panel</a>
+</header>
+
+<main style="flex:1;box-sizing:border-box;width:100%;max-width:1200px;margin:0 auto;padding:40px 40px 56px;display:flex;flex-direction:column;gap:32px">
+
+<ol aria-label="Pasos" style="list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="3">
+<li style="display:flex;flex-direction:column;gap:8px">
+<div style="height:6px;border-radius:999px;background:{{s.bar}}"></div>
+<span style="font-size:13px;color:{{s.color}};font-weight:{{s.weight}}">{{s.n}}. {{s.label}}</span>
+</li>
+</sc-for>
+</ol>
+
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+<section style="flex:3 1 480px;min-width:0;background:#181B18;border:1px solid #2A2F2A;border-radius:20px;padding:32px;display:flex;flex-direction:column;gap:28px">
+
+<h1 style="margin:0;font-size:36px;line-height:1.15;font-weight:800;letter-spacing:-0.02em">{{title}}</h1>
+
+<sc-if value="{{s1}}" hint-placeholder-val="{{true}}">
+<div style="display:flex;flex-direction:column;gap:26px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<label for="n-name" style="font-size:13px;color:#A3A89E">Nombre de la habilidad</label>
+<input id="n-name" type="text" value="{{name}}" onChange="{{setName}}" placeholder="Ej. Piano, Dibujo, Ajedrez" style="box-sizing:border-box;width:100%;min-height:52px;padding:0 16px;border-radius:12px;border:1px solid #3A403A;background:#111311;color:#ECE9E0;font-family:inherit;font-size:18px">
+</div>
+<div role="group" aria-label="Color" style="display:flex;flex-direction:column;gap:10px">
+<span style="font-size:13px;color:#A3A89E">Color</span>
+<div style="display:flex;flex-wrap:wrap;gap:10px">
+<sc-for list="{{colors}}" as="c" hint-placeholder-count="5">
+<button type="button" aria-pressed="{{c.pressed}}" aria-label="{{c.name}}" onClick="{{c.pick}}" style="width:44px;height:44px;border-radius:50%;border:2px solid {{c.ring}};background:transparent;padding:4px">
+<span style="display:block;width:100%;height:100%;border-radius:50%;background:{{c.hex}}"></span>
+</button>
+</sc-for>
+</div>
+</div>
+<div role="group" aria-label="Meta de horas" style="display:flex;flex-direction:column;gap:10px">
+<span style="font-size:13px;color:#A3A89E">Meta de horas</span>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<sc-for list="{{goals}}" as="g" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{g.pressed}}" onClick="{{g.pick}}" style="min-height:48px;padding:0 20px;border-radius:12px;border:1px solid {{g.border}};background:{{g.bg}};color:#ECE9E0;font-family:'IBM Plex Mono',monospace;font-size:15px">{{g.label}}</button>
+</sc-for>
+</div>
+<span style="font-size:13px;color:#A3A89E">10.000 h es la cifra clásica de la maestría. Puedes elegir una meta más corta para empezar.</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px;max-width:320px">
+<label for="n-init" style="font-size:13px;color:#A3A89E">¿Cuántas horas llevas ya? (opcional)</label>
+<input id="n-init" type="number" min="0" value="{{initial}}" onChange="{{setInitial}}" style="box-sizing:border-box;width:100%;min-height:48px;padding:0 14px;border-radius:12px;border:1px solid #3A403A;background:#111311;color:#ECE9E0;font-family:'IBM Plex Mono',monospace;font-size:16px">
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{s2}}" hint-placeholder-val="{{false}}">
+<div style="display:flex;flex-direction:column;gap:26px">
+<div role="group" aria-label="Meta diaria" style="display:flex;flex-direction:column;gap:10px">
+<span style="font-size:13px;color:#A3A89E">Tiempo por día de práctica</span>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<sc-for list="{{dailyOpts}}" as="d" hint-placeholder-count="6">
+<button type="button" aria-pressed="{{d.pressed}}" onClick="{{d.pick}}" style="min-height:48px;padding:0 18px;border-radius:12px;border:1px solid {{d.border}};background:{{d.bg}};color:#ECE9E0;font-family:'IBM Plex Mono',monospace;font-size:15px">{{d.label}}</button>
+</sc-for>
+</div>
+</div>
+<div role="group" aria-label="Días por semana" style="display:flex;flex-direction:column;gap:10px">
+<span style="font-size:13px;color:#A3A89E">Días por semana</span>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<sc-for list="{{dayOpts}}" as="d" hint-placeholder-count="5">
+<button type="button" aria-pressed="{{d.pressed}}" onClick="{{d.pick}}" style="width:52px;height:48px;border-radius:12px;border:1px solid {{d.border}};background:{{d.bg}};color:#ECE9E0;font-family:'IBM Plex Mono',monospace;font-size:15px">{{d.label}}</button>
+</sc-for>
+</div>
+<span style="font-size:13px;color:#A3A89E">Con este ritmo practicas {{weekly}} por semana. Elige algo que puedas sostener incluso en una mala semana.</span>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{s3}}" hint-placeholder-val="{{false}}">
+<div style="display:flex;flex-direction:column;gap:26px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:16px 18px;border:1px solid #2A2F2A;border-radius:14px">
+<div style="display:flex;flex-direction:column;gap:2px">
+<span style="font-weight:600">Recordarme todos los días</span>
+<span style="font-size:13px;color:#A3A89E">Aviso en el navegador a la hora que elijas</span>
+</div>
+<div style="display:flex;align-items:center;gap:12px">
+<input type="time" aria-label="Hora del recordatorio" value="{{remindTime}}" onChange="{{setTime}}" style="box-sizing:border-box;min-height:44px;padding:0 10px;border-radius:10px;border:1px solid #3A403A;background:#111311;color:#ECE9E0;font-family:'IBM Plex Mono',monospace;font-size:15px">
+<button type="button" role="switch" aria-checked="{{remind}}" aria-label="Activar recordatorio diario" onClick="{{flipRemind}}" style="position:relative;width:52px;height:44px;border:0;background:transparent;padding:0">
+<span style="position:absolute;left:0;top:8px;width:52px;height:28px;border-radius:999px;background:{{remindTrack}}"></span>
+<span style="position:absolute;top:12px;left:{{remindKnob}};width:20px;height:20px;border-radius:50%;background:#ECE9E0"></span>
+</button>
+</div>
+</div>
+<dl style="margin:0;display:grid;grid-template-columns:auto 1fr;gap:12px 24px;align-items:baseline">
+<dt style="color:#A3A89E;font-size:14px">Habilidad</dt><dd style="margin:0;font-weight:600">{{name}}</dd>
+<dt style="color:#A3A89E;font-size:14px">Meta</dt><dd style="margin:0;font-family:'IBM Plex Mono',monospace">{{goalText}} h</dd>
+<dt style="color:#A3A89E;font-size:14px">Ritmo</dt><dd style="margin:0;font-family:'IBM Plex Mono',monospace">{{dailyText}} · {{days}} días por semana</dd>
+<dt style="color:#A3A89E;font-size:14px">Recordatorio</dt><dd style="margin:0;font-family:'IBM Plex Mono',monospace">{{remindSummary}}</dd>
+</dl>
+</div>
+</sc-if>
+
+<div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center">
+<div>
+<sc-if value="{{notFirst}}" hint-placeholder-val="{{false}}">
+<button type="button" onClick="{{back}}" style="min-height:48px;padding:0 22px;border-radius:12px;border:1px solid #3A403A;background:transparent;color:#ECE9E0;font-weight:600;font-size:15px">Atrás</button>
+</sc-if>
+</div>
+<div>
+<sc-if value="{{notLast}}" hint-placeholder-val="{{true}}">
+<button type="button" onClick="{{next}}" style="min-height:48px;padding:0 28px;border-radius:12px;border:0;background:{{accent}};color:#111311;font-weight:700;font-size:16px">Siguiente</button>
+</sc-if>
+<sc-if value="{{s3}}" hint-placeholder-val="{{false}}">
+<a href="Skill.dc.html" style="display:inline-flex;align-items:center;min-height:48px;padding:0 28px;border-radius:12px;background:{{accent}};color:#111311;font-weight:700;font-size:16px">Crear habilidad</a>
+</sc-if>
+</div>
+</div>
+</section>
+
+<aside aria-label="Tu camino" style="flex:2 1 320px;min-width:0;background:#181B18;border:1px solid #2A2F2A;border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:22px">
+<div style="display:flex;align-items:center;gap:12px">
+<span style="width:14px;height:14px;border-radius:50%;background:{{colorHex}}"></span>
+<h2 style="margin:0;font-size:20px;font-weight:700">{{name}}</h2>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<span style="font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#A3A89E">A este ritmo llegas a la meta en</span>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:44px;font-weight:500;line-height:1.1;color:{{colorHex}}">{{etaGoal}}</span>
+<span style="font-size:13px;color:#A3A89E">{{weekly}} por semana · {{goalText}} h de meta</span>
+</div>
+<div style="display:flex;flex-direction:column">
+<sc-for list="{{etas}}" as="e" hint-placeholder-count="3">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:12px 0;border-top:1px solid #2A2F2A">
+<span style="font-family:'IBM Plex Mono',monospace;font-size:15px">{{e.h}} h</span>
+<span style="color:#A3A89E;font-size:14px">{{e.eta}}</span>
+</div>
+</sc-for>
+</div>
+</aside>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#F0A93B","options":["#F0A93B","#4FC1AC","#B5A1F0","#F07A5C"]},"$preview":{"width":1360,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent ?? '#F0A93B';
+    const st = this.state || {};
+    const step = st.step || 1;
+    const name = st.name ?? 'Piano';
+    const colorId = st.colorId || 'lila';
+    const goal = st.goal || 10000;
+    const initial = st.initial ?? '0';
+    const daily = st.daily || 120;
+    const days = st.days || 6;
+    const remind = st.remind ?? true;
+    const remindTime = st.remindTime || '07:00';
+
+    const palette = [
+      { id: 'ambar', name: 'Ámbar', hex: '#F0A93B' },
+      { id: 'agua', name: 'Agua', hex: '#4FC1AC' },
+      { id: 'lila', name: 'Lila', hex: '#B5A1F0' },
+      { id: 'coral', name: 'Coral', hex: '#F07A5C' },
+      { id: 'cielo', name: 'Cielo', hex: '#7FB2F0' }
+    ];
+    const colorHex = palette.find((c) => c.id === colorId).hex;
+    const colors = palette.map((c) => ({
+      name: c.name,
+      hex: c.hex,
+      pressed: c.id === colorId,
+      ring: c.id === colorId ? '#ECE9E0' : 'transparent',
+      pick: () => this.setState({ colorId: c.id })
+    }));
+
+    const nf = (v) => String(v).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const goals = [1000, 5000, 10000].map((g) => ({
+      label: nf(g) + ' h',
+      pressed: goal === g,
+      border: goal === g ? colorHex : '#3A403A',
+      bg: goal === g ? '#262B26' : 'transparent',
+      pick: () => this.setState({ goal: g })
+    }));
+
+    const hm = (m) => {
+      const h = Math.floor(m / 60);
+      const r = m % 60;
+      if (h === 0) return r + ' min';
+      return r === 0 ? h + ' h' : h + ' h ' + r + ' min';
+    };
+    const dailyOpts = [30, 60, 90, 120, 180, 240].map((m) => ({
+      label: hm(m),
+      pressed: daily === m,
+      border: daily === m ? colorHex : '#3A403A',
+      bg: daily === m ? '#262B26' : 'transparent',
+      pick: () => this.setState({ daily: m })
+    }));
+    const dayOpts = [3, 4, 5, 6, 7].map((d) => ({
+      label: String(d),
+      pressed: days === d,
+      border: days === d ? colorHex : '#3A403A',
+      bg: days === d ? '#262B26' : 'transparent',
+      pick: () => this.setState({ days: d })
+    }));
+
+    const perWeek = (daily * days) / 60;
+    const init = Math.max(0, parseFloat(initial) || 0);
+    const fmtNum = (v) => (Math.round(v * 10) / 10).toString().replace('.', ',');
+    const eta = (target) => {
+      const rem = target - init;
+      if (rem <= 0) return 'Ya alcanzado';
+      const weeks = rem / perWeek;
+      if (weeks < 9) return Math.ceil(weeks) + ' semanas';
+      const months = weeks / 4.345;
+      if (months < 24) return Math.round(months) + ' meses';
+      const years = weeks / 52.18;
+      return (years >= 10 ? String(Math.round(years)) : fmtNum(years)) + ' años';
+    };
+    const marks = [100, 1000, 5000, 10000].filter((h) => h <= goal);
+    const etas = marks.map((h) => ({ h: nf(h), eta: eta(h) }));
+
+    const to12 = (t) => {
+      const p = String(t).split(':');
+      const hh = parseInt(p[0], 10);
+      const mm = p[1] || '00';
+      const suf = hh >= 12 ? 'pm' : 'am';
+      return ((hh % 12) || 12) + ':' + mm + ' ' + suf;
+    };
+
+    const steps = ['Habilidad', 'Ritmo', 'Recordatorio'].map((label, i) => ({
+      n: i + 1,
+      label,
+      bar: i + 1 <= step ? colorHex : '#262B26',
+      color: i + 1 === step ? '#ECE9E0' : '#A3A89E',
+      weight: i + 1 === step ? '600' : '400'
+    }));
+
+    const titles = ['¿Qué quieres dominar?', '¿Cuánto tiempo le vas a dar?', 'Que no se te olvide'];
+
+    return {
+      accent,
+      steps,
+      title: titles[step - 1],
+      s1: step === 1,
+      s2: step === 2,
+      s3: step === 3,
+      notFirst: step > 1,
+      notLast: step < 3,
+      name: name.trim() === '' ? 'Nueva habilidad' : name,
+      colors,
+      colorHex,
+      goals,
+      initial,
+      dailyOpts,
+      dayOpts,
+      days,
+      goalText: nf(goal),
+      dailyText: hm(daily),
+      weekly: fmtNum(perWeek) + ' h',
+      etaGoal: eta(goal),
+      etas,
+      remind,
+      remindTime,
+      remindTrack: remind ? colorHex : '#3A403A',
+      remindKnob: remind ? '28px' : '4px',
+      remindSummary: remind ? 'Todos los días a las ' + to12(remindTime) : 'Sin recordatorio',
+      setName: (e) => this.setState({ name: e.target.value }),
+      setInitial: (e) => this.setState({ initial: e.target.value }),
+      setTime: (e) => this.setState({ remindTime: e.target.value }),
+      flipRemind: () => this.setState({ remind: !remind }),
+      next: () => this.setState({ step: Math.min(3, step + 1) }),
+      back: () => this.setState({ step: Math.max(1, step - 1) })
+    };
+  }
+}
+</script>
+</body>
+</html>
