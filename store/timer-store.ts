@@ -60,7 +60,21 @@ export const useTimerStore = create<TimerState>()(
       setDurations(durations) {
         set((s) => {
           if (s.running) return { durations };
-          return { durations, remainingAtStart: modeTotalSeconds(s.mode, durations) };
+          const unchanged =
+            s.durations.focusMin === durations.focusMin &&
+            s.durations.shortMin === durations.shortMin &&
+            s.durations.longMin === durations.longMin;
+          if (unchanged) return { durations };
+          // Only snap remainingAtStart to the new total when the countdown
+          // hasn't been touched yet; otherwise a paused/in-progress period
+          // would get silently reset to the full duration (e.g. every time
+          // this runs again on remount, since the profile sync effect that
+          // calls setDurations fires on every mount of the timer screen).
+          const wasUntouched = s.remainingAtStart === modeTotalSeconds(s.mode, s.durations);
+          return {
+            durations,
+            remainingAtStart: wasUntouched ? modeTotalSeconds(s.mode, durations) : s.remainingAtStart,
+          };
         });
       },
 
