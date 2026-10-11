@@ -20,6 +20,15 @@ interface TimerState {
   completedFocusCount: number;
   skillId: string | null;
   intention: string;
+  /**
+   * Seconds added to the current period via extend() (the fullscreen
+   * "+5 min" / "+2 min" buttons), on top of the mode's normal duration.
+   * Tracked separately from remainingAtStart so the progress bar can still
+   * show a total (modeTotalSeconds + extraSeconds) that grows along with it,
+   * the way the design reference's `total: total + 300` does. Reset to 0
+   * whenever the period itself resets (setMode/skip/completeFocusPeriod/reset).
+   */
+  extraSeconds: number;
   /** set right after a focus period completes, to drive the "save session?" prompt. */
   pendingSave: { durationMin: number; pomodoros: number; skillId: string | null } | null;
 
@@ -33,6 +42,15 @@ interface TimerState {
   reset: () => void;
   /** Skip the current period without crediting it as completed. */
   skip: () => void;
+  /**
+   * Extends the current period by `seconds` without disturbing elapsed time.
+   * Works identically whether running or paused: remainingAtStart is the
+   * "remaining time as of startedAt" (or right now, if paused) baseline that
+   * getRemainingSeconds() subtracts elapsed time from, so bumping it by
+   * `seconds` adds exactly `seconds` to the remaining time at any future
+   * `now`, the same way pause()/start() already treat it as that baseline.
+   */
+  extend: (seconds: number) => void;
   /** Called by the ticking component once the countdown hits zero. */
   completeFocusPeriod: () => void;
   clearPendingSave: () => void;
@@ -49,6 +67,7 @@ export const useTimerStore = create<TimerState>()(
       completedFocusCount: 0,
       skillId: null,
       intention: "",
+      extraSeconds: 0,
       pendingSave: null,
 
       getRemainingSeconds(now = Date.now()) {
@@ -79,7 +98,13 @@ export const useTimerStore = create<TimerState>()(
       },
 
       setMode(mode) {
-        set((s) => ({ mode, running: false, startedAt: null, remainingAtStart: modeTotalSeconds(mode, s.durations) }));
+        set((s) => ({
+          mode,
+          running: false,
+          startedAt: null,
+          remainingAtStart: modeTotalSeconds(mode, s.durations),
+          extraSeconds: 0,
+        }));
       },
 
       setSkill(skillId) {
@@ -111,6 +136,7 @@ export const useTimerStore = create<TimerState>()(
           running: false,
           startedAt: null,
           remainingAtStart: modeTotalSeconds(s.mode, s.durations),
+          extraSeconds: 0,
         }));
       },
 
@@ -122,8 +148,16 @@ export const useTimerStore = create<TimerState>()(
             running: false,
             startedAt: null,
             remainingAtStart: modeTotalSeconds(next, s.durations),
+            extraSeconds: 0,
           };
         });
+      },
+
+      extend(seconds) {
+        set((s) => ({
+          remainingAtStart: s.remainingAtStart + seconds,
+          extraSeconds: s.extraSeconds + seconds,
+        }));
       },
 
       completeFocusPeriod() {
@@ -139,6 +173,7 @@ export const useTimerStore = create<TimerState>()(
             running: false,
             startedAt: null,
             remainingAtStart: modeTotalSeconds(next, s.durations),
+            extraSeconds: 0,
             completedFocusCount: completed,
             pendingSave,
           };
@@ -160,6 +195,7 @@ export const useTimerStore = create<TimerState>()(
         completedFocusCount: s.completedFocusCount,
         skillId: s.skillId,
         intention: s.intention,
+        extraSeconds: s.extraSeconds,
         pendingSave: s.pendingSave,
       }),
     },

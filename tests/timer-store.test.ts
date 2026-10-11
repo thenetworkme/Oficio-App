@@ -13,6 +13,7 @@ describe("timer store", () => {
       completedFocusCount: 0,
       skillId: null,
       intention: "",
+      extraSeconds: 0,
       pendingSave: null,
     });
   });
@@ -65,5 +66,64 @@ describe("timer store", () => {
     expect(state.startedAt).toBeGreaterThanOrEqual(before);
     expect(state.remainingAtStart).toBe(777);
     expect(state.getRemainingSeconds(state.startedAt!)).toBe(777);
+  });
+
+  it("extend() adds seconds to the remaining time while paused", () => {
+    const { pause, extend } = useTimerStore.getState();
+    useTimerStore.setState({ remainingAtStart: 300 });
+    pause();
+
+    extend(120);
+
+    const state = useTimerStore.getState();
+    expect(state.remainingAtStart).toBe(420);
+    expect(state.extraSeconds).toBe(120);
+    expect(state.getRemainingSeconds()).toBe(420);
+  });
+
+  it("extend() adds seconds to the remaining time while running, without losing elapsed time", () => {
+    const { start, extend, getRemainingSeconds } = useTimerStore.getState();
+    useTimerStore.setState({ remainingAtStart: 1500 });
+    start();
+    const startedAt = useTimerStore.getState().startedAt!;
+
+    // 10 real seconds elapse before the extend() click.
+    const tPlus10 = startedAt + 10_000;
+    expect(getRemainingSeconds(tPlus10)).toBe(1490);
+
+    extend(300);
+    const state = useTimerStore.getState();
+    expect(state.extraSeconds).toBe(300);
+    // Elapsed time (10s) is still accounted for; only the extension is added.
+    expect(getRemainingSeconds(tPlus10)).toBe(1790);
+    expect(state.startedAt).toBe(startedAt);
+  });
+
+  it("extend() accumulates across multiple calls", () => {
+    const { extend } = useTimerStore.getState();
+    extend(300);
+    extend(120);
+    expect(useTimerStore.getState().extraSeconds).toBe(420);
+  });
+
+  it("resets extraSeconds when the period resets (skip/completeFocusPeriod/setMode/reset)", () => {
+    const { extend, skip, completeFocusPeriod, setMode, reset } = useTimerStore.getState();
+
+    extend(300);
+    expect(useTimerStore.getState().extraSeconds).toBe(300);
+    skip();
+    expect(useTimerStore.getState().extraSeconds).toBe(0);
+
+    extend(300);
+    completeFocusPeriod();
+    expect(useTimerStore.getState().extraSeconds).toBe(0);
+
+    extend(300);
+    setMode("short");
+    expect(useTimerStore.getState().extraSeconds).toBe(0);
+
+    extend(300);
+    reset();
+    expect(useTimerStore.getState().extraSeconds).toBe(0);
   });
 });
