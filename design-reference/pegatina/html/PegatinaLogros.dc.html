@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Pegatina — Logros</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF4D6}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px solid var(--ink,#111);outline-offset:3px}
+.bx{border:3px solid var(--bd,#111);border-radius:14px;box-shadow:6px 6px 0 var(--sh,#111)}
+.mono{font-family:'Space Mono',monospace}
+.lbl{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.02em}
+.h1{margin:0;font-size:84px;line-height:.95;font-weight:700;letter-spacing:-.05em}
+.h2{margin:0;font-size:38px;line-height:1.05;font-weight:700;letter-spacing:-.03em}
+.h3{margin:0;font-size:28px;line-height:1.1;font-weight:700;letter-spacing:-.03em}
+.chip{min-height:44px;padding:0 18px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700;font-size:15px;background:var(--card,#fff);color:var(--ink,#111)}
+.btn{min-height:56px;padding:0 28px;font-size:20px;font-weight:700;color:#111;display:inline-flex;align-items:center;justify-content:center}
+.in{min-height:48px;padding:0 14px;border:3px solid var(--bd,#111);border-radius:12px;font-size:16px;background:var(--card,#fff);color:var(--ink,#111);width:100%;box-sizing:border-box}
+.in::placeholder{color:#6b6b6b}
+.hov{transition:transform .12s,box-shadow .12s}
+.hov:hover{transform:translate(-2px,-2px) rotate(var(--r,0deg));box-shadow:9px 9px 0 var(--sh,#111)}
+.press:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--sh,#111)}
+@media (prefers-reduced-motion:reduce){.hov{transition:none}}
+@keyframes cf{0%{transform:translateY(-40px) rotate(0);opacity:1}100%{transform:translateY(520px) rotate(540deg);opacity:.9}}
+@keyframes pop{0%{transform:scale(.6) rotate(-6deg);opacity:0}100%{transform:scale(1) rotate(-2deg);opacity:1}}
+.cf{position:absolute;top:0;width:14px;height:14px;border:3px solid #111;animation:cf 2.6s linear infinite}
+.pop{animation:pop .35s cubic-bezier(.2,1.4,.4,1) both}
+@media (prefers-reduced-motion:reduce){.cf,.pop{animation:none}.cf{top:40%}}
+</style>
+</helmet>
+<div style="background:var(--bg,#FFF4D6);color:var(--ink,#111);font-family:'Space Grotesk',system-ui,sans-serif;font-size:16px;line-height:1.4;min-height:600px;padding:28px 48px 64px;box-sizing:border-box;display:flex;flex-direction:column;gap:32px;">
+<header style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+<a href="PegatinaPanel.dc.html" class="bx" style="background:var(--a1,#FFD84D);color:#111;padding:6px 18px;font-size:30px;font-weight:700;transform:rotate(-2deg);letter-spacing:-.02em">oficio!</a>
+<nav aria-label="Principal" style="display:flex;gap:8px;flex:1;flex-wrap:wrap"><a href="PegatinaPanel.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Hoy</a><a href="PegatinaTimer.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Tomate</a><a href="PegatinaStats.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Números</a><a href="PegatinaLogros.dc.html" aria-current="page" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;background:var(--ink,#111);color:var(--paper,#FFF4D6);font-weight:700">Logros</a><a href="PegatinaTienda.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Tienda</a><a href="PegatinaAvisos.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Avisos</a><a href="PegatinaAjustes.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Ajustes</a></nav>
+<a href="PegatinaAjustes.dc.html" aria-label="Perfil de Kobox" class="bx" style="background:var(--a3,#7BE0A4);color:#111;padding:6px 16px 6px 8px;min-height:44px;box-sizing:border-box;display:flex;align-items:center;gap:10px;font-weight:700"><span aria-hidden="true" style="width:32px;height:32px;border-radius:50%;background:#111;color:var(--a3,#7BE0A4);display:flex;align-items:center;justify-content:center">K</span>Kobox</a>
+<a href="PegatinaLogin.dc.html" aria-label="Cerrar sesión" class="bx press" style="width:50px;height:50px;background:var(--card,#fff);color:var(--ink,#111);display:flex;align-items:center;justify-content:center;padding:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></a>
+</header>
+
+<section style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap">
+<div style="display:flex;flex-direction:column;gap:12px"><h1 class="h1">Tus sellos<br>de oficio<span style="color:#FF8FB8;-webkit-text-stroke:3px #111">.</span></h1><p style="margin:0;font-size:20px;max-width:560px">Cada hito es un sello nuevo en tu álbum. {{summary}}</p></div>
+<div style="display:flex;gap:10px;flex-wrap:wrap" role="tablist"><sc-for list="{{tabs}}" as="t" hint-placeholder-count="3"><button type="button" role="tab" aria-selected="{{t.on}}" onClick="{{t.pick}}" class="bx press" style="min-height:48px;padding:0 20px;font-size:16px;font-weight:700;color:#111;background:{{t.bg}};box-shadow:{{t.sh}};transform:{{t.tr}}">{{t.label}}</button></sc-for></div>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:0;position:relative" aria-label="Línea de tiempo de hitos">
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="7">
+<div style="display:grid;grid-template-columns:1fr 64px 1fr;align-items:center;min-height:150px">
+<div style="grid-column:{{r.colL}};grid-row:1;display:flex;justify-content:flex-end;padding-right:24px">{{r.emptyL}}</div>
+<div style="grid-column:2;grid-row:1;display:flex;flex-direction:column;align-items:center;align-self:stretch"><div style="flex:1;width:0;border-left:4px dashed #111;visibility:{{r.upVis}}"></div><span aria-hidden="true" style="width:38px;height:38px;border:3px solid #111;border-radius:50%;background:{{r.dot}};color:#FFF4D6;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px">{{r.mark}}</span><div style="flex:1;width:0;border-left:4px dashed #111;visibility:{{r.downVis}}"></div></div>
+<article class="bx" style="grid-column:{{r.col}};grid-row:1;background:{{r.bg}};border-style:{{r.bstyle}};padding:20px 24px;transform:rotate({{r.rot}});display:flex;flex-direction:column;gap:6px;position:relative;color:#111;margin:14px 0;opacity:{{r.op}}">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px"><span style="font-size:52px;font-weight:700;letter-spacing:-.05em;line-height:1">{{r.h}} <span style="font-size:22px">h</span></span><span class="lbl" style="background:#111;color:{{r.bg}};padding:3px 10px;border-radius:999px">{{r.rank}}</span></div>
+<span style="font-weight:700">{{r.note}}</span>
+<div role="progressbar" aria-label="Avance al hito" aria-valuenow="{{r.pct}}" aria-valuemin="0" aria-valuemax="100" style="height:16px;background:#fff;border:3px solid #111;border-radius:999px;overflow:hidden;visibility:{{r.barVis}}"><div style="width:{{r.pct}}%;height:100%;background:#111"></div></div>
+</article>
+</div>
+</sc-for>
+</section>
+
+<section class="bx" style="background:#7CC4FF;padding:24px 30px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;color:#111">
+<div style="flex:1 1 360px"><h2 class="h3">¿Cómo se siente cruzar un hito?</h2><p style="margin:6px 0 0;font-weight:500">Cuando llegues a uno, te lo celebramos así.</p></div>
+<button type="button" onClick="{{open}}" class="bx press btn" style="background:#FFD84D">Ver celebración de 1.000 h</button>
+</section>
+
+<sc-if value="{{show}}" hint-placeholder-val="{{false}}">
+<div role="dialog" aria-modal="true" aria-label="Hito alcanzado" style="position:fixed;inset:0;background:rgba(17,17,17,.7);display:flex;align-items:center;justify-content:center;z-index:50;padding:24px">
+<div class="bx" style="position:relative;width:min(560px,100%);background:#FFF4D6;padding:48px 40px 36px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;overflow:hidden;color:#111">
+<div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none"><sc-for list="{{confetti}}" as="c" hint-placeholder-count="22"><span class="cf" style="left:{{c.x}}%;background:{{c.bg}};animation-delay:{{c.d}}s;border-radius:{{c.r}}"></span></sc-for></div>
+<span class="lbl">¡Hito desbloqueado!</span>
+<div class="pop bx" style="background:#FFD84D;padding:16px 34px;font-size:76px;font-weight:700;letter-spacing:-.05em;line-height:1;transform:rotate(-2deg)">1.000 h</div>
+<p style="margin:8px 0 0;font-size:22px;font-weight:700">Sello de Artesano en Programación.</p>
+<p style="margin:0;font-weight:500">Solo 1 de cada 10 personas que empiezan llega hasta aquí. Siguiente parada: 5.000 h.</p>
+<button type="button" onClick="{{close}}" class="bx press btn" style="background:#FF8FB8;margin-top:10px">Seguir subiendo</button>
+</div>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":600}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const st = this.state || {};
+    const i = st.skill ?? 0;
+    const sk = [
+      { name: 'Programación', h: 1284, dates: ['mar 2025', 'mar 2025', 'may 2025', 'nov 2025', 'abr 2026'] },
+      { name: 'Inglés', h: 312, dates: ['jun 2025', 'jun 2025', 'sep 2025'] },
+      { name: 'Guitarra', h: 96, dates: ['ene 2026', 'feb 2026'] }
+    ];
+    const cur = sk[i];
+    const marks = [1, 10, 100, 500, 1000, 5000, 10000];
+    const ranks = ['Primer paso', 'Hábito', 'Aprendiz', 'Oficial', 'Artesano', 'Experto', 'Maestro'];
+    const colors = ['#FFD84D', '#7BE0A4', '#FF8FB8', '#7CC4FF', '#FF9F5A', '#FFD84D', '#7BE0A4'];
+    const nf = (v) => String(v).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const nextIdx = marks.findIndex((m) => cur.h < m);
+    const rows = marks.map((m, k) => {
+      const reached = cur.h >= m;
+      const isNext = k === nextIdx;
+      const prev = k === 0 ? 0 : marks[k - 1];
+      const pct = reached ? 100 : isNext ? Math.max(2, Math.round(((cur.h - prev) / (m - prev)) * 100)) : 0;
+      const left = k % 2 === 0;
+      return {
+        h: nf(m), rank: ranks[k],
+        note: reached ? 'Alcanzado en ' + cur.dates[k] : isNext ? 'Te faltan ' + nf(m - cur.h) + ' h' : 'Aún bloqueado',
+        bg: reached ? colors[k] : isNext ? '#fff' : '#E9E4D4',
+        bstyle: reached || isNext ? 'solid' : 'dashed',
+        op: reached || isNext ? 1 : 0.7,
+        rot: (left ? -1 : 1) * (0.6 + (k % 3) * 0.4) + 'deg',
+        dot: reached ? '#111' : '#fff', mark: reached ? '✓' : '',
+        col: left ? '1' : '3', colL: left ? '3' : '1', emptyL: '',
+        upVis: k === 0 ? 'hidden' : 'visible', downVis: k === marks.length - 1 ? 'hidden' : 'visible',
+        pct, barVis: isNext ? 'visible' : 'hidden'
+      };
+    });
+    const confetti = Array.from({ length: 22 }, (_, n) => ({ x: (n * 37) % 96 + 2, d: -((n * 0.27) % 2.6).toFixed(2), bg: ['#FFD84D', '#FF8FB8', '#7BE0A4', '#7CC4FF', '#FF9F5A'][n % 5], r: n % 3 === 0 ? '50%' : '2px' }));
+    const reachedN = marks.filter((m) => cur.h >= m).length;
+    return {
+      rows, confetti,
+      summary: 'En ' + cur.name + ' llevas ' + reachedN + ' de 7.',
+      tabs: sk.map((s, j) => ({ label: s.name, on: i === j, bg: i === j ? '#FFD84D' : '#fff', sh: i === j ? '2px 2px 0 #111' : '6px 6px 0 #111', tr: i === j ? 'translate(4px,4px)' : 'none', pick: () => this.setState({ skill: j }) })),
+      show: !!st.show,
+      open: () => this.setState({ show: true }),
+      close: () => this.setState({ show: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

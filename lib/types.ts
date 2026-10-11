@@ -5,8 +5,13 @@ export interface Profile {
   displayName: string | null;
   timezone: string;
   themeId: string;
-  accentIdx: number;
+  /** Index into ACCENT_SWATCHES (lib/theme/tokens.ts), or null for the theme's own a1. */
+  accentIdx: number | null;
   followSystemTheme: boolean;
+  /** Epoch ms when the user finished the first-run onboarding flow (/onboarding).
+   * Null/undefined means it hasn't run yet — used to route new sign-ups there
+   * once, right after account creation, and skip it for returning users. */
+  onboardingCompletedAt: number | null;
   pomodoroFocusMin: number;
   pomodoroShortMin: number;
   pomodoroLongMin: number;
@@ -17,9 +22,10 @@ export interface Profile {
 export const DEFAULT_PROFILE: Omit<Profile, "uid" | "createdAt"> = {
   displayName: null,
   timezone: "America/Santo_Domingo",
-  themeId: "oficio",
-  accentIdx: 0,
+  themeId: "pegatina",
+  accentIdx: null,
   followSystemTheme: false,
+  onboardingCompletedAt: null,
   pomodoroFocusMin: 25,
   pomodoroShortMin: 5,
   pomodoroLongMin: 15,
@@ -93,3 +99,48 @@ export interface Achievement {
 }
 
 export const DEFAULT_SKILL_COLORS = ["accent", "a2", "a3"] as const;
+
+// ---------------------------------------------------------------------------
+// Economy / Shop (Pegatina gamification layer — see lib/economy.ts, lib/shop.ts)
+// ---------------------------------------------------------------------------
+
+/** `pets/{uid}`: the user's mascot (Tomi placeholder). Coins is a denormalized
+ * running balance kept in sync with coinLedger via a transaction on every
+ * write (see lib/firestore/economy.ts) — never summed from the ledger on read. */
+export interface Pet {
+  uid: string;
+  name: string;
+  xp: number;
+  coins: number;
+  createdAt: number;
+}
+
+export type ShopCategory = "hat" | "cape" | "acc" | "bg";
+
+/** `inventory/{id}`: one doc per item the user owns. */
+export interface InventoryItem {
+  id: string;
+  userId: string;
+  itemId: string;
+  acquiredAt: number;
+}
+
+/** `equipped/{uid}`: what's currently worn, one slot per category. */
+export interface Equipped {
+  uid: string;
+  hat: string | null;
+  cape: string | null;
+  acc: string | null;
+  bg: string;
+}
+
+export const DEFAULT_EQUIPPED: Omit<Equipped, "uid"> = { hat: "cap", cape: null, acc: null, bg: "cream" };
+
+/** `coinLedger/{id}`: append-only audit trail of every coin change. */
+export interface CoinLedgerEntry {
+  id: string;
+  userId: string;
+  delta: number;
+  reason: string;
+  createdAt: number;
+}

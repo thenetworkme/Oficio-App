@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Pegatina — Panel</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF4D6}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px solid var(--ink,#111);outline-offset:3px}
+.bx{border:3px solid var(--bd,#111);border-radius:14px;box-shadow:6px 6px 0 var(--sh,#111)}
+.mono{font-family:'Space Mono',monospace}
+.lbl{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.02em}
+.h1{margin:0;font-size:84px;line-height:.95;font-weight:700;letter-spacing:-.05em}
+.h2{margin:0;font-size:38px;line-height:1.05;font-weight:700;letter-spacing:-.03em}
+.h3{margin:0;font-size:28px;line-height:1.1;font-weight:700;letter-spacing:-.03em}
+.chip{min-height:44px;padding:0 18px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700;font-size:15px;background:var(--card,#fff);color:var(--ink,#111)}
+.btn{min-height:56px;padding:0 28px;font-size:20px;font-weight:700;color:#111;display:inline-flex;align-items:center;justify-content:center}
+.in{min-height:48px;padding:0 14px;border:3px solid var(--bd,#111);border-radius:12px;font-size:16px;background:var(--card,#fff);color:var(--ink,#111);width:100%;box-sizing:border-box}
+.in::placeholder{color:#6b6b6b}
+.hov{transition:transform .12s,box-shadow .12s}
+.hov:hover{transform:translate(-2px,-2px) rotate(var(--r,0deg));box-shadow:9px 9px 0 var(--sh,#111)}
+.press:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--sh,#111)}
+@media (prefers-reduced-motion:reduce){.hov{transition:none}}
+</style>
+</helmet>
+<div style="background:#FFF4D6;color:#111;font-family:'Space Grotesk',system-ui,sans-serif;font-size:16px;line-height:1.4;min-height:600px;padding:28px 48px 56px;box-sizing:border-box;display:flex;flex-direction:column;gap:32px">
+
+<header style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+<a href="PegatinaPanel.dc.html" class="bx" style="background:var(--a1,#FFD84D);color:#111;padding:6px 18px;font-size:30px;font-weight:700;transform:rotate(-2deg);letter-spacing:-.02em">oficio!</a>
+<nav aria-label="Principal" style="display:flex;gap:8px;flex:1;flex-wrap:wrap"><a href="PegatinaPanel.dc.html" aria-current="page" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;background:var(--ink,#111);color:var(--paper,#FFF4D6);font-weight:700">Hoy</a><a href="PegatinaTimer.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Tomate</a><a href="PegatinaStats.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Números</a><a href="PegatinaLogros.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Logros</a><a href="PegatinaTienda.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Tienda</a><a href="PegatinaAvisos.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Avisos</a><a href="PegatinaAjustes.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Ajustes</a></nav>
+<a href="PegatinaAjustes.dc.html" aria-label="Perfil de Kobox" class="bx" style="background:var(--a3,#7BE0A4);color:#111;padding:6px 16px 6px 8px;min-height:44px;box-sizing:border-box;display:flex;align-items:center;gap:10px;font-weight:700"><span aria-hidden="true" style="width:32px;height:32px;border-radius:50%;background:#111;color:var(--a3,#7BE0A4);display:flex;align-items:center;justify-content:center">K</span>Kobox</a>
+<a href="PegatinaLogin.dc.html" aria-label="Cerrar sesión" class="bx press" style="width:50px;height:50px;background:var(--card,#fff);color:var(--ink,#111);display:flex;align-items:center;justify-content:center;padding:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></a>
+</header>
+
+<section style="display:flex;gap:32px;flex-wrap:wrap;align-items:stretch">
+<div style="flex:2 1 500px;display:flex;flex-direction:column;gap:20px;justify-content:center;position:relative;padding:8px 0">
+<h1 style="margin:0;font-size:104px;line-height:.92;font-weight:700;letter-spacing:-.05em">12 días<br>seguidos<span style="color:#FF8FB8;-webkit-text-stroke:3px #111">.</span></h1>
+<p style="margin:0;font-size:22px;max-width:520px">Hoy llevas <b style="background:#FFD84D;padding:0 6px">1 h 35 min</b>. Faltan 55 para no romper la racha.</p>
+<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px">
+<a href="PegatinaTimer.dc.html" class="bx hov" style="--r:-1deg;min-height:60px;padding:0 30px;display:flex;align-items:center;background:#FF8FB8;font-size:22px;font-weight:700">Empezar un tomate →</a>
+<a href="PegatinaRegistro.dc.html" class="bx hov" style="min-height:60px;padding:0 24px;display:flex;align-items:center;background:#fff;font-size:18px;font-weight:700">+ Horas a mano</a>
+</div>
+</div>
+<a href="PegatinaTienda.dc.html" aria-label="Ir a la tienda de Tomi" class="bx hov" style="--r:-1.5deg;flex:1 1 250px;max-width:300px;background:#fff;padding:14px;display:flex;flex-direction:column;gap:10px;align-self:center;color:#111;transform:rotate(-1.5deg)"><div style="position:relative"><svg viewBox="0 0 200 200" width="230" height="230" role="img" aria-label="Tomi, tu mascota" class="" style="display:block;max-width:100%;height:auto">
+<g stroke="#111" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+<rect x="4" y="4" width="192" height="192" rx="30" fill="{{mBg}}"/>
+<ellipse cx="100" cy="184" rx="50" ry="8" fill="rgba(17,17,17,.18)" stroke="none"/>
+<g style="display:{{dCred}}"><path d="M50 108 L22 188 L178 188 L150 108 Z" fill="#FF4D4D"/></g>
+<g style="display:{{dCstar}}"><path d="M50 108 L22 188 L178 188 L150 108 Z" fill="#2B3A8C"/><g fill="#FFD84D" stroke="none"><circle cx="40" cy="170" r="5"/><circle cx="160" cy="165" r="5"/><circle cx="70" cy="182" r="4"/><circle cx="132" cy="180" r="4"/></g></g>
+<g style="display:{{dCmaster}}"><path d="M50 108 L22 188 L178 188 L150 108 Z" fill="#FFD84D"/><path d="M30 176 L170 176" stroke="#111" stroke-width="5" fill="none"/><circle cx="100" cy="176" r="6" fill="#FF8FB8"/></g>
+<g style="display:{{dBuho}}"><path d="M52 84 L56 50 L82 70 Z" fill="{{mCol}}"/><path d="M148 84 L144 50 L118 70 Z" fill="{{mCol}}"/></g>
+<g style="display:{{dGato}}"><path d="M48 92 L54 46 L88 68 Z" fill="{{mCol}}"/><path d="M152 92 L146 46 L112 68 Z" fill="{{mCol}}"/></g>
+<ellipse cx="100" cy="118" rx="60" ry="56" fill="{{mCol}}"/>
+<g style="display:{{dLeaf}}"><path d="M100 64 C88 52 70 54 62 60 C74 70 88 72 100 64Z M100 64 C112 52 130 54 138 60 C126 70 112 72 100 64Z M100 64 L100 50" fill="#7BE0A4"/></g>
+<g stroke="none"><circle cx="64" cy="130" r="9" fill="#fff" opacity=".45"/><circle cx="136" cy="130" r="9" fill="#fff" opacity=".45"/></g>
+<g stroke-width="4"><circle cx="78" cy="108" r="12" fill="#fff"/><circle cx="122" cy="108" r="12" fill="#fff"/></g>
+<g fill="#111" stroke="none"><circle cx="80" cy="109" r="5.5"/><circle cx="120" cy="109" r="5.5"/></g>
+<g style="display:{{dSmile}}"><path d="M86 130 Q100 144 114 130" fill="none"/></g>
+<g style="display:{{dOpen}}"><path d="M84 128 Q100 158 116 128 Z" fill="#111"/><path d="M92 143 Q100 150 108 143 Q100 138 92 143Z" fill="#FF8FB8" stroke="none"/></g>
+<g style="display:{{dBeak}}"><path d="M92 124 L108 124 L100 140 Z" fill="#FF9F5A"/></g>
+<g style="display:{{dGato}}"><path d="M96 122 L104 122 L100 127 Z" fill="#FF8FB8" stroke-width="3"/><path d="M52 124 L30 120 M52 132 L30 138 M148 124 L170 120 M148 132 L170 138" stroke-width="3" fill="none"/></g>
+<g style="display:{{dAglass}}" stroke-width="4"><circle cx="78" cy="108" r="17" fill="rgba(124,196,255,.35)"/><circle cx="122" cy="108" r="17" fill="rgba(124,196,255,.35)"/><path d="M95 108 L105 108" fill="none"/></g>
+<g style="display:{{dAmono}}" stroke-width="4"><circle cx="122" cy="108" r="18" fill="rgba(255,255,255,.3)"/><path d="M138 120 Q150 150 140 180" fill="none" stroke-width="3"/></g>
+<g style="display:{{dAscarf}}"><path d="M54 160 Q100 186 146 160 L150 176 Q100 202 50 176 Z" fill="#FF4D4D"/><path d="M126 182 L142 200 L120 198 Z" fill="#FF4D4D"/></g>
+<g style="display:{{dAbow}}"><path d="M100 170 L74 156 L74 184 Z" fill="#FF8FB8"/><path d="M100 170 L126 156 L126 184 Z" fill="#FF8FB8"/><circle cx="100" cy="170" r="8" fill="#FFD84D"/></g>
+<g style="display:{{dHcap}}"><path d="M58 76 Q100 24 142 76 Z" fill="#7CC4FF"/><path d="M110 74 Q152 66 174 82 Q164 94 112 86 Z" fill="#4AA3E8"/><circle cx="100" cy="42" r="5" fill="#FFD84D" stroke-width="3"/></g>
+<g style="display:{{dHtop}}"><ellipse cx="100" cy="74" rx="48" ry="9" fill="#2B2B2B"/><path d="M68 74 L70 24 Q100 16 130 24 L132 74 Z" fill="#2B2B2B"/><rect x="69" y="52" width="62" height="12" fill="#FFD84D" stroke-width="3"/></g>
+<g style="display:{{dHcrown}}"><path d="M62 78 L66 38 L86 58 L100 32 L114 58 L134 38 L138 78 Z" fill="#FFD84D"/><circle cx="100" cy="62" r="5" fill="#FF8FB8" stroke-width="3"/></g>
+<g style="display:{{dHchef}}"><circle cx="78" cy="48" r="20" fill="#fff"/><circle cx="100" cy="38" r="22" fill="#fff"/><circle cx="122" cy="48" r="20" fill="#fff"/><rect x="72" y="62" width="56" height="16" rx="4" fill="#fff"/></g>
+<g style="display:{{dHwiz}}"><path d="M66 78 L100 8 L134 78 Z" fill="#8E7CFF"/><ellipse cx="100" cy="78" rx="54" ry="10" fill="#8E7CFF"/><g fill="#FFD84D" stroke="none"><circle cx="96" cy="48" r="4"/><circle cx="108" cy="62" r="3"/><circle cx="88" cy="66" r="3"/></g></g>
+</g></svg><div class="bx" style="position:absolute;right:-14px;top:-12px;background:#FF8FB8;padding:6px 12px;transform:rotate(6deg);font-weight:700;font-size:14px;box-shadow:3px 3px 0 #111">¡Racha 12!</div></div><div style="display:flex;justify-content:space-between;font-weight:700"><span>Tomi · Nv. 14</span><span class="mono" style="font-size:13px">340 $ →</span></div></a>
+<div class="bx" style="flex:1 1 300px;background:#7CC4FF;padding:26px;display:flex;flex-direction:column;gap:12px;transform:rotate(1.5deg)">
+<span class="mono" style="font-weight:700;text-transform:uppercase;font-size:13px">Esta semana</span>
+<div style="font-size:72px;font-weight:700;line-height:1;letter-spacing:-.04em">9,9<span style="font-size:28px"> / 15 h</span></div>
+<div style="display:flex;gap:8px;align-items:flex-end;height:130px" aria-label="Horas por día">
+<sc-for list="{{week}}" as="d" hint-placeholder-count="7"><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end"><div style="width:100%;height:{{d.h}}px;background:{{d.bg}};border:3px solid #111;border-radius:6px"></div><span class="mono" style="font-size:12px;font-weight:700">{{d.l}}</span></div></sc-for>
+</div>
+</div>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:18px">
+<div style="display:flex;align-items:baseline;gap:14px"><h2 style="margin:0;font-size:38px;letter-spacing:-.03em">Tu álbum de sellos</h2><span class="mono" style="font-size:14px">1 sello = 100 horas</span></div>
+<div style="display:flex;gap:28px;flex-wrap:wrap">
+<sc-for list="{{skills}}" as="s" hint-placeholder-count="3">
+<a href="PegatinaHabilidad.dc.html" class="bx hov" style="--r:{{s.rot}};flex:1 1 250px;background:{{s.color}};padding:24px;display:flex;flex-direction:column;gap:14px;transform:rotate({{s.rot}})">
+<div style="display:flex;justify-content:space-between;align-items:flex-start"><h3 style="margin:0;font-size:26px;letter-spacing:-.03em">{{s.name}}</h3><span class="mono" style="background:#111;color:{{s.color}};padding:2px 10px;border-radius:999px;font-weight:700;font-size:13px;white-space:nowrap;align-self:flex-start">{{s.tag}}</span></div>
+<div style="font-size:64px;font-weight:700;line-height:1;letter-spacing:-.04em">{{s.hours}}<span style="font-size:24px"> h</span></div>
+<div aria-hidden="true" style="display:grid;grid-template-columns:repeat(20,1fr);gap:3px"><sc-for list="{{s.cells}}" as="c" hint-placeholder-count="40"><span style="aspect-ratio:1;background:{{c.bg}};border:2px solid #111;border-radius:2px"></span></sc-for></div>
+<span class="mono" style="font-size:13px;font-weight:700">{{s.stamps}} de 100 sellos · faltan {{s.left}} h</span>
+</a>
+</sc-for>
+<a href="PegatinaCrear.dc.html" class="bx hov" style="--r:1deg;flex:0 0 190px;background:#fff;border-style:dashed;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;font-weight:700;font-size:22px"><span aria-hidden="true" style="font-size:56px;line-height:1">+</span>Nueva habilidad</a>
+</div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":1000}}'>
+class Component extends DCLogic {
+  mv(o) {
+    const sp = o.sp || 'tomate';
+    const sh = (c) => (c ? 'inline' : 'none');
+    return {
+      mBg: o.bg || '#FFF4D6', mCol: o.col || '#FF8FB8',
+      dTomate: sh(sp === 'tomate'), dBuho: sh(sp === 'buho'), dGato: sh(sp === 'gato'),
+      dLeaf: sh(sp === 'tomate' && !o.hat), dBeak: sh(sp === 'buho'),
+      dSmile: sh(sp !== 'buho' && !o.open), dOpen: sh(sp !== 'buho' && !!o.open),
+      dHcap: sh(o.hat === 'cap'), dHtop: sh(o.hat === 'top'), dHcrown: sh(o.hat === 'crown'), dHchef: sh(o.hat === 'chef'), dHwiz: sh(o.hat === 'wiz'),
+      dCred: sh(o.cape === 'red'), dCstar: sh(o.cape === 'star'), dCmaster: sh(o.cape === 'master'),
+      dAglass: sh(o.acc === 'glass'), dAmono: sh(o.acc === 'mono'), dAscarf: sh(o.acc === 'scarf'), dAbow: sh(o.acc === 'bow')
+    };
+  }
+  renderVals() {
+    const days = [['L', 1.5], ['M', 2], ['X', 1], ['J', 2.5], ['V', 0], ['S', 1.4], ['D', 1.5]];
+    const week = days.map(([l, v], i) => ({ l, h: Math.max(6, v * 44), bg: i === 6 ? '#FFD84D' : '#fff' }));
+    const mk = (hours) => Array.from({ length: 100 }, (_, i) => ({ bg: i < Math.floor(hours / 100) ? '#111' : (i === Math.floor(hours / 100) ? 'rgba(17,17,17,.35)' : '#fff') }));
+    const skills = [
+      { name: 'Programación', hours: '1.284', n: 1284, color: '#FFD84D', rot: '-1.2deg', tag: 'Nv. 12' },
+      { name: 'Inglés', hours: '312', n: 312, color: '#7BE0A4', rot: '1deg', tag: 'Nv. 7' },
+      { name: 'Guitarra', hours: '96', n: 96, color: '#FF9F5A', rot: '-0.6deg', tag: 'Nv. 3' }
+    ].map((s) => ({ ...s, cells: mk(s.n), stamps: Math.floor(s.n / 100), left: String(10000 - s.n).replace(/\B(?=(\d{3})+$)/g, ".") }));
+    return { ...this.mv({ sp: 'tomate', col: '#FF8FB8', hat: 'cap', acc: 'bow' }), week, skills };
+  }
+}
+</script>
+</body>
+</html>

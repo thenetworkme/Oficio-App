@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Pegatina — Ajustes</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF4D6}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px solid var(--ink,#111);outline-offset:3px}
+.bx{border:3px solid var(--bd,#111);border-radius:14px;box-shadow:6px 6px 0 var(--sh,#111)}
+.mono{font-family:'Space Mono',monospace}
+.lbl{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.02em}
+.h1{margin:0;font-size:84px;line-height:.95;font-weight:700;letter-spacing:-.05em}
+.h2{margin:0;font-size:38px;line-height:1.05;font-weight:700;letter-spacing:-.03em}
+.h3{margin:0;font-size:28px;line-height:1.1;font-weight:700;letter-spacing:-.03em}
+.chip{min-height:44px;padding:0 18px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700;font-size:15px;background:var(--card,#fff);color:var(--ink,#111)}
+.btn{min-height:56px;padding:0 28px;font-size:20px;font-weight:700;color:#111;display:inline-flex;align-items:center;justify-content:center}
+.in{min-height:48px;padding:0 14px;border:3px solid var(--bd,#111);border-radius:12px;font-size:16px;background:var(--card,#fff);color:var(--ink,#111);width:100%;box-sizing:border-box}
+.in::placeholder{color:#6b6b6b}
+.hov{transition:transform .12s,box-shadow .12s}
+.hov:hover{transform:translate(-2px,-2px) rotate(var(--r,0deg));box-shadow:9px 9px 0 var(--sh,#111)}
+.press:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--sh,#111)}
+@media (prefers-reduced-motion:reduce){.hov{transition:none}}
+</style>
+</helmet>
+<div style="background:var(--bg,#FFF4D6);color:var(--ink,#111);font-family:'Space Grotesk',system-ui,sans-serif;font-size:16px;line-height:1.4;min-height:600px;padding:28px 48px 64px;box-sizing:border-box;display:flex;flex-direction:column;gap:32px;min-height:100vh;{{vars}}">
+<header style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+<a href="PegatinaPanel.dc.html" class="bx" style="background:var(--a1,#FFD84D);color:#111;padding:6px 18px;font-size:30px;font-weight:700;transform:rotate(-2deg);letter-spacing:-.02em">oficio!</a>
+<nav aria-label="Principal" style="display:flex;gap:8px;flex:1;flex-wrap:wrap"><a href="PegatinaPanel.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Hoy</a><a href="PegatinaTimer.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Tomate</a><a href="PegatinaStats.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Números</a><a href="PegatinaLogros.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Logros</a><a href="PegatinaTienda.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Tienda</a><a href="PegatinaAvisos.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Avisos</a><a href="PegatinaAjustes.dc.html" aria-current="page" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;background:var(--ink,#111);color:var(--paper,#FFF4D6);font-weight:700">Ajustes</a></nav>
+<a href="PegatinaAjustes.dc.html" aria-label="Perfil de Kobox" class="bx" style="background:var(--a3,#7BE0A4);color:#111;padding:6px 16px 6px 8px;min-height:44px;box-sizing:border-box;display:flex;align-items:center;gap:10px;font-weight:700"><span aria-hidden="true" style="width:32px;height:32px;border-radius:50%;background:#111;color:var(--a3,#7BE0A4);display:flex;align-items:center;justify-content:center">K</span>Kobox</a>
+<a href="PegatinaLogin.dc.html" aria-label="Cerrar sesión" class="bx press" style="width:50px;height:50px;background:var(--card,#fff);color:var(--ink,#111);display:flex;align-items:center;justify-content:center;padding:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></a>
+</header>
+
+<section style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap">
+<h1 class="h1">Ajustes<span style="color:var(--a2);-webkit-text-stroke:3px var(--bd)">.</span></h1>
+<div style="display:flex;gap:10px" role="tablist">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="2"><button type="button" role="tab" aria-selected="{{t.on}}" onClick="{{t.pick}}" class="bx press" style="min-height:52px;padding:0 24px;font-size:18px;font-weight:700;color:#111;background:{{t.bg}};box-shadow:{{t.sh}};transform:{{t.tr}}">{{t.label}}</button></sc-for>
+</div>
+</section>
+
+<sc-if value="{{perfil}}" hint-placeholder-val="{{true}}">
+<div style="display:flex;flex-direction:column;gap:32px">
+<section style="display:flex;gap:28px;flex-wrap:wrap;align-items:stretch">
+<article class="bx" style="flex:2 1 560px;background:var(--a1);color:#111;padding:28px 30px;display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+<span aria-hidden="true" style="width:104px;height:104px;border-radius:50%;border:3px solid #111;background:#111;color:var(--a1);display:flex;align-items:center;justify-content:center;font-size:56px;font-weight:700">K</span>
+<div><div style="font-size:48px;font-weight:700;letter-spacing:-.04em;line-height:1">{{name}}</div><div class="mono" style="margin-top:6px">tu@correo.com</div><div style="font-weight:500">Miembro desde marzo de 2025</div></div>
+</article>
+<div style="flex:1 1 340px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+<div class="bx" style="background:var(--a2);color:#111;padding:14px;transform:rotate(-1deg)"><div style="font-size:30px;font-weight:700;letter-spacing:-.04em">1.692</div><span class="lbl">horas</span></div>
+<div class="bx" style="background:var(--a3);color:#111;padding:14px;transform:rotate(1deg)"><div style="font-size:30px;font-weight:700;letter-spacing:-.04em">3</div><span class="lbl">habilidades</span></div>
+<div class="bx" style="background:var(--card);color:var(--ink);padding:14px;transform:rotate(-.6deg)"><div style="font-size:30px;font-weight:700;letter-spacing:-.04em">31</div><span class="lbl">mejor racha</span></div>
+</div>
+</section>
+
+<section style="display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start">
+<article class="bx" style="flex:1 1 520px;background:var(--card);padding:28px;display:flex;flex-direction:column;gap:20px">
+<h2 class="h3">Datos personales</h2>
+<div style="display:flex;flex-direction:column;gap:8px"><label class="lbl" for="pn">Nombre</label><input id="pn" type="text" class="in" value="{{name}}" onChange="{{setName}}"></div>
+<div style="display:flex;flex-direction:column;gap:8px"><label class="lbl" for="pe">Correo</label><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><input id="pe" type="email" class="in" value="tu@correo.com" readonly style="flex:1 1 240px;width:auto;opacity:.75"><span class="lbl" style="background:var(--a3);color:#111;border:3px solid var(--bd);border-radius:999px;padding:6px 12px">Verificado</span></div></div>
+<div style="display:flex;flex-direction:column;gap:8px"><span class="lbl">Zona horaria</span><div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{zones}}" as="z" hint-placeholder-count="3"><button type="button" aria-pressed="{{z.on}}" onClick="{{z.pick}}" class="chip" style="background:{{z.bg}};color:{{z.fg}}">{{z.label}}</button></sc-for></div></div>
+<div style="display:flex;flex-direction:column;gap:8px"><span class="lbl">Idioma</span><div style="display:flex;gap:8px"><sc-for list="{{langs}}" as="z" hint-placeholder-count="2"><button type="button" aria-pressed="{{z.on}}" onClick="{{z.pick}}" class="chip" style="background:{{z.bg}};color:{{z.fg}}">{{z.label}}</button></sc-for></div></div>
+</article>
+<article class="bx" style="flex:1 1 520px;background:var(--card);padding:28px;display:flex;flex-direction:column;gap:20px">
+<h2 class="h3">Práctica</h2>
+<div style="display:flex;flex-direction:column;gap:8px"><span class="lbl">Mínimo diario para la racha</span><div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{mins}}" as="z" hint-placeholder-count="5"><button type="button" aria-pressed="{{z.on}}" onClick="{{z.pick}}" class="chip" style="background:{{z.bg}};color:{{z.fg}}">{{z.label}}</button></sc-for></div></div>
+<sc-for list="{{steppers}}" as="p" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;gap:14px"><span style="flex:1;font-weight:700">{{p.label}}</span>
+<button type="button" aria-label="Restar a {{p.label}}" onClick="{{p.minus}}" class="bx press" style="width:44px;height:44px;font-size:24px;font-weight:700;padding:0;background:var(--card);color:var(--ink)">−</button>
+<span class="mono" style="font-size:22px;font-weight:700;min-width:100px;text-align:center">{{p.value}} min</span>
+<button type="button" aria-label="Sumar a {{p.label}}" onClick="{{p.plus}}" class="bx press" style="width:44px;height:44px;font-size:24px;font-weight:700;padding:0;background:var(--card);color:var(--ink)">+</button></div>
+</sc-for>
+<button type="button" onClick="{{save}}" class="bx press btn" style="background:var(--a1);margin-top:6px">{{saveText}}</button>
+</article>
+</section>
+
+<section style="display:flex;gap:28px;flex-wrap:wrap;align-items:stretch">
+<article class="bx" style="flex:1 1 520px;background:var(--card);padding:28px;display:flex;flex-direction:column;gap:14px">
+<h2 class="h3">Cuenta</h2>
+<button type="button" class="bx press" style="min-height:52px;text-align:left;padding:0 18px;font-size:17px;font-weight:700;background:var(--card);color:var(--ink)">Cambiar contraseña</button>
+<button type="button" class="bx press" style="min-height:52px;text-align:left;padding:0 18px;font-size:17px;font-weight:700;background:var(--card);color:var(--ink)">Exportar mis datos (CSV)</button>
+<button type="button" class="bx press" style="min-height:52px;text-align:left;padding:0 18px;font-size:17px;font-weight:700;background:var(--a1);color:#111">Cerrar sesión</button>
+</article>
+<article class="bx" style="flex:1 1 520px;background:var(--card);border-color:var(--danger);box-shadow:6px 6px 0 var(--danger);padding:28px;display:flex;flex-direction:column;gap:14px">
+<h2 class="h3" style="color:var(--danger)">Zona de riesgo</h2>
+<p style="margin:0;font-weight:500">Eliminar tu cuenta borra tus 1.692 horas, tus sesiones y tus rachas. No se puede deshacer.</p>
+<sc-if value="{{notAsking}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{ask}}" class="press" style="min-height:52px;padding:0 20px;font-size:17px;font-weight:700;background:transparent;color:var(--danger);border:3px solid var(--danger);border-radius:14px;align-self:flex-start">Eliminar cuenta</button></sc-if>
+<sc-if value="{{asking}}" hint-placeholder-val="{{false}}"><div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><span style="font-weight:700">¿Seguro?</span><button type="button" class="press" style="min-height:48px;padding:0 18px;font-weight:700;font-size:16px;background:var(--danger);color:#111;border:3px solid var(--danger);border-radius:14px">Sí, eliminar todo</button><button type="button" onClick="{{cancelAsk}}" class="chip">Cancelar</button></div></sc-if>
+</article>
+</section>
+</div>
+</sc-if>
+
+<sc-if value="{{apariencia}}" hint-placeholder-val="{{false}}">
+<div style="display:flex;flex-direction:column;gap:32px">
+<section style="display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start">
+<div style="flex:2 1 600px;display:flex;flex-direction:column;gap:28px">
+<div style="display:flex;flex-direction:column;gap:14px"><h2 class="h3">Catppuccin</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px"><sc-for list="{{cat}}" as="t" hint-placeholder-count="4"><button type="button" aria-pressed="{{t.on}}" onClick="{{t.pick}}" style="text-align:left;padding:16px 18px;border:3px solid {{t.bd}};border-radius:14px;background:{{t.bg}};color:{{t.text}};box-shadow:{{t.sh}};display:flex;flex-direction:column;gap:12px"><span style="font-weight:700;font-size:18px">{{t.name}} {{t.mark}}</span><span style="display:flex;gap:6px"><span style="width:26px;height:26px;border-radius:50%;background:{{t.a1}};border:2px solid {{t.bd}}"></span><span style="width:26px;height:26px;border-radius:50%;background:{{t.a2}};border:2px solid {{t.bd}}"></span><span style="width:26px;height:26px;border-radius:50%;background:{{t.a3}};border:2px solid {{t.bd}}"></span></span></button></sc-for></div></div>
+<div style="display:flex;flex-direction:column;gap:14px"><h2 class="h3">Otros</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px"><sc-for list="{{others}}" as="t" hint-placeholder-count="4"><button type="button" aria-pressed="{{t.on}}" onClick="{{t.pick}}" style="text-align:left;padding:16px 18px;border:3px solid {{t.bd}};border-radius:14px;background:{{t.bg}};color:{{t.text}};box-shadow:{{t.sh}};display:flex;flex-direction:column;gap:12px"><span style="font-weight:700;font-size:18px">{{t.name}} {{t.mark}}</span><span style="display:flex;gap:6px"><span style="width:26px;height:26px;border-radius:50%;background:{{t.a1}};border:2px solid {{t.bd}}"></span><span style="width:26px;height:26px;border-radius:50%;background:{{t.a2}};border:2px solid {{t.bd}}"></span><span style="width:26px;height:26px;border-radius:50%;background:{{t.a3}};border:2px solid {{t.bd}}"></span></span></button></sc-for></div></div>
+</div>
+
+<div style="flex:1 1 340px;display:flex;flex-direction:column;gap:24px">
+<article class="bx" style="background:var(--card);padding:24px;display:flex;flex-direction:column;gap:14px">
+<h2 class="h3">Color principal</h2>
+<div style="display:flex;gap:12px;flex-wrap:wrap"><sc-for list="{{accents}}" as="c" hint-placeholder-count="5"><button type="button" aria-pressed="{{c.on}}" aria-label="{{c.name}}" onClick="{{c.pick}}" style="width:48px;height:48px;border-radius:50%;border:3px solid var(--bd);background:{{c.hex}};box-shadow:{{c.sh}};padding:0"></button></sc-for></div>
+<div style="display:flex;align-items:center;gap:14px;margin-top:6px"><div style="flex:1"><div style="font-weight:700">Seguir el tema del sistema</div><div class="mono" style="font-size:12px">Latte de día, Mocha de noche</div></div>
+<button type="button" role="switch" aria-checked="{{sys}}" aria-label="Seguir el tema del sistema" onClick="{{flipSys}}" style="flex:0 0 72px;height:40px;border:3px solid var(--bd);border-radius:999px;background:{{sysTrack}};position:relative;padding:0"><span style="position:absolute;top:3px;left:{{sysKnob}};width:28px;height:28px;border-radius:50%;background:var(--bd)"></span></button></div>
+</article>
+<article class="bx" style="background:var(--bg);padding:20px;display:flex;flex-direction:column;gap:14px;transform:rotate(1deg)">
+<span class="lbl">Vista previa</span>
+<div class="bx" style="background:var(--a1);color:#111;padding:14px 16px"><div style="font-size:40px;font-weight:700;letter-spacing:-.04em;line-height:1">12 días</div><span style="font-weight:500">seguidos</span></div>
+<div style="display:flex;gap:10px"><span class="bx" style="flex:1;background:var(--a2);color:#111;padding:10px 12px;font-weight:700;box-shadow:4px 4px 0 var(--sh)">Inglés</span><span class="bx" style="flex:1;background:var(--a3);color:#111;padding:10px 12px;font-weight:700;box-shadow:4px 4px 0 var(--sh)">Guitarra</span></div>
+<div role="progressbar" aria-label="Vista previa" aria-valuenow="13" aria-valuemin="0" aria-valuemax="100" style="height:22px;background:var(--card);border:3px solid var(--bd);border-radius:999px;overflow:hidden"><div style="width:13%;height:100%;background:var(--ink)"></div></div>
+</article>
+</div>
+</section>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":600}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const st = this.state || {};
+    const tab = st.tab || 'perfil';
+    const themeId = st.theme || 'pegatina';
+    const accent = st.accent || null;
+    const T = {
+      pegatina: { name: 'Pegatina', g: 'o', bg: '#FFF4D6', card: '#FFFFFF', text: '#111111', bd: '#111111', sh: '#111111', a1: '#FFD84D', a2: '#FF8FB8', a3: '#7BE0A4', danger: '#D6361F' },
+      mocha: { name: 'Mocha', g: 'c', bg: '#1E1E2E', card: '#313244', text: '#CDD6F4', bd: '#CDD6F4', sh: '#11111B', a1: '#F9E2AF', a2: '#F5C2E7', a3: '#A6E3A1', danger: '#F38BA8' },
+      macchiato: { name: 'Macchiato', g: 'c', bg: '#24273A', card: '#363A4F', text: '#CAD3F5', bd: '#CAD3F5', sh: '#181926', a1: '#EED49F', a2: '#F5BDE6', a3: '#A6DA95', danger: '#ED8796' },
+      frappe: { name: 'Frappé', g: 'c', bg: '#303446', card: '#414559', text: '#C6D0F5', bd: '#C6D0F5', sh: '#232634', a1: '#E5C890', a2: '#F4B8E4', a3: '#A6D189', danger: '#E78284' },
+      latte: { name: 'Latte', g: 'c', bg: '#EFF1F5', card: '#FFFFFF', text: '#4C4F69', bd: '#4C4F69', sh: '#4C4F69', a1: '#F2C46D', a2: '#EA76CB', a3: '#8BD17C', danger: '#D20F39' },
+      nord: { name: 'Nord', g: 'o', bg: '#2E3440', card: '#3B4252', text: '#ECEFF4', bd: '#ECEFF4', sh: '#1B1F27', a1: '#EBCB8B', a2: '#B48EAD', a3: '#A3BE8C', danger: '#BF616A' },
+      gruvbox: { name: 'Gruvbox', g: 'o', bg: '#282828', card: '#3C3836', text: '#EBDBB2', bd: '#EBDBB2', sh: '#1D2021', a1: '#FABD2F', a2: '#D3869B', a3: '#B8BB26', danger: '#FB4934' },
+      rosepine: { name: 'Rosé Pine', g: 'o', bg: '#191724', card: '#26233A', text: '#E0DEF4', bd: '#E0DEF4', sh: '#0F0D1A', a1: '#F6C177', a2: '#EB6F92', a3: '#9CCFD8', danger: '#EB6F92' }
+    };
+    const th = T[themeId];
+    const a1 = accent || th.a1;
+    const vars = '--bg:' + th.bg + ';--paper:' + th.bg + ';--ink:' + th.text + ';--card:' + th.card + ';--bd:' + th.bd + ';--sh:' + th.sh + ';--a1:' + a1 + ';--a2:' + th.a2 + ';--a3:' + th.a3 + ';--danger:' + th.danger + ';color:' + th.text + ';';
+    const card = (id) => { const t = T[id]; return { name: t.name, mark: themeId === id ? '✓' : '', on: themeId === id, bg: t.bg, text: t.text, bd: t.bd, a1: t.a1, a2: t.a2, a3: t.a3, sh: themeId === id ? '6px 6px 0 ' + t.a1 : 'none', pick: () => this.setState({ theme: id, accent: null }) }; };
+    const name = st.name ?? 'Kobox';
+    const zone = st.zone ?? 0;
+    const lang = st.lang ?? 0;
+    const minD = st.minD ?? 30;
+    const pom = st.pom || { f: 25, s: 5, l: 15 };
+    const opt = (list, cur, key) => list.map((l, i) => ({ label: l, on: cur === i, bg: cur === i ? 'var(--a1)' : 'var(--card)', fg: cur === i ? '#111' : 'var(--ink)', pick: () => this.setState({ [key]: i, saved: false }) }));
+    const sw = [['Ámbar', '#FFD84D'], ['Rosa', '#FF8FB8'], ['Verde', '#7BE0A4'], ['Cielo', '#7CC4FF'], ['Naranja', '#FF9F5A']];
+    const sys = !!st.sys;
+    const step = (key, label, d, min, max) => ({ label, value: pom[key], minus: () => this.setState({ pom: { ...pom, [key]: Math.max(min, pom[key] - d) }, saved: false }), plus: () => this.setState({ pom: { ...pom, [key]: Math.min(max, pom[key] + d) }, saved: false }) });
+    return {
+      vars, name,
+      perfil: tab === 'perfil', apariencia: tab === 'apariencia',
+      tabs: [['perfil', 'Perfil'], ['apariencia', 'Apariencia']].map(([id, label]) => ({ label, on: tab === id, bg: tab === id ? 'var(--a1)' : 'var(--card)', sh: tab === id ? '2px 2px 0 var(--sh)' : '6px 6px 0 var(--sh)', tr: tab === id ? 'translate(4px,4px)' : 'none', pick: () => this.setState({ tab: id }) })),
+      setName: (e) => this.setState({ name: e.target.value, saved: false }),
+      zones: opt(['Santo Domingo (UTC−4)', 'Ciudad de México (UTC−6)', 'Madrid (UTC+1)'], zone, 'zone'),
+      langs: opt(['Español', 'English'], lang, 'lang'),
+      mins: [15, 30, 45, 60, 90].map((m) => ({ label: m + ' min', on: minD === m, bg: minD === m ? 'var(--a1)' : 'var(--card)', fg: minD === m ? '#111' : 'var(--ink)', pick: () => this.setState({ minD: m, saved: false }) })),
+      steppers: [step('f', 'Enfoque', 5, 5, 90), step('s', 'Descanso corto', 1, 1, 30), step('l', 'Descanso largo', 1, 1, 60)],
+      save: () => this.setState({ saved: true }),
+      saveText: st.saved ? '¡Cambios guardados!' : 'Guardar cambios',
+      asking: !!st.asking, notAsking: !st.asking,
+      ask: () => this.setState({ asking: true }), cancelAsk: () => this.setState({ asking: false }),
+      cat: ['mocha', 'macchiato', 'frappe', 'latte'].map(card),
+      others: ['pegatina', 'nord', 'gruvbox', 'rosepine'].map(card),
+      accents: sw.map(([n, h]) => ({ name: n, hex: h, on: a1 === h, sh: a1 === h ? '4px 4px 0 var(--sh)' : 'none', pick: () => this.setState({ accent: h }) })),
+      sys, sysTrack: sys ? 'var(--a3)' : 'var(--card)', sysKnob: sys ? '35px' : '3px',
+      flipSys: () => this.setState({ sys: !sys })
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Pegatina — Crear habilidad</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF4D6}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px solid var(--ink,#111);outline-offset:3px}
+.bx{border:3px solid var(--bd,#111);border-radius:14px;box-shadow:6px 6px 0 var(--sh,#111)}
+.mono{font-family:'Space Mono',monospace}
+.lbl{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.02em}
+.h1{margin:0;font-size:84px;line-height:.95;font-weight:700;letter-spacing:-.05em}
+.h2{margin:0;font-size:38px;line-height:1.05;font-weight:700;letter-spacing:-.03em}
+.h3{margin:0;font-size:28px;line-height:1.1;font-weight:700;letter-spacing:-.03em}
+.chip{min-height:44px;padding:0 18px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700;font-size:15px;background:var(--card,#fff);color:var(--ink,#111)}
+.btn{min-height:56px;padding:0 28px;font-size:20px;font-weight:700;color:#111;display:inline-flex;align-items:center;justify-content:center}
+.in{min-height:48px;padding:0 14px;border:3px solid var(--bd,#111);border-radius:12px;font-size:16px;background:var(--card,#fff);color:var(--ink,#111);width:100%;box-sizing:border-box}
+.in::placeholder{color:#6b6b6b}
+.hov{transition:transform .12s,box-shadow .12s}
+.hov:hover{transform:translate(-2px,-2px) rotate(var(--r,0deg));box-shadow:9px 9px 0 var(--sh,#111)}
+.press:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--sh,#111)}
+@media (prefers-reduced-motion:reduce){.hov{transition:none}}
+</style>
+</helmet>
+<div style="background:var(--bg,#FFF4D6);color:var(--ink,#111);font-family:'Space Grotesk',system-ui,sans-serif;font-size:16px;line-height:1.4;min-height:600px;padding:28px 48px 64px;box-sizing:border-box;display:flex;flex-direction:column;gap:32px;">
+
+<header style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+<div class="bx" style="background:#FFD84D;color:#111;padding:6px 18px;font-size:30px;font-weight:700;transform:rotate(-2deg);letter-spacing:-.02em">oficio!</div>
+<span style="flex:1"></span>
+<a href="PegatinaPanel.dc.html" class="bx press" style="min-height:44px;padding:0 18px;display:flex;align-items:center;background:#fff;color:#111;font-weight:700">Cancelar y volver</a>
+</header>
+<div style="display:flex;gap:12px;flex-wrap:wrap" aria-label="Pasos">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="4"><span aria-current="{{s.cur}}" style="min-height:44px;padding:0 18px;display:inline-flex;align-items:center;gap:8px;border:3px solid #111;border-radius:999px;font-weight:700;background:{{s.bg}};box-shadow:{{s.sh}}"><span class="mono">{{s.n}}</span>{{s.label}}</span></sc-for>
+</div>
+<h1 class="h1">{{title}}</h1>
+<section style="display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start">
+<div class="bx" style="flex:2 1 620px;background:#fff;padding:30px;display:flex;flex-direction:column;gap:24px;color:#111">
+
+<sc-if value="{{s1}}" hint-placeholder-val="{{true}}">
+<div style="display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;flex-direction:column;gap:8px"><label class="lbl" for="nom">Nombre de la habilidad</label><input id="nom" type="text" class="in" style="font-size:22px;font-weight:700" value="{{name}}" onChange="{{setName}}"></div>
+<div style="display:flex;flex-direction:column;gap:8px"><span class="lbl">Color</span><div style="display:flex;gap:12px"><sc-for list="{{colors}}" as="c" hint-placeholder-count="5"><button type="button" aria-pressed="{{c.on}}" aria-label="{{c.name}}" onClick="{{c.pick}}" style="width:52px;height:52px;border-radius:50%;border:3px solid #111;background:{{c.hex}};box-shadow:{{c.sh}};padding:0"></button></sc-for></div></div>
+<div style="display:flex;flex-direction:column;gap:8px"><span class="lbl">Meta de horas</span><div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{goals}}" as="g" hint-placeholder-count="3"><button type="button" aria-pressed="{{g.on}}" onClick="{{g.pick}}" class="chip" style="background:{{g.bg}};color:#111">{{g.label}}</button></sc-for></div><span style="font-size:14px">10.000 h es la cifra clásica de la maestría. Puedes elegir una meta más corta para empezar.</span></div>
+<div style="display:flex;flex-direction:column;gap:8px;max-width:320px"><label class="lbl" for="ini">¿Cuántas horas llevas ya? (opcional)</label><input id="ini" type="number" min="0" class="in" value="{{initial}}" onChange="{{setInitial}}"></div>
+</div>
+</sc-if>
+
+<sc-if value="{{s2}}" hint-placeholder-val="{{false}}">
+<div style="display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;flex-direction:column;gap:8px"><span class="lbl">Tiempo por día de práctica</span><div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{dailyOpts}}" as="d" hint-placeholder-count="6"><button type="button" aria-pressed="{{d.on}}" onClick="{{d.pick}}" class="chip" style="background:{{d.bg}};color:#111">{{d.label}}</button></sc-for></div></div>
+<div style="display:flex;flex-direction:column;gap:8px"><span class="lbl">Días por semana</span><div style="display:flex;gap:8px"><sc-for list="{{dayOpts}}" as="d" hint-placeholder-count="7"><button type="button" aria-pressed="{{d.on}}" onClick="{{d.pick}}" style="flex:1;min-height:52px;border:3px solid #111;border-radius:12px;font-size:18px;font-weight:700;color:#111;background:{{d.bg}}">{{d.label}}</button></sc-for></div></div>
+<p style="margin:0;font-size:18px;font-weight:500">Con este ritmo practicas <b style="background:#FFD84D;padding:0 6px">{{weekly}}</b> por semana. Elige algo que puedas sostener incluso en una mala semana.</p>
+</div>
+</sc-if>
+
+<sc-if value="{{s3}}" hint-placeholder-val="{{false}}">
+<div style="display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;align-items:center;gap:20px"><div style="flex:1"><div style="font-size:22px;font-weight:700">Recordarme todos los días</div><div class="mono" style="font-size:13px">Aviso en el navegador a la hora que elijas</div></div>
+<button type="button" role="switch" aria-checked="{{remind}}" aria-label="Recordarme todos los días" onClick="{{flipRemind}}" style="flex:0 0 72px;height:40px;border:3px solid #111;border-radius:999px;background:{{track}};position:relative;padding:0"><span style="position:absolute;top:3px;left:{{knob}};width:28px;height:28px;border-radius:50%;background:#111"></span></button></div>
+<div style="display:flex;flex-direction:column;gap:8px;max-width:260px"><label class="lbl" for="rt">Hora del aviso</label><input id="rt" type="time" class="in" value="{{remindTime}}" onChange="{{setRemindTime}}"></div>
+</div>
+</sc-if>
+
+<sc-if value="{{s4}}" hint-placeholder-val="{{false}}">
+<div style="display:flex;flex-direction:column;gap:14px">
+<sc-for list="{{summary}}" as="r" hint-placeholder-count="4"><div style="display:flex;gap:16px;padding:12px 0;border-top:3px dashed #111;flex-wrap:wrap"><span class="lbl" style="flex:0 0 130px;padding-top:4px">{{r.k}}</span><span style="font-size:20px;font-weight:700">{{r.v}}</span></div></sc-for>
+</div>
+</sc-if>
+
+<div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:6px">
+<button type="button" onClick="{{back}}" class="bx press btn" style="background:#fff;font-size:18px;visibility:{{backVis}}">Atrás</button>
+<button type="button" onClick="{{next}}" class="bx press btn" style="background:#FFD84D;font-size:18px">{{nextText}}</button>
+</div>
+</div>
+
+<aside style="flex:1 1 340px;display:flex;flex-direction:column;gap:26px">
+<div class="bx" style="background:{{color}};padding:26px 28px;transform:rotate(1.5deg);color:#111">
+<span class="lbl">A este ritmo llegas a la meta en</span>
+<div style="font-size:30px;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin-top:4px">{{name}}</div>
+<div style="font-size:64px;font-weight:700;letter-spacing:-.05em;line-height:1.05">{{etaGoal}}</div>
+<span class="mono" style="font-size:13px">{{weekly}} por semana · {{goalText}} h de meta</span>
+</div>
+<div class="bx" style="background:#fff;padding:20px 24px;display:flex;flex-direction:column;gap:6px;color:#111">
+<sc-for list="{{etas}}" as="e" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;font-weight:700"><span class="mono">{{e.h}} h</span><span>{{e.eta}}</span></div></sc-for>
+</div>
+</aside>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":600}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const st = this.state || {};
+    const step = st.step || 1;
+    const name = st.name ?? 'Piano';
+    const colorId = st.colorId ?? 2;
+    const goal = st.goal || 10000;
+    const initial = Number(st.initial ?? 0) || 0;
+    const daily = st.daily || 120;
+    const days = st.days || 6;
+    const remind = st.remind ?? true;
+    const remindTime = st.remindTime || '07:00';
+    const created = !!st.created;
+    const pal = [['Ámbar', '#FFD84D'], ['Verde', '#7BE0A4'], ['Rosa', '#FF8FB8'], ['Cielo', '#7CC4FF'], ['Naranja', '#FF9F5A']];
+    const hex = pal[colorId][1];
+    const nf = (v) => String(v).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const hm = (m) => { const h = Math.floor(m / 60), r = m % 60; if (h === 0) return r + ' min'; return r === 0 ? h + ' h' : h + ' h ' + r + ' min'; };
+    const weeklyH = (daily * days) / 60;
+    const weekly = hm(daily * days);
+    const eta = (g) => {
+      const weeks = Math.max(0, g - initial) / weeklyH;
+      if (weeks < 1) return 'Menos de 1 semana';
+      const months = weeks / 4.345;
+      if (months < 24) return '≈ ' + Math.max(1, Math.round(months)) + ' meses';
+      return '≈ ' + (Math.round((months / 12) * 10) / 10).toString().replace('.', ',') + ' años';
+    };
+    const labels = ['Habilidad', 'Ritmo', 'Aviso', 'Listo'];
+    const steps = labels.map((l, i) => ({ n: String(i + 1), label: l, cur: step === i + 1 ? 'step' : 'false', bg: step === i + 1 ? hex : (step > i + 1 ? '#fff' : '#E9E4D4'), sh: step === i + 1 ? '4px 4px 0 #111' : 'none' }));
+    const titles = ['¿Qué quieres dominar?', '¿Cuánto vas a practicar?', '¿Cuándo te aviso?', created ? '¡' + name + ' ya está en tu álbum!' : 'Todo listo para ' + name];
+    return {
+      steps, title: titles[step - 1], name, color: hex, weekly, goalText: nf(goal), etaGoal: eta(goal),
+      etas: [1000, 5000, 10000].map((g) => ({ h: nf(g), eta: eta(g) })),
+      s1: step === 1, s2: step === 2, s3: step === 3, s4: step === 4,
+      initial: String(initial),
+      colors: pal.map(([n, h], i) => ({ name: n, hex: h, on: i === colorId, sh: i === colorId ? '5px 5px 0 #111' : 'none', pick: () => this.setState({ colorId: i }) })),
+      goals: [1000, 5000, 10000].map((g) => ({ label: nf(g) + ' h', on: goal === g, bg: goal === g ? hex : '#fff', pick: () => this.setState({ goal: g }) })),
+      dailyOpts: [30, 60, 90, 120, 180, 240].map((m) => ({ label: hm(m), on: daily === m, bg: daily === m ? hex : '#fff', pick: () => this.setState({ daily: m }) })),
+      dayOpts: [1, 2, 3, 4, 5, 6, 7].map((n) => ({ label: String(n), on: days === n, bg: days === n ? hex : '#fff', pick: () => this.setState({ days: n }) })),
+      remind, track: remind ? '#7BE0A4' : '#fff', knob: remind ? '35px' : '3px', remindTime,
+      flipRemind: () => this.setState({ remind: !remind }),
+      setName: (e) => this.setState({ name: e.target.value }),
+      setInitial: (e) => this.setState({ initial: e.target.value }),
+      setRemindTime: (e) => this.setState({ remindTime: e.target.value }),
+      summary: [
+        { k: 'Habilidad', v: name },
+        { k: 'Meta', v: nf(goal) + ' h' + (initial ? ' (ya llevas ' + nf(initial) + ' h)' : '') },
+        { k: 'Ritmo', v: hm(daily) + ' · ' + days + ' días por semana' },
+        { k: 'Recordatorio', v: remind ? 'Todos los días a las ' + remindTime : 'Sin recordatorio' }
+      ],
+      backVis: step === 1 || created ? 'hidden' : 'visible',
+      back: () => this.setState({ step: Math.max(1, step - 1) }),
+      nextText: step < 3 ? 'Siguiente' : step === 3 ? 'Ver resumen' : (created ? '¡Creada!' : 'Crear habilidad'),
+      next: () => step < 4 ? this.setState({ step: step + 1 }) : this.setState({ created: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

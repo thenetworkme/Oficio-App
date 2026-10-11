@@ -1,7 +1,17 @@
 import { collection, deleteDoc, doc, getDocs, query, where, writeBatch } from "firebase/firestore";
 import { getDb } from "@/lib/firebase";
 
-const USER_SCOPED_COLLECTIONS = ["skills", "sessions", "reminders", "achievements", "pushSubscriptions"] as const;
+const USER_SCOPED_COLLECTIONS = [
+  "skills",
+  "sessions",
+  "reminders",
+  "achievements",
+  "pushSubscriptions",
+  "inventory",
+  "coinLedger",
+] as const;
+
+// pets/{uid} and equipped/{uid} are keyed by uid directly (like profiles/{uid}), deleted below.
 
 /**
  * Deletes every Firestore document that belongs to a user: their profile
@@ -23,4 +33,6 @@ export async function deleteAllUserData(uid: string): Promise<void> {
   }
 
   await deleteDoc(doc(db, "profiles", uid));
+  await deleteDoc(doc(db, "pets", uid));
+  await deleteDoc(doc(db, "equipped", uid));
 }

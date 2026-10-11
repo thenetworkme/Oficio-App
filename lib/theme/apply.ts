@@ -4,17 +4,17 @@ export const THEME_STORAGE_KEY = "oficio-theme-cache";
 
 export interface ThemeCache {
   themeId: string;
-  accentIdx: number;
+  accentIdx: number | null;
   followSystem: boolean;
 }
 
-export function applyTheme(themeId: string, accentIdx: number) {
+export function applyTheme(themeId: string, accentIdx: number | null) {
   if (typeof document === "undefined") return;
   const theme = getTheme(themeId);
-  const { accent, a2, a3 } = resolveAccents(theme, accentIdx);
+  const { a1, a2, a3 } = resolveAccents(theme, accentIdx);
   const root = document.documentElement;
   root.setAttribute("data-theme", theme.id);
-  root.style.setProperty("--accent", accent);
+  root.style.setProperty("--a1", a1);
   root.style.setProperty("--a2", a2);
   root.style.setProperty("--a3", a3);
   root.style.colorScheme = theme.mode;

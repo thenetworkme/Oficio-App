@@ -1,19 +1,20 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, IBM_Plex_Mono } from "next/font/google";
+import { Space_Grotesk, Space_Mono } from "next/font/google";
 import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister";
 import { ThemeScript } from "@/components/theme/ThemeScript";
 import { AuthProvider } from "@/lib/auth/AuthProvider";
 import { ThemeProvider } from "@/lib/theme/ThemeProvider";
 import "./globals.css";
 
-const bricolage = Bricolage_Grotesque({
-  variable: "--font-bricolage",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
+  weight: ["500", "700"],
   subsets: ["latin"],
 });
 
-const ibmPlexMono = IBM_Plex_Mono({
-  variable: "--font-ibm-plex-mono",
-  weight: ["400", "500"],
+const spaceMono = Space_Mono({
+  variable: "--font-space-mono",
+  weight: ["400", "700"],
   subsets: ["latin"],
 });
 
@@ -26,12 +27,12 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#111311",
+  themeColor: "#FFF4D6",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${bricolage.variable} ${ibmPlexMono.variable}`} suppressHydrationWarning>
+    <html lang="es" className={`${spaceGrotesk.variable} ${spaceMono.variable}`} suppressHydrationWarning>
       <head>
         <ThemeScript />
       </head>

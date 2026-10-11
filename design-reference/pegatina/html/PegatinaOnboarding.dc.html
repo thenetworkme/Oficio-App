@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Pegatina — Primeros pasos</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF4D6}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px solid var(--ink,#111);outline-offset:3px}
+.bx{border:3px solid var(--bd,#111);border-radius:14px;box-shadow:6px 6px 0 var(--sh,#111)}
+.mono{font-family:'Space Mono',monospace}
+.lbl{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.02em}
+.h1{margin:0;font-size:84px;line-height:.95;font-weight:700;letter-spacing:-.05em}
+.h2{margin:0;font-size:38px;line-height:1.05;font-weight:700;letter-spacing:-.03em}
+.h3{margin:0;font-size:28px;line-height:1.1;font-weight:700;letter-spacing:-.03em}
+.chip{min-height:44px;padding:0 18px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700;font-size:15px;background:var(--card,#fff);color:var(--ink,#111)}
+.btn{min-height:56px;padding:0 28px;font-size:20px;font-weight:700;color:#111;display:inline-flex;align-items:center;justify-content:center}
+.in{min-height:48px;padding:0 14px;border:3px solid var(--bd,#111);border-radius:12px;font-size:16px;background:var(--card,#fff);color:var(--ink,#111);width:100%;box-sizing:border-box}
+.in::placeholder{color:#6b6b6b}
+.hov{transition:transform .12s,box-shadow .12s}
+.hov:hover{transform:translate(-2px,-2px) rotate(var(--r,0deg));box-shadow:9px 9px 0 var(--sh,#111)}
+.press:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--sh,#111)}
+@media (prefers-reduced-motion:reduce){.hov{transition:none}}
+</style>
+</helmet>
+<div style="background:var(--bg,#FFF4D6);color:var(--ink,#111);font-family:'Space Grotesk',system-ui,sans-serif;font-size:16px;line-height:1.4;min-height:700px;padding:28px 48px 64px;box-sizing:border-box;display:flex;flex-direction:column;gap:32px;">
+
+<header style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+<div class="bx" style="background:#FFD84D;color:#111;padding:6px 18px;font-size:30px;font-weight:700;transform:rotate(-2deg);letter-spacing:-.02em">oficio!</div>
+<div style="flex:1;display:flex;gap:10px;max-width:420px;margin-left:auto" role="progressbar" aria-label="Progreso del inicio" aria-valuenow="{{step}}" aria-valuemin="1" aria-valuemax="4"><sc-for list="{{dots}}" as="d" hint-placeholder-count="4"><span style="flex:1;height:18px;border:3px solid #111;border-radius:999px;background:{{d.bg}}"></span></sc-for></div>
+<a href="PegatinaPanel.dc.html" style="font-weight:700;text-decoration:underline">Saltar</a>
+</header>
+<main style="display:flex;gap:40px;flex-wrap:wrap;align-items:center;flex:1">
+<aside style="flex:0 1 460px;min-width:320px;display:flex;flex-direction:column;align-items:center;gap:18px">
+<div style="position:relative"><svg viewBox="0 0 200 200" width="380" height="380" role="img" aria-label="Tu mascota" class="" style="display:block;max-width:100%;height:auto">
+<g stroke="#111" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+<rect x="4" y="4" width="192" height="192" rx="30" fill="{{mBg}}"/>
+<ellipse cx="100" cy="184" rx="50" ry="8" fill="rgba(17,17,17,.18)" stroke="none"/>
+<g style="display:{{dCred}}"><path d="M50 108 L22 188 L178 188 L150 108 Z" fill="#FF4D4D"/></g>
+<g style="display:{{dCstar}}"><path d="M50 108 L22 188 L178 188 L150 108 Z" fill="#2B3A8C"/><g fill="#FFD84D" stroke="none"><circle cx="40" cy="170" r="5"/><circle cx="160" cy="165" r="5"/><circle cx="70" cy="182" r="4"/><circle cx="132" cy="180" r="4"/></g></g>
+<g style="display:{{dCmaster}}"><path d="M50 108 L22 188 L178 188 L150 108 Z" fill="#FFD84D"/><path d="M30 176 L170 176" stroke="#111" stroke-width="5" fill="none"/><circle cx="100" cy="176" r="6" fill="#FF8FB8"/></g>
+<g style="display:{{dBuho}}"><path d="M52 84 L56 50 L82 70 Z" fill="{{mCol}}"/><path d="M148 84 L144 50 L118 70 Z" fill="{{mCol}}"/></g>
+<g style="display:{{dGato}}"><path d="M48 92 L54 46 L88 68 Z" fill="{{mCol}}"/><path d="M152 92 L146 46 L112 68 Z" fill="{{mCol}}"/></g>
+<ellipse cx="100" cy="118" rx="60" ry="56" fill="{{mCol}}"/>
+<g style="display:{{dLeaf}}"><path d="M100 64 C88 52 70 54 62 60 C74 70 88 72 100 64Z M100 64 C112 52 130 54 138 60 C126 70 112 72 100 64Z M100 64 L100 50" fill="#7BE0A4"/></g>
+<g stroke="none"><circle cx="64" cy="130" r="9" fill="#fff" opacity=".45"/><circle cx="136" cy="130" r="9" fill="#fff" opacity=".45"/></g>
+<g stroke-width="4"><circle cx="78" cy="108" r="12" fill="#fff"/><circle cx="122" cy="108" r="12" fill="#fff"/></g>
+<g fill="#111" stroke="none"><circle cx="80" cy="109" r="5.5"/><circle cx="120" cy="109" r="5.5"/></g>
+<g style="display:{{dSmile}}"><path d="M86 130 Q100 144 114 130" fill="none"/></g>
+<g style="display:{{dOpen}}"><path d="M84 128 Q100 158 116 128 Z" fill="#111"/><path d="M92 143 Q100 150 108 143 Q100 138 92 143Z" fill="#FF8FB8" stroke="none"/></g>
+<g style="display:{{dBeak}}"><path d="M92 124 L108 124 L100 140 Z" fill="#FF9F5A"/></g>
+<g style="display:{{dGato}}"><path d="M96 122 L104 122 L100 127 Z" fill="#FF8FB8" stroke-width="3"/><path d="M52 124 L30 120 M52 132 L30 138 M148 124 L170 120 M148 132 L170 138" stroke-width="3" fill="none"/></g>
+<g style="display:{{dAglass}}" stroke-width="4"><circle cx="78" cy="108" r="17" fill="rgba(124,196,255,.35)"/><circle cx="122" cy="108" r="17" fill="rgba(124,196,255,.35)"/><path d="M95 108 L105 108" fill="none"/></g>
+<g style="display:{{dAmono}}" stroke-width="4"><circle cx="122" cy="108" r="18" fill="rgba(255,255,255,.3)"/><path d="M138 120 Q150 150 140 180" fill="none" stroke-width="3"/></g>
+<g style="display:{{dAscarf}}"><path d="M54 160 Q100 186 146 160 L150 176 Q100 202 50 176 Z" fill="#FF4D4D"/><path d="M126 182 L142 200 L120 198 Z" fill="#FF4D4D"/></g>
+<g style="display:{{dAbow}}"><path d="M100 170 L74 156 L74 184 Z" fill="#FF8FB8"/><path d="M100 170 L126 156 L126 184 Z" fill="#FF8FB8"/><circle cx="100" cy="170" r="8" fill="#FFD84D"/></g>
+<g style="display:{{dHcap}}"><path d="M58 76 Q100 24 142 76 Z" fill="#7CC4FF"/><path d="M110 74 Q152 66 174 82 Q164 94 112 86 Z" fill="#4AA3E8"/><circle cx="100" cy="42" r="5" fill="#FFD84D" stroke-width="3"/></g>
+<g style="display:{{dHtop}}"><ellipse cx="100" cy="74" rx="48" ry="9" fill="#2B2B2B"/><path d="M68 74 L70 24 Q100 16 130 24 L132 74 Z" fill="#2B2B2B"/><rect x="69" y="52" width="62" height="12" fill="#FFD84D" stroke-width="3"/></g>
+<g style="display:{{dHcrown}}"><path d="M62 78 L66 38 L86 58 L100 32 L114 58 L134 38 L138 78 Z" fill="#FFD84D"/><circle cx="100" cy="62" r="5" fill="#FF8FB8" stroke-width="3"/></g>
+<g style="display:{{dHchef}}"><circle cx="78" cy="48" r="20" fill="#fff"/><circle cx="100" cy="38" r="22" fill="#fff"/><circle cx="122" cy="48" r="20" fill="#fff"/><rect x="72" y="62" width="56" height="16" rx="4" fill="#fff"/></g>
+<g style="display:{{dHwiz}}"><path d="M66 78 L100 8 L134 78 Z" fill="#8E7CFF"/><ellipse cx="100" cy="78" rx="54" ry="10" fill="#8E7CFF"/><g fill="#FFD84D" stroke="none"><circle cx="96" cy="48" r="4"/><circle cx="108" cy="62" r="3"/><circle cx="88" cy="66" r="3"/></g></g>
+</g></svg>
+<div class="bx" style="position:absolute;left:-16px;top:-14px;background:#fff;padding:10px 18px;transform:rotate(-5deg);font-weight:700;max-width:230px;color:#111">{{bubble}}</div></div>
+<span class="mono" style="font-weight:700">{{petLine}}</span>
+</aside>
+
+<section class="bx" style="flex:1 1 560px;background:#fff;padding:36px 40px;display:flex;flex-direction:column;gap:24px;color:#111">
+<span class="lbl">Paso {{step}} de 4</span>
+<h1 class="h1" style="font-size:60px">{{title}}</h1>
+
+<sc-if value="{{s1}}" hint-placeholder-val="{{true}}"><div style="display:flex;flex-direction:column;gap:22px">
+<div style="display:flex;flex-direction:column;gap:8px"><span class="lbl">Elige quién te acompaña</span><div style="display:flex;gap:12px;flex-wrap:wrap"><sc-for list="{{species}}" as="s" hint-placeholder-count="3"><button type="button" aria-pressed="{{s.on}}" onClick="{{s.pick}}" class="bx press" style="min-height:52px;padding:0 22px;font-size:17px;font-weight:700;color:#111;background:{{s.bg}};box-shadow:{{s.sh}};transform:{{s.tr}}">{{s.label}}</button></sc-for></div></div>
+<div style="display:flex;flex-direction:column;gap:8px"><span class="lbl">Color</span><div style="display:flex;gap:12px"><sc-for list="{{colors}}" as="c" hint-placeholder-count="5"><button type="button" aria-pressed="{{c.on}}" aria-label="{{c.name}}" onClick="{{c.pick}}" style="width:52px;height:52px;border-radius:50%;border:3px solid #111;background:{{c.hex}};box-shadow:{{c.sh}};padding:0"></button></sc-for></div></div>
+<div style="display:flex;flex-direction:column;gap:8px"><label class="lbl" for="pn">Ponle nombre</label><input id="pn" type="text" class="in" style="font-size:22px;font-weight:700" value="{{petName}}" onChange="{{setPet}}"></div>
+</div></sc-if>
+
+<sc-if value="{{s2}}" hint-placeholder-val="{{false}}"><div style="display:flex;flex-direction:column;gap:18px">
+<span class="lbl">Elige tu primera habilidad</span>
+<div style="display:flex;gap:10px;flex-wrap:wrap"><sc-for list="{{skills}}" as="k" hint-placeholder-count="8"><button type="button" aria-pressed="{{k.on}}" onClick="{{k.pick}}" class="chip" style="min-height:50px;font-size:17px;background:{{k.bg}};color:#111">{{k.icon}} {{k.name}}</button></sc-for></div>
+<div style="display:flex;flex-direction:column;gap:8px"><label class="lbl" for="ot">¿Otra? Escríbela</label><input id="ot" type="text" class="in" placeholder="Ej: Ajedrez, Piano, Dibujo…" value="{{custom}}" onChange="{{setCustom}}"></div>
+<p style="margin:0;font-weight:500">Después puedes agregar más. Mejor una a la vez.</p>
+</div></sc-if>
+
+<sc-if value="{{s3}}" hint-placeholder-val="{{false}}"><div style="display:flex;flex-direction:column;gap:22px">
+<div style="display:flex;flex-direction:column;gap:8px"><span class="lbl">Tiempo por día</span><div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{dailyOpts}}" as="d" hint-placeholder-count="5"><button type="button" aria-pressed="{{d.on}}" onClick="{{d.pick}}" class="chip" style="background:{{d.bg}};color:#111">{{d.label}}</button></sc-for></div></div>
+<div style="display:flex;flex-direction:column;gap:8px"><span class="lbl">Días por semana</span><div style="display:flex;gap:8px"><sc-for list="{{dayOpts}}" as="d" hint-placeholder-count="7"><button type="button" aria-pressed="{{d.on}}" onClick="{{d.pick}}" style="flex:1;min-height:52px;border:3px solid #111;border-radius:12px;font-size:18px;font-weight:700;color:#111;background:{{d.bg}}">{{d.label}}</button></sc-for></div></div>
+<div style="display:flex;flex-direction:column;gap:8px;max-width:260px"><label class="lbl" for="rt">Te aviso a las</label><input id="rt" type="time" class="in" value="{{time}}" onChange="{{setTime}}"></div>
+<div class="bx" style="background:#FFD84D;padding:16px 20px;transform:rotate(-1deg)"><span class="lbl">A este ritmo</span><div style="font-size:30px;font-weight:700;letter-spacing:-.03em">{{weekly}} por semana · llegas en {{eta}}</div></div>
+</div></sc-if>
+
+<sc-if value="{{s4}}" hint-placeholder-val="{{false}}"><div style="display:flex;flex-direction:column;gap:16px">
+<sc-for list="{{summary}}" as="r" hint-placeholder-count="3"><div style="display:flex;gap:16px;padding:12px 0;border-top:3px dashed #111;flex-wrap:wrap"><span class="lbl" style="flex:0 0 120px;padding-top:4px">{{r.k}}</span><span style="font-size:20px;font-weight:700">{{r.v}}</span></div></sc-for>
+<div class="bx" style="background:#7BE0A4;padding:16px 20px;display:flex;align-items:center;gap:14px;transform:rotate(1deg)"><span aria-hidden="true" style="width:44px;height:44px;border:3px solid #111;border-radius:50%;background:#FFF4D6;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:22px">$</span><div><b style="font-size:22px">+100 monedas de bienvenida</b><div style="font-weight:500">Pásate por la tienda y arréglale el look a {{petName}}.</div></div></div>
+</div></sc-if>
+
+<div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:4px">
+<button type="button" onClick="{{back}}" class="bx press btn" style="background:#fff;font-size:18px;visibility:{{backVis}}">Atrás</button>
+<sc-if value="{{notLast}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{next}}" class="bx press btn" style="background:#FFD84D;font-size:18px">Siguiente</button></sc-if>
+<sc-if value="{{isLast}}" hint-placeholder-val="{{false}}"><a href="PegatinaPanel.dc.html" class="bx press btn" style="background:#FF8FB8;font-size:18px">Entrar a mi panel →</a></sc-if>
+</div>
+</section>
+</main>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":700}}'>
+class Component extends DCLogic {
+  mv(o) {
+    const sp = o.sp || 'tomate';
+    const sh = (c) => (c ? 'inline' : 'none');
+    return {
+      mBg: o.bg || '#FFF4D6', mCol: o.col || '#FF8FB8',
+      dTomate: sh(sp === 'tomate'), dBuho: sh(sp === 'buho'), dGato: sh(sp === 'gato'),
+      dLeaf: sh(sp === 'tomate' && !o.hat), dBeak: sh(sp === 'buho'),
+      dSmile: sh(sp !== 'buho' && !o.open), dOpen: sh(sp !== 'buho' && !!o.open),
+      dHcap: sh(o.hat === 'cap'), dHtop: sh(o.hat === 'top'), dHcrown: sh(o.hat === 'crown'), dHchef: sh(o.hat === 'chef'), dHwiz: sh(o.hat === 'wiz'),
+      dCred: sh(o.cape === 'red'), dCstar: sh(o.cape === 'star'), dCmaster: sh(o.cape === 'master'),
+      dAglass: sh(o.acc === 'glass'), dAmono: sh(o.acc === 'mono'), dAscarf: sh(o.acc === 'scarf'), dAbow: sh(o.acc === 'bow')
+    };
+  }
+
+  renderVals() {
+    const st = this.state || {};
+    const step = st.step || 1;
+    const sp = st.sp || 'tomate';
+    const ci = st.ci ?? 0;
+    const pet = st.pet ?? 'Tomi';
+    const skill = st.skill ?? 0;
+    const custom = st.custom ?? '';
+    const daily = st.daily || 60;
+    const days = st.days || 5;
+    const time = st.time || '07:00';
+    const pal = [['Rosa', '#FF8FB8'], ['Amarillo', '#FFD84D'], ['Verde', '#7BE0A4'], ['Cielo', '#7CC4FF'], ['Naranja', '#FF9F5A']];
+    const hex = pal[ci][1];
+    const list = [['Programación', '💻'], ['Inglés', '🗣️'], ['Guitarra', '🎸'], ['Piano', '🎹'], ['Dibujo', '✏️'], ['Escritura', '📝'], ['Ajedrez', '♟️'], ['Fitness', '🏋️']];
+    const skillName = custom.trim() || list[skill][0];
+    const hm = (m) => { const h = Math.floor(m / 60), r = m % 60; if (h === 0) return r + ' min'; return r === 0 ? h + ' h' : h + ' h ' + r + ' min'; };
+    const weeklyH = (daily * days) / 60;
+    const years = 10000 / weeklyH / 52.1;
+    const eta = years >= 2 ? Math.round(years * 10) / 10 + ' años' : Math.round(years * 12) + ' meses';
+    const titles = ['Conoce a tu compañero.', '¿Qué quieres dominar?', '¿Cuánto vas a practicar?', 'Todo listo, ' + 'Kobox.'];
+    const bubbles = ['¡Hola! Soy ' + pet + '. Voy a contar tus horas contigo.', 'Elige una. Yo la anoto en tu álbum.', 'Mejor poco todos los días que mucho un día.', '¡Vamos por las primeras 10.000 h!'];
+    const speciesNames = { tomate: 'Tomate', buho: 'Búho', gato: 'Gato' };
+    return {
+      ...this.mv({ sp, col: hex, hat: step >= 4 ? 'cap' : null, open: step === 4 }),
+      step, title: titles[step - 1], bubble: bubbles[step - 1], petName: pet, petLine: pet + ' · Nv. 1 · ' + speciesNames[sp],
+      dots: [1, 2, 3, 4].map((n) => ({ bg: n <= step ? '#111' : '#fff' })),
+      s1: step === 1, s2: step === 2, s3: step === 3, s4: step === 4,
+      notLast: step < 4, isLast: step === 4,
+      species: Object.keys(speciesNames).map((id) => ({ label: speciesNames[id], on: sp === id, bg: sp === id ? hex : '#fff', sh: sp === id ? '2px 2px 0 #111' : '6px 6px 0 #111', tr: sp === id ? 'translate(4px,4px)' : 'none', pick: () => this.setState({ sp: id }) })),
+      colors: pal.map(([n, h], i) => ({ name: n, hex: h, on: i === ci, sh: i === ci ? '5px 5px 0 #111' : 'none', pick: () => this.setState({ ci: i }) })),
+      setPet: (e) => this.setState({ pet: e.target.value.slice(0, 14) || 'Tomi' }),
+      skills: list.map(([n, ic], i) => ({ name: n, icon: ic, on: !custom.trim() && skill === i, bg: !custom.trim() && skill === i ? hex : '#fff', pick: () => this.setState({ skill: i, custom: '' }) })),
+      custom, setCustom: (e) => this.setState({ custom: e.target.value }),
+      dailyOpts: [30, 60, 90, 120, 180].map((m) => ({ label: hm(m), on: daily === m, bg: daily === m ? hex : '#fff', pick: () => this.setState({ daily: m }) })),
+      dayOpts: [1, 2, 3, 4, 5, 6, 7].map((n) => ({ label: String(n), on: days === n, bg: days === n ? hex : '#fff', pick: () => this.setState({ days: n }) })),
+      time, setTime: (e) => this.setState({ time: e.target.value }),
+      weekly: hm(daily * days), eta,
+      summary: [{ k: 'Compañero', v: pet + ' (' + speciesNames[sp] + ')' }, { k: 'Habilidad', v: skillName }, { k: 'Ritmo', v: hm(daily) + ' · ' + days + ' días por semana' }, { k: 'Aviso', v: 'A las ' + time }],
+      backVis: step === 1 ? 'hidden' : 'visible',
+      back: () => this.setState({ step: Math.max(1, step - 1) }),
+      next: () => this.setState({ step: Math.min(4, step + 1) })
+    };
+  }
+}
+</script>
+</body>
+</html>

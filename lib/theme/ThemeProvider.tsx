@@ -4,14 +4,14 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { updateProfile } from "@/lib/firestore/profiles";
 import { applyTheme, writeThemeCache } from "@/lib/theme/apply";
-import { getTheme, systemThemeId, THEMES } from "@/lib/theme/tokens";
+import { DEFAULT_THEME_ID, getTheme, systemThemeId, THEMES } from "@/lib/theme/tokens";
 
 interface ThemeContextValue {
   themeId: string;
-  accentIdx: number;
+  accentIdx: number | null;
   followSystem: boolean;
-  setTheme: (themeId: string, accentIdx?: number) => void;
-  setAccentIdx: (idx: number) => void;
+  setTheme: (themeId: string, accentIdx?: number | null) => void;
+  setAccentIdx: (idx: number | null) => void;
   setFollowSystem: (follow: boolean) => void;
 }
 
@@ -19,8 +19,8 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const { profile } = useAuth();
-  const [themeId, setThemeId] = useState("oficio");
-  const [accentIdx, setAccentIdxState] = useState(0);
+  const [themeId, setThemeId] = useState(DEFAULT_THEME_ID);
+  const [accentIdx, setAccentIdxState] = useState<number | null>(null);
   const [followSystem, setFollowSystemState] = useState(false);
 
   // Sync local state from the user's profile once it loads.
@@ -40,7 +40,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       return followSystem ? systemThemeId(new Date().getHours()) : themeId;
     }
     function effectiveAccent() {
-      return followSystem ? 0 : accentIdx;
+      return followSystem ? null : accentIdx;
     }
     function apply() {
       const effId = effectiveTheme();
@@ -58,7 +58,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       themeId,
       accentIdx,
       followSystem,
-      setTheme(id, idx = 0) {
+      setTheme(id, idx = null) {
         setThemeId(id);
         setAccentIdxState(idx);
         if (profile) void updateProfile(profile.uid, { themeId: id, accentIdx: idx });

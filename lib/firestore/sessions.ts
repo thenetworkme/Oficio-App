@@ -11,6 +11,7 @@ import {
 } from "firebase/firestore";
 import { getDb } from "@/lib/firebase";
 import { recordCrossedMilestones } from "@/lib/firestore/achievements";
+import { awardSessionEconomy } from "@/lib/firestore/economy";
 import type { PracticeSession, SessionSource } from "@/lib/types";
 
 function sessionsCol() {
@@ -33,6 +34,8 @@ export interface SaveSessionResult {
   beforeHours: number;
   afterHours: number;
   milestonesCrossed: number[];
+  coinsGained: number;
+  xpGained: number;
 }
 
 /**
@@ -60,8 +63,12 @@ export async function saveSession(input: NewSessionInput): Promise<SaveSessionRe
   const beforeHours = beforeMinutes / 60;
   const afterHours = afterMinutes / 60;
   const crossed = await recordCrossedMilestones(input.userId, input.skillId, beforeHours, afterHours);
+  // Economy (coins/XP) is awarded in its own transaction, same pattern as
+  // milestone bookkeeping above — see lib/firestore/economy.ts for why the
+  // pet balance update is transactional with its ledger entry.
+  const { coinsGained, xpGained } = await awardSessionEconomy(input.userId, input.durationMin, input.quality);
 
-  return { sessionId: sessionRef.id, beforeHours, afterHours, milestonesCrossed: crossed };
+  return { sessionId: sessionRef.id, beforeHours, afterHours, milestonesCrossed: crossed, coinsGained, xpGained };
 }
 
 /** Reverses a session's effect on the skill's total (used when deleting a logged entry). */

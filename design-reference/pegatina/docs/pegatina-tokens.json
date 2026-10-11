@@ -1,0 +1,20 @@
+{
+  "style": "Pegatina (neo-brutalista, stickers)",
+  "fonts": { "text": "Space Grotesk 500/700", "mono": "Space Mono 400/700" },
+  "colors": {
+    "paper": "#FFF4D6", "ink": "#111111", "card": "#FFFFFF",
+    "yellow": "#FFD84D", "pink": "#FF8FB8", "green": "#7BE0A4", "blue": "#7CC4FF", "orange": "#FF9F5A",
+    "locked": "#E9E4D4", "danger": "#D6361F"
+  },
+  "borders": { "width": "3px", "radius": "14px", "pill": "999px" },
+  "shadow": "6px 6px 0 #111 (hover 9px 9px 0, active 2px 2px 0)",
+  "rotation": "stickers rotados entre -2deg y 2deg",
+  "themes": ["Pegatina", "Catppuccin Mocha", "Macchiato", "Frappé", "Latte", "Nord", "Gruvbox", "Rosé Pine"],
+  "economy": { "coinsPerSession": "round(min/25*10) + (focus>=4 ? 5 : 0)", "xp": "round(min*(0.8+focus*0.1))", "welcomeCoins": 100 },
+  "shopItems": {
+    "hat": ["cap(0)", "chef(120)", "top(150)", "wiz(250)", "crown(400, Nv.15)"],
+    "cape": ["red(200)", "star(350)", "master(800, 5.000 h)"],
+    "acc": ["glass(90)", "mono(100)", "bow(60)", "scarf(130)"],
+    "bg": ["cream(0)", "mint(80)", "sky(80)", "lilac(100)", "sunset(120)"]
+  }
+}

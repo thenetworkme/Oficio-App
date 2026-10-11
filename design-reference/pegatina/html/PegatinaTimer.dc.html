@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Pegatina — Tomate</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF4D6}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px solid var(--ink,#111);outline-offset:3px}
+.bx{border:3px solid var(--bd,#111);border-radius:14px;box-shadow:6px 6px 0 var(--sh,#111)}
+.mono{font-family:'Space Mono',monospace}
+.lbl{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.02em}
+.h1{margin:0;font-size:84px;line-height:.95;font-weight:700;letter-spacing:-.05em}
+.h2{margin:0;font-size:38px;line-height:1.05;font-weight:700;letter-spacing:-.03em}
+.h3{margin:0;font-size:28px;line-height:1.1;font-weight:700;letter-spacing:-.03em}
+.chip{min-height:44px;padding:0 18px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700;font-size:15px;background:var(--card,#fff);color:var(--ink,#111)}
+.btn{min-height:56px;padding:0 28px;font-size:20px;font-weight:700;color:#111;display:inline-flex;align-items:center;justify-content:center}
+.in{min-height:48px;padding:0 14px;border:3px solid var(--bd,#111);border-radius:12px;font-size:16px;background:var(--card,#fff);color:var(--ink,#111);width:100%;box-sizing:border-box}
+.in::placeholder{color:#6b6b6b}
+.hov{transition:transform .12s,box-shadow .12s}
+.hov:hover{transform:translate(-2px,-2px) rotate(var(--r,0deg));box-shadow:9px 9px 0 var(--sh,#111)}
+.press:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--sh,#111)}
+@media (prefers-reduced-motion:reduce){.hov{transition:none}}
+</style>
+</helmet>
+<div style="background:{{bg}};color:#111;font-family:'Space Grotesk',system-ui,sans-serif;font-size:16px;line-height:1.4;min-height:600px;padding:28px 48px 48px;box-sizing:border-box;display:flex;flex-direction:column;gap:28px;transition:background .3s">
+
+<header style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+<a href="PegatinaPanel.dc.html" class="bx" style="background:var(--a1,#FFD84D);color:#111;padding:6px 18px;font-size:30px;font-weight:700;transform:rotate(-2deg);letter-spacing:-.02em">oficio!</a>
+<nav aria-label="Principal" style="display:flex;gap:8px;flex:1;flex-wrap:wrap"><a href="PegatinaPanel.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Hoy</a><a href="PegatinaTimer.dc.html" aria-current="page" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;background:var(--ink,#111);color:var(--paper,#FFF4D6);font-weight:700">Tomate</a><a href="PegatinaStats.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Números</a><a href="PegatinaLogros.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Logros</a><a href="PegatinaTienda.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Tienda</a><a href="PegatinaAvisos.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Avisos</a><a href="PegatinaAjustes.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Ajustes</a></nav>
+<a href="PegatinaAjustes.dc.html" aria-label="Perfil de Kobox" class="bx" style="background:var(--a3,#7BE0A4);color:#111;padding:6px 16px 6px 8px;min-height:44px;box-sizing:border-box;display:flex;align-items:center;gap:10px;font-weight:700"><span aria-hidden="true" style="width:32px;height:32px;border-radius:50%;background:#111;color:var(--a3,#7BE0A4);display:flex;align-items:center;justify-content:center">K</span>Kobox</a>
+<a href="PegatinaLogin.dc.html" aria-label="Cerrar sesión" class="bx press" style="width:50px;height:50px;background:var(--card,#fff);color:var(--ink,#111);display:flex;align-items:center;justify-content:center;padding:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></a>
+</header>
+
+<div class="mono" style="font-weight:700;margin-bottom:-12px">Tomate {{n}} de 4 · {{skillLabel}}</div>
+<main style="display:flex;gap:40px;flex-wrap:wrap;align-items:center;justify-content:center;flex:1">
+<div style="position:relative;display:flex;align-items:center;justify-content:center">
+<div class="bx" style="width:440px;height:440px;max-width:100%;border-radius:50%;background:{{fruit}};box-shadow:10px 10px 0 #111;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;position:relative">
+<svg width="120" height="56" viewBox="0 0 120 56" style="position:absolute;top:-34px;left:50%;transform:translateX(-50%)" aria-hidden="true"><path d="M60 52 C50 30 20 36 8 22 C28 20 44 22 52 34 C48 18 56 6 60 2 C64 6 72 18 68 34 C76 22 92 20 112 22 C100 36 70 30 60 52Z" fill="#7BE0A4" stroke="#111" stroke-width="3" stroke-linejoin="round"/></svg>
+<span role="timer" style="font-size:132px;font-weight:700;letter-spacing:-.06em;line-height:1">{{timeText}}</span>
+<span class="mono" style="font-weight:700;font-size:16px;text-transform:uppercase">{{modeLabel}}</span>
+</div>
+<div class="bx" style="position:absolute;right:-24px;top:40px;background:#FFD84D;padding:8px 16px;transform:rotate(8deg);font-weight:700;font-size:20px">{{sticker}}</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:22px;min-width:300px;flex:0 1 360px">
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="3"><button type="button" aria-pressed="{{t.on}}" onClick="{{t.pick}}" class="bx" style="min-height:48px;padding:0 18px;font-size:16px;font-weight:700;background:{{t.bg}};box-shadow:{{t.sh}};transform:{{t.tr}}">{{t.label}}</button></sc-for>
+</div>
+<button type="button" onClick="{{toggle}}" class="bx press" style="min-height:84px;font-size:32px;font-weight:700;background:#111;color:#FFF4D6;box-shadow:6px 6px 0 #FF8FB8">{{toggleText}}</button>
+<div style="display:flex;gap:12px">
+<button type="button" onClick="{{reset}}" class="bx press" style="flex:1;min-height:52px;font-size:16px;font-weight:700;background:#fff">Reiniciar</button>
+<button type="button" onClick="{{skip}}" class="bx press" style="flex:1;min-height:52px;font-size:16px;font-weight:700;background:#fff">Saltar</button>
+</div>
+<a href="PegatinaCierre.dc.html" class="bx press" style="min-height:52px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;background:#7BE0A4;color:#111">Terminar y guardar sesión →</a>
+<div style="display:flex;flex-direction:column;gap:10px">
+<span class="mono" style="font-size:13px;font-weight:700;text-transform:uppercase">¿Qué practicas?</span>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<sc-for list="{{skills}}" as="k" hint-placeholder-count="3"><button type="button" aria-pressed="{{k.on}}" onClick="{{k.pick}}" style="min-height:44px;padding:0 16px;border:3px solid #111;border-radius:999px;font-size:15px;font-weight:700;background:{{k.bg}}">{{k.name}}</button></sc-for>
+</div>
+</div>
+<div style="display:flex;gap:10px" aria-label="Tomates de hoy"><sc-for list="{{dots}}" as="d" hint-placeholder-count="4"><span style="width:36px;height:36px;border-radius:50%;border:3px solid #111;background:{{d.bg}}"></span></sc-for></div>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"focusMin":{"editor":"int","default":25,"min":1,"max":90,"unit":"min"},"shortMin":{"editor":"int","default":5,"min":1,"max":30,"unit":"min"},"longMin":{"editor":"int","default":15,"min":1,"max":60,"unit":"min"},"$preview":{"width":1360,"height":860}}'>
+class Component extends DCLogic {
+  total(m) { return (m === 'focus' ? (this.props.focusMin ?? 25) : m === 'short' ? (this.props.shortMin ?? 5) : (this.props.longMin ?? 15)) * 60; }
+  componentDidMount() { this.t = setInterval(() => this.tick(), 1000); }
+  componentWillUnmount() { clearInterval(this.t); }
+  adv(completed) {
+    const s = this.state || {};
+    const mode = s.mode || 'focus';
+    let done = s.done || 0;
+    let next = 'focus';
+    if (mode === 'focus') { if (completed) done += 1; next = done > 0 && done % 4 === 0 ? 'long' : 'short'; }
+    this.setState({ mode: next, left: this.total(next), running: false, done });
+  }
+  tick() {
+    const s = this.state || {};
+    if (!s.running) return;
+    const left = (s.left ?? this.total(s.mode || 'focus')) - 1;
+    if (left > 0) this.setState({ left }); else this.adv(true);
+  }
+  renderVals() {
+    const s = this.state || {};
+    const mode = s.mode || 'focus';
+    const total = this.total(mode);
+    const left = s.left ?? total;
+    const running = !!s.running;
+    const done = s.done || 0;
+    const skill = s.skill ?? 0;
+    const setMode = (m) => this.setState({ mode: m, left: this.total(m), running: false });
+    const fill = { focus: '#FF8FB8', short: '#7BE0A4', long: '#7CC4FF' };
+    const filled = done > 0 && done % 4 === 0 && mode !== 'focus' ? 4 : done % 4;
+    return {
+      bg: mode === 'focus' ? '#FFF4D6' : '#E4F7EA',
+      fruit: fill[mode],
+      timeText: String(Math.floor(left / 60)).padStart(2, '0') + ':' + String(left % 60).padStart(2, '0'),
+      modeLabel: mode === 'focus' ? 'Modo enfoque' : mode === 'short' ? 'Respira' : 'Descanso largo',
+      sticker: running ? '¡Sin distraerte!' : (left === total ? '¡A darle!' : 'En pausa'),
+      skillLabel: ['Programación', 'Inglés', 'Guitarra'][skill], n: Math.min(filled + (mode === 'focus' ? 1 : 0), 4),
+      tabs: [['focus', 'Enfoque'], ['short', 'Corto'], ['long', 'Largo']].map(([id, label]) => ({ label, on: mode === id, bg: mode === id ? '#FFD84D' : '#fff', sh: mode === id ? '2px 2px 0 #111' : '6px 6px 0 #111', tr: mode === id ? 'translate(4px,4px)' : 'none', pick: () => setMode(id) })),
+      toggleText: running ? 'Pausa' : 'Dale',
+      toggle: () => this.setState({ running: !running, left }),
+      reset: () => this.setState({ left: total, running: false }),
+      skip: () => this.adv(false),
+      skills: ['Programación', 'Inglés', 'Guitarra'].map((name, i) => ({ name, on: skill === i, bg: skill === i ? '#FFD84D' : '#fff', pick: () => this.setState({ skill: i }) })),
+      dots: [0, 1, 2, 3].map((i) => ({ bg: i < filled ? '#FF8FB8' : '#fff' }))
+    };
+  }
+}
+</script>
+</body>
+</html>

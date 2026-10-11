@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Pegatina — Números</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF4D6}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px solid var(--ink,#111);outline-offset:3px}
+.bx{border:3px solid var(--bd,#111);border-radius:14px;box-shadow:6px 6px 0 var(--sh,#111)}
+.mono{font-family:'Space Mono',monospace}
+.lbl{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.02em}
+.h1{margin:0;font-size:84px;line-height:.95;font-weight:700;letter-spacing:-.05em}
+.h2{margin:0;font-size:38px;line-height:1.05;font-weight:700;letter-spacing:-.03em}
+.h3{margin:0;font-size:28px;line-height:1.1;font-weight:700;letter-spacing:-.03em}
+.chip{min-height:44px;padding:0 18px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700;font-size:15px;background:var(--card,#fff);color:var(--ink,#111)}
+.btn{min-height:56px;padding:0 28px;font-size:20px;font-weight:700;color:#111;display:inline-flex;align-items:center;justify-content:center}
+.in{min-height:48px;padding:0 14px;border:3px solid var(--bd,#111);border-radius:12px;font-size:16px;background:var(--card,#fff);color:var(--ink,#111);width:100%;box-sizing:border-box}
+.in::placeholder{color:#6b6b6b}
+.hov{transition:transform .12s,box-shadow .12s}
+.hov:hover{transform:translate(-2px,-2px) rotate(var(--r,0deg));box-shadow:9px 9px 0 var(--sh,#111)}
+.press:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--sh,#111)}
+@media (prefers-reduced-motion:reduce){.hov{transition:none}}
+</style>
+</helmet>
+<div style="background:var(--bg,#FFF4D6);color:var(--ink,#111);font-family:'Space Grotesk',system-ui,sans-serif;font-size:16px;line-height:1.4;min-height:600px;padding:28px 48px 64px;box-sizing:border-box;display:flex;flex-direction:column;gap:32px;">
+<header style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+<a href="PegatinaPanel.dc.html" class="bx" style="background:var(--a1,#FFD84D);color:#111;padding:6px 18px;font-size:30px;font-weight:700;transform:rotate(-2deg);letter-spacing:-.02em">oficio!</a>
+<nav aria-label="Principal" style="display:flex;gap:8px;flex:1;flex-wrap:wrap"><a href="PegatinaPanel.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Hoy</a><a href="PegatinaTimer.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Tomate</a><a href="PegatinaStats.dc.html" aria-current="page" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;background:var(--ink,#111);color:var(--paper,#FFF4D6);font-weight:700">Números</a><a href="PegatinaLogros.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Logros</a><a href="PegatinaTienda.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Tienda</a><a href="PegatinaAvisos.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Avisos</a><a href="PegatinaAjustes.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Ajustes</a></nav>
+<a href="PegatinaAjustes.dc.html" aria-label="Perfil de Kobox" class="bx" style="background:var(--a3,#7BE0A4);color:#111;padding:6px 16px 6px 8px;min-height:44px;box-sizing:border-box;display:flex;align-items:center;gap:10px;font-weight:700"><span aria-hidden="true" style="width:32px;height:32px;border-radius:50%;background:#111;color:var(--a3,#7BE0A4);display:flex;align-items:center;justify-content:center">K</span>Kobox</a>
+<a href="PegatinaLogin.dc.html" aria-label="Cerrar sesión" class="bx press" style="width:50px;height:50px;background:var(--card,#fff);color:var(--ink,#111);display:flex;align-items:center;justify-content:center;padding:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></a>
+</header>
+
+<section style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap">
+<h1 class="h1">Lo que mides,<br>mejora<span style="color:#FF8FB8;-webkit-text-stroke:3px #111">.</span></h1>
+<div style="display:flex;gap:10px" role="group" aria-label="Periodo">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="3"><button type="button" aria-pressed="{{t.on}}" onClick="{{t.pick}}" class="bx press" style="min-height:48px;padding:0 20px;font-size:16px;font-weight:700;color:#111;background:{{t.bg}};box-shadow:{{t.sh}};transform:{{t.tr}}">{{t.label}}</button></sc-for>
+</div>
+</section>
+
+<section style="display:flex;gap:28px;flex-wrap:wrap;align-items:stretch">
+<article class="bx" style="flex:2 1 620px;background:#FFD84D;padding:28px 30px;display:flex;flex-direction:column;gap:16px;color:#111">
+<span class="lbl">Camino a las 10.000 horas · Programación</span>
+<div style="font-size:92px;font-weight:700;line-height:1;letter-spacing:-.05em">1.284<span style="font-size:30px;letter-spacing:0"> h · 12,8 %</span></div>
+<div style="position:relative;padding-top:6px">
+<div role="progressbar" aria-label="Progreso a 10.000 horas" aria-valuenow="13" aria-valuemin="0" aria-valuemax="100" style="height:34px;background:#fff;border:3px solid #111;border-radius:999px;overflow:hidden"><div style="width:12.8%;height:100%;background:#111"></div></div>
+<div class="mono" style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-top:8px"><span>0</span><span>100</span><span>1.000</span><span>5.000</span><span>10.000</span></div>
+</div>
+</article>
+<div style="flex:1 1 300px;display:flex;flex-direction:column;gap:22px">
+<div class="bx" style="background:#FF8FB8;padding:20px 24px;transform:rotate(1.2deg);color:#111"><span class="lbl">Ritmo actual</span><div style="font-size:44px;font-weight:700;line-height:1.05;letter-spacing:-.04em">15 h/sem</div><span style="font-weight:500">llegas en ≈ 11 años</span></div>
+<div class="bx" style="background:#7CC4FF;padding:20px 24px;transform:rotate(-1deg);color:#111"><span class="lbl">Si practicas 3 h/día</span><div style="font-size:44px;font-weight:700;line-height:1.05;letter-spacing:-.04em">21 h/sem</div><span style="font-weight:500">llegas en ≈ 8 años</span></div>
+</div>
+</section>
+
+<section style="display:flex;gap:28px;flex-wrap:wrap;align-items:stretch">
+<article class="bx" style="flex:2 1 620px;background:#fff;padding:26px 30px;display:flex;flex-direction:column;gap:18px;color:#111">
+<div><h2 class="h3">{{chartTitle}}</h2><span class="mono" style="font-size:13px">{{chartSub}}</span></div>
+<div style="display:flex;gap:{{gap}}px;align-items:flex-end;height:220px" role="img" aria-label="{{chartTitle}}">
+<sc-for list="{{bars}}" as="m" hint-placeholder-count="12"><div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%;min-width:0"><span class="mono" style="font-size:12px;font-weight:700">{{m.v}}</span><div style="width:100%;height:{{m.h}}px;background:{{m.bg}};border:3px solid #111;border-radius:6px"></div><span class="mono" style="font-size:12px;font-weight:700">{{m.label}}</span></div></sc-for>
+</div>
+</article>
+<article class="bx" style="flex:1 1 320px;background:#7BE0A4;padding:26px 28px;display:flex;flex-direction:column;gap:16px;color:#111">
+<div><h2 class="h3">Reparto por habilidad</h2><span class="mono" style="font-size:13px">1.692 h en total</span></div>
+<div style="display:flex;height:34px;border:3px solid #111;border-radius:999px;overflow:hidden" aria-hidden="true"><div style="width:75.9%;background:#FFD84D"></div><div style="width:18.4%;background:#FF8FB8;border-left:3px solid #111"></div><div style="width:5.7%;background:#7CC4FF;border-left:3px solid #111"></div></div>
+<sc-for list="{{split}}" as="s" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:12px"><span style="width:22px;height:22px;border:3px solid #111;border-radius:50%;background:{{s.color}}"></span><span style="flex:1;font-weight:700">{{s.name}}</span><span class="mono" style="font-weight:700">{{s.hours}} h · {{s.pct}}</span></div></sc-for>
+</article>
+</section>
+
+<section style="display:flex;gap:28px;flex-wrap:wrap;align-items:stretch">
+<article class="bx" style="flex:2 1 620px;background:#7CC4FF;padding:26px 30px;display:flex;flex-direction:column;gap:18px;color:#111">
+<div><h2 class="h3">Tu mejor momento del día</h2><span class="mono" style="font-size:13px">Sesiones completas sin pausas, por franja horaria</span></div>
+<div style="display:flex;gap:22px;align-items:flex-end;height:150px" role="img" aria-label="Horas por franja horaria">
+<sc-for list="{{slots}}" as="t" hint-placeholder-count="4"><div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%"><span class="mono" style="font-weight:700;font-size:13px">{{t.v}}</span><div style="width:100%;height:{{t.h}}px;background:{{t.bg}};border:3px solid #111;border-radius:6px"></div><span class="mono" style="font-size:12px;font-weight:700;text-align:center">{{t.label}}</span></div></sc-for>
+</div>
+</article>
+<div style="flex:1 1 360px;display:grid;grid-template-columns:1fr 1fr;gap:20px">
+<div class="bx" style="background:#FF9F5A;padding:18px;transform:rotate(-1deg);color:#111"><span class="lbl">Pomodoros del mes</span><div style="font-size:48px;font-weight:700;letter-spacing:-.04em;line-height:1.1">142</div></div>
+<div class="bx" style="background:#FFD84D;padding:18px;transform:rotate(1deg);color:#111"><span class="lbl">Promedio diario</span><div style="font-size:40px;font-weight:700;letter-spacing:-.04em;line-height:1.2">2h 08m</div></div>
+<div class="bx" style="background:#FF8FB8;padding:18px;transform:rotate(1deg);color:#111"><span class="lbl">Sesión más larga</span><div style="font-size:40px;font-weight:700;letter-spacing:-.04em;line-height:1.2">2h 10m</div></div>
+<div class="bx" style="background:#7BE0A4;padding:18px;transform:rotate(-1.5deg);color:#111"><span class="lbl">Mejor racha</span><div style="font-size:40px;font-weight:700;letter-spacing:-.04em;line-height:1.2">31 días</div></div>
+</div>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":600}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const st = this.state || {};
+    const per = st.per || 'año';
+    const sets = {
+      semana: { title: 'Horas por día', sub: 'Esta semana · todas las habilidades', labels: ['L', 'M', 'X', 'J', 'V', 'S', 'D'], vals: [1.5, 2, 1, 2.5, 0, 1.4, 1.5], gap: 18 },
+      mes: { title: 'Horas por semana', sub: 'Últimas 8 semanas · todas las habilidades', labels: ['17 ago', '24 ago', '31 ago', '7 sep', '14 sep', '21 sep', '28 sep', '5 oct'], vals: [11, 13, 12, 14, 13, 15, 16, 9.9], gap: 14 },
+      año: { title: 'Horas por mes', sub: 'Últimos 12 meses · todas las habilidades', labels: ['N', 'D', 'E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O'], vals: [38, 46, 52, 49, 58, 61, 66, 70, 64, 72, 69, 38], gap: 10 }
+    };
+    const d = sets[per];
+    const max = Math.max.apply(null, d.vals);
+    const bars = d.vals.map((v, i) => ({ v: String(v).replace('.', ','), label: d.labels[i], h: Math.max(4, Math.round((v / max) * 150)), bg: i === d.vals.length - 1 ? '#FF8FB8' : '#FFD84D' }));
+    const tabs = [['semana', 'Semana'], ['mes', 'Mes'], ['año', 'Año']].map(([id, label]) => ({ label, on: per === id, bg: per === id ? '#FFD84D' : '#fff', sh: per === id ? '2px 2px 0 #111' : '6px 6px 0 #111', tr: per === id ? 'translate(4px,4px)' : 'none', pick: () => this.setState({ per: id }) }));
+    const split = [
+      { name: 'Programación', hours: '1.284', pct: '75,9 %', color: '#FFD84D' },
+      { name: 'Inglés', hours: '312', pct: '18,4 %', color: '#FF8FB8' },
+      { name: 'Guitarra', hours: '96', pct: '5,7 %', color: '#7CC4FF' }
+    ];
+    const sv = [4, 38, 22, 31];
+    const sl = ['Madrugada · 5–8 am', 'Mañana · 8 am–1 pm', 'Tarde · 1–7 pm', 'Noche · 7 pm–12'];
+    const best = sv.indexOf(Math.max.apply(null, sv));
+    const slots = sv.map((v, i) => ({ v: v + ' h', label: sl[i], h: Math.max(6, Math.round((v / 38) * 80)), bg: i === best ? '#FFD84D' : '#fff' }));
+    return { tabs, bars, split, slots, chartTitle: d.title, chartSub: d.sub, gap: d.gap };
+  }
+}
+</script>
+</body>
+</html>

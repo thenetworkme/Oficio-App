@@ -6,34 +6,32 @@ const THEME_BOOT_SCRIPT = `
 (function () {
   try {
     var THEMES = {
-      oficio: { mode: "dark", accents: ["#F0A93B", "#4FC1AC", "#B5A1F0", "#F07A5C"] },
-      mocha: { mode: "dark", accents: ["#cba6f7", "#fab387", "#94e2d5", "#89b4fa", "#a6e3a1", "#f5c2e7"] },
-      macchiato: { mode: "dark", accents: ["#c6a0f6", "#f5a97f", "#8bd5ca", "#8aadf4", "#a6da95", "#f5bde6"] },
-      frappe: { mode: "dark", accents: ["#ca9ee6", "#ef9f76", "#81c8be", "#8caaee", "#a6d189", "#f4b8e4"] },
-      latte: { mode: "light", accents: ["#8839ef", "#1e66f5", "#179299", "#40a02b", "#fe640b", "#ea76cb"] },
-      nord: { mode: "dark", accents: ["#88c0d0", "#ebcb8b", "#a3be8c", "#b48ead", "#d08770", "#81a1c1"] },
-      gruvbox: { mode: "dark", accents: ["#fabd2f", "#8ec07c", "#d3869b", "#83a598", "#fe8019", "#b8bb26"] },
-      rosepine: { mode: "dark", accents: ["#ebbcba", "#c4a7e7", "#9ccfd8", "#f6c177", "#eb6f92"] }
+      pegatina: { mode: "light", a1: "#FFD84D", a2: "#FF8FB8", a3: "#7BE0A4" },
+      mocha: { mode: "dark", a1: "#F9E2AF", a2: "#F5C2E7", a3: "#A6E3A1" },
+      macchiato: { mode: "dark", a1: "#EED49F", a2: "#F5BDE6", a3: "#A6DA95" },
+      frappe: { mode: "dark", a1: "#E5C890", a2: "#F4B8E4", a3: "#A6D189" },
+      latte: { mode: "light", a1: "#F2C46D", a2: "#EA76CB", a3: "#8BD17C" },
+      nord: { mode: "dark", a1: "#EBCB8B", a2: "#B48EAD", a3: "#A3BE8C" },
+      gruvbox: { mode: "dark", a1: "#FABD2F", a2: "#D3869B", a3: "#B8BB26" },
+      rosepine: { mode: "dark", a1: "#F6C177", a2: "#EB6F92", a3: "#9CCFD8" }
     };
+    var SWATCHES = ["#FFD84D", "#FF8FB8", "#7BE0A4", "#7CC4FF", "#FF9F5A"];
     var raw = localStorage.getItem("oficio-theme-cache");
     var cache = raw ? JSON.parse(raw) : null;
-    var themeId = (cache && cache.themeId) || "oficio";
-    var accentIdx = cache && typeof cache.accentIdx === "number" ? cache.accentIdx : 0;
+    var themeId = (cache && cache.themeId) || "pegatina";
+    var accentIdx = cache && typeof cache.accentIdx === "number" ? cache.accentIdx : null;
     if (cache && cache.followSystem) {
       var hour = new Date().getHours();
       themeId = hour >= 7 && hour < 19 ? "latte" : "mocha";
-      accentIdx = 0;
+      accentIdx = null;
     }
-    var theme = THEMES[themeId] || THEMES.oficio;
-    var accents = theme.accents;
-    var idx = accentIdx >= 0 && accentIdx < accents.length ? accentIdx : 0;
-    var accent = accents[idx];
-    var rest = accents.filter(function (h) { return h !== accent; });
+    var theme = THEMES[themeId] || THEMES.pegatina;
+    var a1 = accentIdx != null && accentIdx >= 0 && accentIdx < SWATCHES.length ? SWATCHES[accentIdx] : theme.a1;
     var root = document.documentElement;
     root.setAttribute("data-theme", themeId);
-    root.style.setProperty("--accent", accent);
-    root.style.setProperty("--a2", rest[0] || accent);
-    root.style.setProperty("--a3", rest[1] || rest[0] || accent);
+    root.style.setProperty("--a1", a1);
+    root.style.setProperty("--a2", theme.a2);
+    root.style.setProperty("--a3", theme.a3);
     root.style.colorScheme = theme.mode;
   } catch (e) {}
 })();

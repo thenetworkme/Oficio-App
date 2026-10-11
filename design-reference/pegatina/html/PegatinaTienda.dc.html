@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Pegatina — Tienda de recompensas</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF4D6}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px solid var(--ink,#111);outline-offset:3px}
+.bx{border:3px solid var(--bd,#111);border-radius:14px;box-shadow:6px 6px 0 var(--sh,#111)}
+.mono{font-family:'Space Mono',monospace}
+.lbl{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.02em}
+.h1{margin:0;font-size:84px;line-height:.95;font-weight:700;letter-spacing:-.05em}
+.h2{margin:0;font-size:38px;line-height:1.05;font-weight:700;letter-spacing:-.03em}
+.h3{margin:0;font-size:28px;line-height:1.1;font-weight:700;letter-spacing:-.03em}
+.chip{min-height:44px;padding:0 18px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700;font-size:15px;background:var(--card,#fff);color:var(--ink,#111)}
+.btn{min-height:56px;padding:0 28px;font-size:20px;font-weight:700;color:#111;display:inline-flex;align-items:center;justify-content:center}
+.in{min-height:48px;padding:0 14px;border:3px solid var(--bd,#111);border-radius:12px;font-size:16px;background:var(--card,#fff);color:var(--ink,#111);width:100%;box-sizing:border-box}
+.in::placeholder{color:#6b6b6b}
+.hov{transition:transform .12s,box-shadow .12s}
+.hov:hover{transform:translate(-2px,-2px) rotate(var(--r,0deg));box-shadow:9px 9px 0 var(--sh,#111)}
+.press:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--sh,#111)}
+@media (prefers-reduced-motion:reduce){.hov{transition:none}}
+</style>
+</helmet>
+<div style="background:var(--bg,#FFF4D6);color:var(--ink,#111);font-family:'Space Grotesk',system-ui,sans-serif;font-size:16px;line-height:1.4;min-height:600px;padding:28px 48px 64px;box-sizing:border-box;display:flex;flex-direction:column;gap:32px;">
+<header style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+<a href="PegatinaPanel.dc.html" class="bx" style="background:var(--a1,#FFD84D);color:#111;padding:6px 18px;font-size:30px;font-weight:700;transform:rotate(-2deg);letter-spacing:-.02em">oficio!</a>
+<nav aria-label="Principal" style="display:flex;gap:8px;flex:1;flex-wrap:wrap"><a href="PegatinaPanel.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Hoy</a><a href="PegatinaTimer.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Tomate</a><a href="PegatinaStats.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Números</a><a href="PegatinaLogros.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Logros</a><a href="PegatinaTienda.dc.html" aria-current="page" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;background:var(--ink,#111);color:var(--paper,#FFF4D6);font-weight:700">Tienda</a><a href="PegatinaAvisos.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Avisos</a><a href="PegatinaAjustes.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Ajustes</a></nav>
+<a href="PegatinaAjustes.dc.html" aria-label="Perfil de Kobox" class="bx" style="background:var(--a3,#7BE0A4);color:#111;padding:6px 16px 6px 8px;min-height:44px;box-sizing:border-box;display:flex;align-items:center;gap:10px;font-weight:700"><span aria-hidden="true" style="width:32px;height:32px;border-radius:50%;background:#111;color:var(--a3,#7BE0A4);display:flex;align-items:center;justify-content:center">K</span>Kobox</a>
+<a href="PegatinaLogin.dc.html" aria-label="Cerrar sesión" class="bx press" style="width:50px;height:50px;background:var(--card,#fff);color:var(--ink,#111);display:flex;align-items:center;justify-content:center;padding:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></a>
+</header>
+
+<section style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap">
+<h1 class="h1">La tienda<br>de {{petName}}<span style="color:#FFD84D;-webkit-text-stroke:3px #111">.</span></h1>
+<div class="bx" style="background:#FFD84D;color:#111;padding:12px 22px;display:flex;align-items:center;gap:12px;transform:rotate(1.5deg)" role="status" aria-label="Monedas disponibles">
+<span aria-hidden="true" style="width:44px;height:44px;border:3px solid #111;border-radius:50%;background:#FFF4D6;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:22px">$</span>
+<div><div style="font-size:40px;font-weight:700;letter-spacing:-.04em;line-height:1">{{coins}}</div><span class="lbl">monedas</span></div>
+</div>
+</section>
+
+<section style="display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start">
+<aside style="flex:0 1 420px;min-width:320px;display:flex;flex-direction:column;gap:20px;position:sticky;top:16px">
+<div class="bx" style="background:#fff;padding:20px;display:flex;flex-direction:column;gap:14px;color:#111">
+<div style="position:relative"><svg viewBox="0 0 200 200" width="380" height="380" role="img" aria-label="Tu mascota con lo que llevas puesto" class="" style="display:block;max-width:100%;height:auto">
+<g stroke="#111" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+<rect x="4" y="4" width="192" height="192" rx="30" fill="{{mBg}}"/>
+<ellipse cx="100" cy="184" rx="50" ry="8" fill="rgba(17,17,17,.18)" stroke="none"/>
+<g style="display:{{dCred}}"><path d="M50 108 L22 188 L178 188 L150 108 Z" fill="#FF4D4D"/></g>
+<g style="display:{{dCstar}}"><path d="M50 108 L22 188 L178 188 L150 108 Z" fill="#2B3A8C"/><g fill="#FFD84D" stroke="none"><circle cx="40" cy="170" r="5"/><circle cx="160" cy="165" r="5"/><circle cx="70" cy="182" r="4"/><circle cx="132" cy="180" r="4"/></g></g>
+<g style="display:{{dCmaster}}"><path d="M50 108 L22 188 L178 188 L150 108 Z" fill="#FFD84D"/><path d="M30 176 L170 176" stroke="#111" stroke-width="5" fill="none"/><circle cx="100" cy="176" r="6" fill="#FF8FB8"/></g>
+<g style="display:{{dBuho}}"><path d="M52 84 L56 50 L82 70 Z" fill="{{mCol}}"/><path d="M148 84 L144 50 L118 70 Z" fill="{{mCol}}"/></g>
+<g style="display:{{dGato}}"><path d="M48 92 L54 46 L88 68 Z" fill="{{mCol}}"/><path d="M152 92 L146 46 L112 68 Z" fill="{{mCol}}"/></g>
+<ellipse cx="100" cy="118" rx="60" ry="56" fill="{{mCol}}"/>
+<g style="display:{{dLeaf}}"><path d="M100 64 C88 52 70 54 62 60 C74 70 88 72 100 64Z M100 64 C112 52 130 54 138 60 C126 70 112 72 100 64Z M100 64 L100 50" fill="#7BE0A4"/></g>
+<g stroke="none"><circle cx="64" cy="130" r="9" fill="#fff" opacity=".45"/><circle cx="136" cy="130" r="9" fill="#fff" opacity=".45"/></g>
+<g stroke-width="4"><circle cx="78" cy="108" r="12" fill="#fff"/><circle cx="122" cy="108" r="12" fill="#fff"/></g>
+<g fill="#111" stroke="none"><circle cx="80" cy="109" r="5.5"/><circle cx="120" cy="109" r="5.5"/></g>
+<g style="display:{{dSmile}}"><path d="M86 130 Q100 144 114 130" fill="none"/></g>
+<g style="display:{{dOpen}}"><path d="M84 128 Q100 158 116 128 Z" fill="#111"/><path d="M92 143 Q100 150 108 143 Q100 138 92 143Z" fill="#FF8FB8" stroke="none"/></g>
+<g style="display:{{dBeak}}"><path d="M92 124 L108 124 L100 140 Z" fill="#FF9F5A"/></g>
+<g style="display:{{dGato}}"><path d="M96 122 L104 122 L100 127 Z" fill="#FF8FB8" stroke-width="3"/><path d="M52 124 L30 120 M52 132 L30 138 M148 124 L170 120 M148 132 L170 138" stroke-width="3" fill="none"/></g>
+<g style="display:{{dAglass}}" stroke-width="4"><circle cx="78" cy="108" r="17" fill="rgba(124,196,255,.35)"/><circle cx="122" cy="108" r="17" fill="rgba(124,196,255,.35)"/><path d="M95 108 L105 108" fill="none"/></g>
+<g style="display:{{dAmono}}" stroke-width="4"><circle cx="122" cy="108" r="18" fill="rgba(255,255,255,.3)"/><path d="M138 120 Q150 150 140 180" fill="none" stroke-width="3"/></g>
+<g style="display:{{dAscarf}}"><path d="M54 160 Q100 186 146 160 L150 176 Q100 202 50 176 Z" fill="#FF4D4D"/><path d="M126 182 L142 200 L120 198 Z" fill="#FF4D4D"/></g>
+<g style="display:{{dAbow}}"><path d="M100 170 L74 156 L74 184 Z" fill="#FF8FB8"/><path d="M100 170 L126 156 L126 184 Z" fill="#FF8FB8"/><circle cx="100" cy="170" r="8" fill="#FFD84D"/></g>
+<g style="display:{{dHcap}}"><path d="M58 76 Q100 24 142 76 Z" fill="#7CC4FF"/><path d="M110 74 Q152 66 174 82 Q164 94 112 86 Z" fill="#4AA3E8"/><circle cx="100" cy="42" r="5" fill="#FFD84D" stroke-width="3"/></g>
+<g style="display:{{dHtop}}"><ellipse cx="100" cy="74" rx="48" ry="9" fill="#2B2B2B"/><path d="M68 74 L70 24 Q100 16 130 24 L132 74 Z" fill="#2B2B2B"/><rect x="69" y="52" width="62" height="12" fill="#FFD84D" stroke-width="3"/></g>
+<g style="display:{{dHcrown}}"><path d="M62 78 L66 38 L86 58 L100 32 L114 58 L134 38 L138 78 Z" fill="#FFD84D"/><circle cx="100" cy="62" r="5" fill="#FF8FB8" stroke-width="3"/></g>
+<g style="display:{{dHchef}}"><circle cx="78" cy="48" r="20" fill="#fff"/><circle cx="100" cy="38" r="22" fill="#fff"/><circle cx="122" cy="48" r="20" fill="#fff"/><rect x="72" y="62" width="56" height="16" rx="4" fill="#fff"/></g>
+<g style="display:{{dHwiz}}"><path d="M66 78 L100 8 L134 78 Z" fill="#8E7CFF"/><ellipse cx="100" cy="78" rx="54" ry="10" fill="#8E7CFF"/><g fill="#FFD84D" stroke="none"><circle cx="96" cy="48" r="4"/><circle cx="108" cy="62" r="3"/><circle cx="88" cy="66" r="3"/></g></g>
+</g></svg>
+<div class="bx" style="position:absolute;right:-6px;top:-10px;background:#FF8FB8;padding:6px 14px;transform:rotate(6deg);font-weight:700">{{bubble}}</div></div>
+<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:30px;font-weight:700;letter-spacing:-.03em">{{petName}}</span><span class="mono" style="font-weight:700">Nv. 14</span></div>
+<div class="mono" style="font-size:13px">Llevas puesto: {{wearing}}</div>
+</div>
+<div class="bx" style="background:#7BE0A4;padding:16px 20px;color:#111;transform:rotate(-1deg)"><span class="lbl">Tu armario</span><div style="font-size:28px;font-weight:700;letter-spacing:-.03em">{{ownedCount}} de {{total}} cosas</div>
+<div style="height:16px;border:3px solid #111;border-radius:999px;background:#fff;overflow:hidden;margin-top:6px" role="progressbar" aria-label="Armario" aria-valuenow="{{ownedPct}}" aria-valuemin="0" aria-valuemax="100"><div style="width:{{ownedPct}}%;height:100%;background:#111"></div></div></div>
+</aside>
+
+<div style="flex:1 1 600px;display:flex;flex-direction:column;gap:22px">
+<div style="display:flex;gap:10px;flex-wrap:wrap" role="tablist"><sc-for list="{{tabs}}" as="t" hint-placeholder-count="4"><button type="button" role="tab" aria-selected="{{t.on}}" onClick="{{t.pick}}" class="bx press" style="min-height:48px;padding:0 20px;font-size:16px;font-weight:700;color:#111;background:{{t.bg}};box-shadow:{{t.sh}};transform:{{t.tr}}">{{t.label}}</button></sc-for></div>
+<div role="status" style="min-height:44px;font-weight:700;font-size:18px;display:flex;align-items:center;gap:10px"><span style="background:{{toastBg}};border:3px solid #111;border-radius:999px;padding:4px 16px;color:#111">{{toast}}</span></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:24px">
+<sc-for list="{{items}}" as="i" hint-placeholder-count="5">
+<article class="bx" style="background:{{i.bg}};padding:16px;display:flex;flex-direction:column;gap:10px;color:#111;opacity:{{i.op}}">
+<div aria-hidden="true" style="height:92px;border:3px solid #111;border-radius:12px;background:{{i.thumb}};display:flex;align-items:center;justify-content:center;font-size:48px">{{i.icon}}</div>
+<div style="font-weight:700;font-size:19px;line-height:1.15">{{i.name}}</div>
+<div class="mono" style="font-size:13px;font-weight:700">{{i.sub}}</div>
+<button type="button" onClick="{{i.act}}" aria-disabled="{{i.dis}}" class="bx press" style="min-height:48px;font-weight:700;font-size:16px;color:#111;background:{{i.btnBg}};box-shadow:3px 3px 0 #111;margin-top:auto">{{i.btn}}</button>
+</article>
+</sc-for>
+</div>
+</div>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":600}}'>
+class Component extends DCLogic {
+  mv(o) {
+    const sp = o.sp || 'tomate';
+    const sh = (c) => (c ? 'inline' : 'none');
+    return {
+      mBg: o.bg || '#FFF4D6', mCol: o.col || '#FF8FB8',
+      dTomate: sh(sp === 'tomate'), dBuho: sh(sp === 'buho'), dGato: sh(sp === 'gato'),
+      dLeaf: sh(sp === 'tomate' && !o.hat), dBeak: sh(sp === 'buho'),
+      dSmile: sh(sp !== 'buho' && !o.open), dOpen: sh(sp !== 'buho' && !!o.open),
+      dHcap: sh(o.hat === 'cap'), dHtop: sh(o.hat === 'top'), dHcrown: sh(o.hat === 'crown'), dHchef: sh(o.hat === 'chef'), dHwiz: sh(o.hat === 'wiz'),
+      dCred: sh(o.cape === 'red'), dCstar: sh(o.cape === 'star'), dCmaster: sh(o.cape === 'master'),
+      dAglass: sh(o.acc === 'glass'), dAmono: sh(o.acc === 'mono'), dAscarf: sh(o.acc === 'scarf'), dAbow: sh(o.acc === 'bow')
+    };
+  }
+
+  renderVals() {
+    const st = this.state || {};
+    const coins = st.coins ?? 340;
+    const owned = st.owned || { cap: true, cream: true };
+    const eq = st.eq || { hat: 'cap', cape: null, acc: null, bg: 'cream' };
+    const tab = st.tab || 'hat';
+    const toast = st.toast || 'Cada tomate completo te da monedas.';
+    const C = [
+      { id: 'cap', cat: 'hat', name: 'Gorra azul', price: 0, icon: '🧢', thumb: '#7CC4FF' },
+      { id: 'chef', cat: 'hat', name: 'Gorro de chef', price: 120, icon: '👨‍🍳', thumb: '#fff' },
+      { id: 'top', cat: 'hat', name: 'Sombrero de copa', price: 150, icon: '🎩', thumb: '#E9E4D4' },
+      { id: 'wiz', cat: 'hat', name: 'Sombrero de mago', price: 250, icon: '🧙', thumb: '#CFC6FF' },
+      { id: 'crown', cat: 'hat', name: 'Corona', price: 400, icon: '👑', thumb: '#FFD84D', lock: 15, lockText: 'Llega al Nv. 15' },
+      { id: 'red', cat: 'cape', name: 'Capa roja', price: 200, icon: '🦸', thumb: '#FF9C9C' },
+      { id: 'star', cat: 'cape', name: 'Capa estrellada', price: 350, icon: '✨', thumb: '#8FA0FF' },
+      { id: 'master', cat: 'cape', name: 'Capa de maestro', price: 800, icon: '🏆', thumb: '#FFD84D', lock: 99, lockText: 'Llega a 5.000 h' },
+      { id: 'glass', cat: 'acc', name: 'Lentes pegatina', price: 90, icon: '🕶️', thumb: '#BFE3FF' },
+      { id: 'mono', cat: 'acc', name: 'Monóculo', price: 100, icon: '🧐', thumb: '#FFE9B0' },
+      { id: 'bow', cat: 'acc', name: 'Moño', price: 60, icon: '🎀', thumb: '#FFC2DA' },
+      { id: 'scarf', cat: 'acc', name: 'Bufanda', price: 130, icon: '🧣', thumb: '#FF9C9C' },
+      { id: 'cream', cat: 'bg', name: 'Crema', price: 0, icon: '', thumb: '#FFF4D6', hex: '#FFF4D6' },
+      { id: 'mint', cat: 'bg', name: 'Menta', price: 80, icon: '', thumb: '#BFF2D6', hex: '#BFF2D6' },
+      { id: 'sky', cat: 'bg', name: 'Cielo', price: 80, icon: '', thumb: '#BFE3FF', hex: '#BFE3FF' },
+      { id: 'lilac', cat: 'bg', name: 'Lila', price: 100, icon: '', thumb: '#E3D5FF', hex: '#E3D5FF' },
+      { id: 'sunset', cat: 'bg', name: 'Atardecer', price: 120, icon: '', thumb: '#FFC9A3', hex: '#FFC9A3' }
+    ];
+    const level = 14;
+    const slot = { hat: 'hat', cape: 'cape', acc: 'acc', bg: 'bg' };
+    const toggle = (it) => {
+      const isOwned = !!owned[it.id];
+      const on = eq[it.cat] === it.id;
+      if (it.lock && level < it.lock) return this.setState({ toast: 'Bloqueado: ' + it.lockText + '.', ok: false });
+      if (isOwned) {
+        const next = { ...eq, [it.cat]: on && it.cat !== 'bg' ? null : it.id };
+        return this.setState({ eq: next, toast: on && it.cat !== 'bg' ? it.name + ' guardado.' : '¡' + it.name + ' puesto!', ok: true });
+      }
+      if (coins < it.price) return this.setState({ toast: 'Te faltan ' + (it.price - coins) + ' monedas para ' + it.name + '.', ok: false });
+      this.setState({ coins: coins - it.price, owned: { ...owned, [it.id]: true }, eq: { ...eq, [it.cat]: it.id }, toast: '¡Compraste ' + it.name + '!', ok: true });
+    };
+    const items = C.filter((x) => x.cat === tab).map((it) => {
+      const isOwned = !!owned[it.id];
+      const on = eq[it.cat] === it.id;
+      const locked = !!it.lock && level < it.lock && !isOwned;
+      const afford = coins >= it.price;
+      return {
+        name: it.name, icon: it.icon, thumb: it.thumb,
+        bg: on ? '#FFD84D' : '#fff', op: locked ? 0.65 : 1,
+        sub: locked ? '🔒 ' + it.lockText : isOwned ? (on ? 'Puesto' : 'En tu armario') : it.price + ' monedas',
+        btn: locked ? 'Bloqueado' : isOwned ? (on ? (it.cat === 'bg' ? 'En uso' : 'Quitar') : 'Ponerme') : afford ? 'Comprar' : 'Te faltan ' + (it.price - coins),
+        btnBg: locked ? '#E9E4D4' : isOwned ? (on ? '#fff' : '#7BE0A4') : afford ? '#FF8FB8' : '#E9E4D4',
+        dis: locked || (!isOwned && !afford),
+        act: () => toggle(it)
+      };
+    });
+    const names = { hat: 'Sombreros', cape: 'Capas', acc: 'Accesorios', bg: 'Fondos' };
+    const bgHex = (C.find((x) => x.id === eq.bg) || {}).hex;
+    const wearing = ['hat', 'cape', 'acc'].map((k) => (C.find((x) => x.id === eq[k]) || {}).name).filter(Boolean).join(', ') || 'nada todavía';
+    const count = Object.keys(owned).length;
+    return {
+      ...this.mv({ sp: 'tomate', col: '#FF8FB8', hat: eq.hat, cape: eq.cape, acc: eq.acc, bg: bgHex, open: !!st.ok }),
+      petName: 'Tomi', coins, items, wearing, toast,
+      toastBg: st.ok === false ? '#FF9C9C' : '#7BE0A4',
+      bubble: st.ok ? '¡Me queda genial!' : '¡Hola!',
+      ownedCount: count, total: C.length, ownedPct: Math.round((count / C.length) * 100),
+      tabs: Object.keys(names).map((id) => ({ label: names[id], on: tab === id, bg: tab === id ? '#FFD84D' : '#fff', sh: tab === id ? '2px 2px 0 #111' : '6px 6px 0 #111', tr: tab === id ? 'translate(4px,4px)' : 'none', pick: () => this.setState({ tab: id }) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Pegatina — Avisos</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF4D6}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px solid var(--ink,#111);outline-offset:3px}
+.bx{border:3px solid var(--bd,#111);border-radius:14px;box-shadow:6px 6px 0 var(--sh,#111)}
+.mono{font-family:'Space Mono',monospace}
+.lbl{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.02em}
+.h1{margin:0;font-size:84px;line-height:.95;font-weight:700;letter-spacing:-.05em}
+.h2{margin:0;font-size:38px;line-height:1.05;font-weight:700;letter-spacing:-.03em}
+.h3{margin:0;font-size:28px;line-height:1.1;font-weight:700;letter-spacing:-.03em}
+.chip{min-height:44px;padding:0 18px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700;font-size:15px;background:var(--card,#fff);color:var(--ink,#111)}
+.btn{min-height:56px;padding:0 28px;font-size:20px;font-weight:700;color:#111;display:inline-flex;align-items:center;justify-content:center}
+.in{min-height:48px;padding:0 14px;border:3px solid var(--bd,#111);border-radius:12px;font-size:16px;background:var(--card,#fff);color:var(--ink,#111);width:100%;box-sizing:border-box}
+.in::placeholder{color:#6b6b6b}
+.hov{transition:transform .12s,box-shadow .12s}
+.hov:hover{transform:translate(-2px,-2px) rotate(var(--r,0deg));box-shadow:9px 9px 0 var(--sh,#111)}
+.press:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--sh,#111)}
+@media (prefers-reduced-motion:reduce){.hov{transition:none}}
+</style>
+</helmet>
+<div style="background:var(--bg,#FFF4D6);color:var(--ink,#111);font-family:'Space Grotesk',system-ui,sans-serif;font-size:16px;line-height:1.4;min-height:600px;padding:28px 48px 64px;box-sizing:border-box;display:flex;flex-direction:column;gap:32px;">
+<header style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+<a href="PegatinaPanel.dc.html" class="bx" style="background:var(--a1,#FFD84D);color:#111;padding:6px 18px;font-size:30px;font-weight:700;transform:rotate(-2deg);letter-spacing:-.02em">oficio!</a>
+<nav aria-label="Principal" style="display:flex;gap:8px;flex:1;flex-wrap:wrap"><a href="PegatinaPanel.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Hoy</a><a href="PegatinaTimer.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Tomate</a><a href="PegatinaStats.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Números</a><a href="PegatinaLogros.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Logros</a><a href="PegatinaTienda.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Tienda</a><a href="PegatinaAvisos.dc.html" aria-current="page" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;background:var(--ink,#111);color:var(--paper,#FFF4D6);font-weight:700">Avisos</a><a href="PegatinaAjustes.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 16px;border:3px solid var(--bd,#111);border-radius:999px;font-weight:700">Ajustes</a></nav>
+<a href="PegatinaAjustes.dc.html" aria-label="Perfil de Kobox" class="bx" style="background:var(--a3,#7BE0A4);color:#111;padding:6px 16px 6px 8px;min-height:44px;box-sizing:border-box;display:flex;align-items:center;gap:10px;font-weight:700"><span aria-hidden="true" style="width:32px;height:32px;border-radius:50%;background:#111;color:var(--a3,#7BE0A4);display:flex;align-items:center;justify-content:center">K</span>Kobox</a>
+<a href="PegatinaLogin.dc.html" aria-label="Cerrar sesión" class="bx press" style="width:50px;height:50px;background:var(--card,#fff);color:var(--ink,#111);display:flex;align-items:center;justify-content:center;padding:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></a>
+</header>
+
+<section style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap">
+<h1 class="h1">La disciplina<br>se agenda<span style="color:#FF8FB8;-webkit-text-stroke:3px #111">.</span></h1>
+</section>
+
+<section class="bx" style="background:{{permBg}};padding:22px 28px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;color:#111">
+<span aria-hidden="true" style="font-size:38px">🔔</span>
+<p style="margin:0;flex:1 1 380px;font-size:18px;font-weight:500">{{permText}}</p>
+<button type="button" onClick="{{askPerm}}" class="bx press btn" style="background:#111;color:#FFF4D6;box-shadow:6px 6px 0 #FF8FB8;min-height:52px;font-size:18px">{{permBtn}}</button>
+</section>
+
+<section style="display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start">
+<div style="flex:1.2 1 560px;display:flex;flex-direction:column;gap:18px">
+<h2 class="h2">Mis recordatorios</h2>
+<sc-for list="{{reminders}}" as="r" hint-placeholder-count="5">
+<article class="bx" style="background:{{r.bg}};padding:18px 22px;display:flex;align-items:center;gap:20px;color:#111">
+<span style="flex:0 0 175px;font-size:28px;font-weight:700;letter-spacing:-.04em;line-height:1.05">{{r.time}}</span>
+<div style="flex:1;min-width:0"><div style="font-size:19px;font-weight:700;line-height:1.2">{{r.title}}</div><div class="mono" style="font-size:13px">{{r.meta}}</div></div>
+<button type="button" role="switch" aria-checked="{{r.on}}" aria-label="{{r.title}}" onClick="{{r.flip}}" style="flex:0 0 72px;height:40px;border:3px solid #111;border-radius:999px;background:{{r.track}};position:relative;padding:0"><span style="position:absolute;top:3px;left:{{r.knob}};width:28px;height:28px;border-radius:50%;background:{{r.knobBg}};border:3px solid #111;box-sizing:border-box;transition:left .15s"></span></button>
+</article>
+</sc-for>
+<article class="bx" style="background:#7CC4FF;padding:22px 26px;transform:rotate(-.8deg);color:#111">
+<span class="lbl">Protección de racha</span>
+<p style="margin:6px 0 0;font-size:18px;font-weight:500">Si a las 8:00 pm todavía no llegas a tus 30 minutos del día, te avisamos con tiempo para salvar la racha de 12 días.</p>
+</article>
+</div>
+
+<div class="bx" style="flex:1 1 400px;background:#fff;padding:28px;display:flex;flex-direction:column;gap:20px;color:#111">
+<h2 class="h3">Nuevo recordatorio</h2>
+<div style="display:flex;flex-direction:column;gap:8px"><span class="lbl">Habilidad</span>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{skills}}" as="k" hint-placeholder-count="3"><button type="button" aria-pressed="{{k.on}}" onClick="{{k.pick}}" class="chip" style="background:{{k.bg}};color:#111">{{k.name}}</button></sc-for></div></div>
+<div style="display:flex;flex-direction:column;gap:8px"><label class="lbl" for="hora">Hora</label><input id="hora" type="time" class="in" value="{{time}}" onChange="{{setTime}}"></div>
+<div style="display:flex;flex-direction:column;gap:8px"><span class="lbl">Se repite</span>
+<div style="display:flex;gap:8px"><sc-for list="{{days}}" as="d" hint-placeholder-count="7"><button type="button" aria-pressed="{{d.on}}" aria-label="{{d.full}}" onClick="{{d.flip}}" style="flex:1;min-height:48px;border:3px solid #111;border-radius:12px;font-weight:700;font-size:16px;color:#111;background:{{d.bg}}">{{d.short}}</button></sc-for></div></div>
+<div style="display:flex;flex-direction:column;gap:8px"><label class="lbl" for="msg">Mensaje</label><input id="msg" type="text" class="in" placeholder="Ej: dos pomodoros antes del trabajo" value="{{msg}}" onChange="{{setMsg}}"></div>
+<button type="button" onClick="{{save}}" class="bx press btn" style="background:#FFD84D;width:100%">{{saveText}}</button>
+</div>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":600}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const st = this.state || {};
+    const perm = !!st.perm;
+    const on = st.on || { r1: true, r2: true, r3: true, r4: true, r5: false };
+    const extra = st.extra || [];
+    const skill = st.skill ?? 0;
+    const time = st.time ?? '07:00';
+    const msg = st.msg ?? '';
+    const dayOn = st.dayOn || { L: true, M: true, X: true, J: true, V: true, S: false, D: false };
+    const colors = ['#FFD84D', '#7BE0A4', '#FF8FB8', '#7CC4FF', '#FF9F5A'];
+    const base = [
+      { id: 'r1', time: '7:00 am', title: 'Inglés: conversación de 25 min', meta: 'Lunes a viernes' },
+      { id: 'r2', time: '10:00 am', title: 'Programación: 2 pomodoros', meta: 'Todos los días' },
+      { id: 'r3', time: '8:00 pm', title: 'Protección de racha', meta: 'Solo si no llegaste a 30 min' },
+      { id: 'r4', time: 'Dom 4:00 pm', title: 'Revisión semanal de horas', meta: 'Domingos' },
+      { id: 'r5', time: '6:30 pm', title: 'Guitarra: escalas, 20 min', meta: 'Martes, jueves y sábado' }
+    ].concat(extra);
+    const reminders = base.map((r, i) => {
+      const isOn = r.id in on ? !!on[r.id] : true;
+      return { time: r.time, title: r.title, meta: r.meta, on: isOn, bg: isOn ? colors[i % 5] : '#E9E4D4', track: isOn ? '#111' : '#fff', knob: isOn ? '35px' : '3px', knobBg: isOn ? '#7BE0A4' : '#111', flip: () => this.setState({ on: { ...on, [r.id]: !isOn } }) };
+    });
+    const names = ['Programación', 'Inglés', 'Guitarra'];
+    const skills = names.map((n, i) => ({ name: n, on: skill === i, bg: skill === i ? '#FFD84D' : '#fff', pick: () => this.setState({ skill: i }) }));
+    const full = { L: 'Lunes', M: 'Martes', X: 'Miércoles', J: 'Jueves', V: 'Viernes', S: 'Sábado', D: 'Domingo' };
+    const days = Object.keys(full).map((k) => ({ short: k, full: full[k], on: !!dayOn[k], bg: dayOn[k] ? '#7BE0A4' : '#fff', flip: () => this.setState({ dayOn: { ...dayOn, [k]: !dayOn[k] } }) }));
+    const sel = Object.keys(full).filter((k) => dayOn[k]);
+    const summary = sel.length === 7 ? 'Todos los días' : sel.join('') === 'LMXJV' ? 'Lunes a viernes' : sel.length === 0 ? 'Sin repetir' : sel.map((k) => full[k].slice(0, 3)).join(', ');
+    const fmt = (t) => { const [h, m] = t.split(':').map(Number); const ap = h >= 12 ? 'pm' : 'am'; return ((h % 12) || 12) + ':' + String(m).padStart(2, '0') + ' ' + ap; };
+    return {
+      reminders, skills, days, time, msg,
+      permBg: perm ? '#7BE0A4' : '#FFD84D',
+      permText: perm ? 'Listo. Los avisos te van a llegar aunque cierres la pestaña.' : 'Permite las notificaciones del navegador para que los avisos lleguen aunque cierres la pestaña.',
+      permBtn: perm ? 'Notificaciones activadas ✓' : 'Activar notificaciones',
+      askPerm: () => this.setState({ perm: !perm }),
+      setTime: (e) => this.setState({ time: e.target.value }),
+      setMsg: (e) => this.setState({ msg: e.target.value }),
+      saveText: st.saved ? '¡Guardado! Agrega otro' : 'Guardar recordatorio',
+      save: (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        const id = 'n' + (extra.length + 1);
+        this.setState({ extra: extra.concat([{ id, time: fmt(time), title: msg.trim() || names[skill] + ': práctica', meta: summary }]), msg: '', saved: true });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>
