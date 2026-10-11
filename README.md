@@ -32,6 +32,27 @@ A full coins/XP/level/shop layer, from `design-reference/pegatina/docs/pegatina-
 - **Purchase trust boundary**: buying an item is a **client-initiated** Firestore transaction (reads `pets/{uid}`, checks coins/level/hours, checks it isn't already owned, then atomically decrements coins + writes `inventory` + `coinLedger`). This is atomic and safe against races between concurrent purchases, but — consistent with this project's existing choice to avoid the Admin SDK — it is *not* enforced by trusted server logic; a modified client could in principle run different logic against the same security rules. Same spirit as this file's other "known limitations": flagged, not hidden.
 - **Where it's awarded**: every saved practice session (`lib/firestore/sessions.ts#saveSession`, used by both the timer and manual log) calls `awardSessionEconomy` right after the milestone check.
 
+## Retos (challenges) — new
+
+A "learn something in X days" feature (e.g. "30 days of guitar"), from `design-reference/retos/` (6 `.dc.html` mockups + PNGs + README, reference only):
+
+- **Routes**: `/retos` (list, active/completed/paused tabs + KPIs), `/retos/nuevo` (create form with a live side-panel projection), `/retos/[id]` (board: hero card, stat tiles, month calendar of day cells, recent diary), `/retos/[id]/dia` (today's diary; pass `?day=N` to open a past day), `/retos/[id]/galeria` (Fotos / Día 1 vs hoy / Diario tabs), `/retos/[id]/cierre` (completed vs. unfinished closure). Nav entry added to `Sidebar`/`MobileNav` right after "Panel", before "Temporizador", matching the mockup's own nav order (its top pill-bar chrome itself was **not** copied — only the existing sidebar/bottom-nav pattern was extended).
+- **Coins/XP formula reused, not forked**: the Retos README's own formula (`coins = round(min/25*10) + 5 if ánimo>=4; xp = round(min*(0.8+ánimo*0.1))`) is **identical** to `lib/economy.ts`'s existing session formula — "ánimo" (mood, 1-5) is simply passed through as the existing `quality` parameter. `lib/firestore/challenges.ts#saveChallengeDay` calls the existing `saveSession`/`coinsPerSession`/`xpForSession` directly; there is only one coin economy in the app.
+- **Firestore model** (see `lib/types.ts`):
+  - `challenges/{id}` — `userId`, `skillId`, `name`, `why` ("mi porqué"), `totalDays`, `dailyGoalMin`, `graceDaysAllowed`, `graceDaysUsed` (denormalized, recomputed from `challengeDays` on every save), `color`, `startedAt`, `reminderTime`, `reminderEnabled`, `status` (`active`/`completed`/`paused`/`abandoned`), `createdAt`, `completedAt`.
+  - `challengeDays/{challengeId}_{dayNumber}` — **deterministic id**, same convention as `achievements/{skillId}_{hours}`, so re-saving a day is an idempotent overwrite rather than a duplicate. Holds `durationMin`, `note`, `tags`, `photoUrls`, `mood`, `difficulty`, and `sessionId` (the `sessions` doc it created).
+  - Saving a day's diary creates a **real `sessions` document** via the existing `saveSession` transactional path (bumps the linked skill's `totalMinutes`, runs milestone checks) tagged `source: "challenge"` + `challengeId` (new optional field on `PracticeSession`, and `"challenge"` added to `SessionSource`). Re-saving a day first reverses its previous session (`deleteSession`) so editing a day never double-counts minutes/coins/XP/skill-hours.
+  - "Max 3 active challenges" (`MAX_ACTIVE_CHALLENGES` in `lib/types.ts`) is enforced client-side before create (`canStartNewChallenge`), consistent with this app's existing trust model for client-enforced rules (see "Economy / Shop" above on the purchase transaction).
+  - **New rules**: `firestore.rules` gained `challenges/{challengeId}` and `challengeDays/{challengeDayId}`, same `userId == request.auth.uid` pattern as every other collection. **New indexes**: `firestore.indexes.json` gained `challenges` (`userId` asc + `createdAt` desc) and `challengeDays` (`challengeId` asc + `dayNumber` asc).
+- **Day-state/streak math** (`lib/challenge.ts`, unit-tested in `tests/challenge.test.ts`): a challenge's streak is scoped to its own `1..totalDays` sequence, so it's new pure logic rather than a call into the app-wide `lib/streak.ts`. A past day with no logged minutes consumes one of the challenge's grace days (in order) until the budget runs out, after which it's "missed"; the current streak counts back from the most recent `done`/`grace` day, stopping at the first `missed` day.
+- **Firebase Storage, set up for real** (not stubbed, unlike the existing "Cambiar foto" avatar upload — see "Known limitations"): `lib/firebase.ts#getFirebaseStorage()` (same lazy-init pattern as Auth/Firestore), `storage.rules` (new file at the repo root — Storage rules are separate from Firestore rules) scoping `challenge-photos/{uid}/...` to that uid, and `lib/storage/challenge-photos.ts` for upload/validate (image types only, 8 MB cap, mirrored client-side and in `storage.rules`)/delete. The diary day screen uploads up to 8 photos per day with a per-photo uploading state.
+  - **Deploy**: Firebase Storage must be **enabled for the project in the Firebase console first** — unlike Firestore/Auth it is not on by default. Then `firebase deploy --only firestore:rules,firestore:indexes,storage` (storage.rules deploys with the `storage` target).
+- **Inferred/simplified, documented here rather than left silent**:
+  - The day-state calendar's "day de gracia"/"perdido" colors (`lib/challenge-ui.ts`) use the mockup's fixed sky-blue/pink rather than the theme's `--a1`/`--a2`/`--a3` (already spoken for by "today"/"done"/the challenge's own color) — these two stay constant across themes instead of flipping with the active palette.
+  - The diary's tag picker uses a generic set (`Técnica`/`Teoría`/`Repaso`/`Proyecto`/`Error`/`Avance`) instead of the mockup's guitar-specific tags, since a challenge can be linked to any skill.
+  - The closure screen (`/retos/[id]/cierre`) reuses the existing `Mascot` component (celebrate/sleepy moods) instead of redrawing the mockup's separate "Chispa" dog character — consistent with this project's one-mascot approach everywhere else.
+  - "Racha de retos" on the list page and the closure screen's reward/bar numbers are all derived live from `challengeDays`, not hardcoded — the mockup's own sample numbers are illustrative, not computed from its DAYS array either.
+
 ## Stack
 
 - Next.js 16 (App Router), React 19, TypeScript (strict)
@@ -55,10 +76,10 @@ A full coins/XP/level/shop layer, from `design-reference/pegatina/docs/pegatina-
    npm install -g firebase-tools
    firebase login
    firebase use --add            # pick your project, once
-   firebase deploy --only firestore:rules,firestore:indexes
+   firebase deploy --only firestore:rules,firestore:indexes,storage
    ```
 
-   `firestore.rules` restricts every collection to `request.auth.uid == resource.data.userId` (profiles/pets/equipped are keyed by uid directly). `firestore.indexes.json` declares the composite indexes the app's queries need (sessions by user+date, sessions by skill+date, skills/reminders by user+createdAt). Without deploying these, Firestore throws a one-time error in the browser console on first query, with a console link to auto-create the missing index — but doing it via the CLI up front avoids that. **No new composite index is needed for the economy collections**: `inventory` and `coinLedger` are only ever queried with a single `userId ==` equality filter and no `orderBy`, which Firestore indexes automatically; `pets`/`equipped` are only ever read by direct document id (`uid`), never queried.
+   `firestore.rules` restricts every collection to `request.auth.uid == resource.data.userId` (profiles/pets/equipped are keyed by uid directly). `firestore.indexes.json` declares the composite indexes the app's queries need (sessions by user+date, sessions by skill+date, skills/reminders by user+createdAt, challenges by user+createdAt, challengeDays by challenge+dayNumber). Without deploying these, Firestore throws a one-time error in the browser console on first query, with a console link to auto-create the missing index — but doing it via the CLI up front avoids that. **No new composite index is needed for the economy collections**: `inventory` and `coinLedger` are only ever queried with a single `userId ==` equality filter and no `orderBy`, which Firestore indexes automatically; `pets`/`equipped` are only ever read by direct document id (`uid`), never queried. `storage.rules` (Retos diary photos) is a **separate file and a separate deploy target** from the Firestore rules — see "Retos (challenges)" below; Storage itself must be enabled in the Firebase console first.
 
 ### Firestore data model
 
@@ -73,6 +94,7 @@ Translated from `design-reference/docs/data-model.sql` (see `lib/types.ts` for t
 - `equipped/{uid}` — currently worn items: `hat`/`cape`/`acc`/`bg` (item id or null). Keyed by uid directly.
 - `inventory/{id}` — one doc per owned shop item: `userId`, `itemId`, `acquiredAt`.
 - `coinLedger/{id}` — append-only audit trail: `userId`, `delta`, `reason`, `createdAt`. Security rules allow `create`/`read` only — no `update`/`delete`, even by the owner.
+- `challenges/{id}`, `challengeDays/{challengeId_dayNumber}` — see "Retos (challenges)" above.
 
 ## 2. Web Push (VAPID)
 
@@ -125,7 +147,7 @@ npm run e2e          # Playwright smoke tests (see "Known limitations")
 - **Reminder push dispatch (cron) is not implemented.** `POST /api/push/send` sends a single Web Push notification given a subscription (guarded by `CRON_SECRET`), and the client-side "Activar notificaciones" flow in `/recordatorios` requests permission, subscribes, and stores the subscription in Firestore. What's missing is the job that finds reminders due *right now* and calls that endpoint for each matching user — `app/api/cron/reminders/route.ts` is a stub with the exact steps to finish it (it needs the Firebase Admin SDK with a service account, since every other server/client read in this app intentionally goes through the signed-in client SDK instead). Once implemented, wire it up with a `crons` entry in `vercel.json` and this file can lose this paragraph.
 - **Playwright**: `playwright.config.ts` and `e2e/auth.spec.ts` are in place (login/registro/recuperar screens render, the auth guard redirects `/` to `/login`), but this sandbox's network policy blocked downloading Playwright's bundled Chromium (`npx playwright install chromium` was refused by the egress proxy), so these were written and build-checked but **not actually executed** here. Run `npx playwright install chromium && npm run e2e` in an environment with normal internet access to verify them, and `npm run build`'s success plus the Vitest suite are what this session could actually confirm end to end. Deeper flows (create a skill → start the timer → log hours → see a milestone celebration, the full `/onboarding` flow, buying a shop item) need a signed-in session; the cleanest way to add those is the [Firebase Local Emulator Suite](https://firebase.google.com/docs/emulator-suite) seeded with a test user, which isn't wired up yet.
 - **Weekly review / streak-guard reminder timing** is modeled in the data (`reminders.kind`) and `lib/streak.needsStreakGuard`, but nothing currently *fires* it automatically — that's the same cron gap as above.
-- **"Cambiar foto" (profile avatar upload)** on `/ajustes` → Perfil is intentionally disabled with a tooltip: it needs Firebase Storage, which isn't set up (no bucket rules, no upload flow). The avatar always falls back to the user's initial on a solid accent circle.
+- **"Cambiar foto" (profile avatar upload)** on `/ajustes` → Perfil is still intentionally disabled with a tooltip — this is now a deliberate inconsistency, not a gap: Firebase Storage **is** set up as of Retos (`lib/firebase.ts#getFirebaseStorage()`, `storage.rules`, `lib/storage/challenge-photos.ts`), but reusing it for the avatar flow (a different upload path/UI) was out of scope for this session. The avatar still falls back to the user's initial on a solid accent circle; wiring it up now just needs a small upload component under an `avatars/{uid}/...` Storage path and a matching rule, not the Storage setup itself.
 - **"Horas por mes" uses Recharts**, per the brief; the weekly bars and 14-week heatmap are hand-rolled CSS grids, matching `design-reference/html/*.dc.html` pixel-for-pixel rather than going through a chart library for shapes a chart library doesn't really help with.
 - Reminder "next occurrence" text on the dashboard is a simple same-day label (time + day-of-week summary), not a full "next matching weekday" calculation.
 - **Visual fidelity varies by screen, intentionally**, given the size of this redesign: Panel, Temporizador, Ajustes, Tienda and the auth/onboarding screens got full structural rewrites against the Pegatina mockups; Estadísticas, Logros, Recordatorios and the Habilidad detail page got every old color-token/border fixed to the new Pegatina look (so nothing looks broken or mixed-style) plus `bx`-class cards, but keep more of their pre-existing layout rather than a full pixel-for-pixel rebuild against their `.dc.html` counterparts. If deeper fidelity on those is wanted, the mockups are in `design-reference/pegatina/html/`.
@@ -145,6 +167,12 @@ app/
     registrar/       "/registrar"     manual session logging
     habilidades/[id] "/habilidades/:id" skill detail
     ajustes/         "/ajustes"       Perfil + Apariencia (theme/accent)
+    retos/           "/retos"         Retos list (active/completed/paused)
+    retos/nuevo/     "/retos/nuevo"   create-challenge form + live projection
+    retos/[id]/      "/retos/:id"            board: hero, stat tiles, calendar, diary feed
+                     "/retos/:id/dia"        today's (or ?day=N's) diary entry
+                     "/retos/:id/galeria"    photos / día 1 vs hoy / diario tabs
+                     "/retos/:id/cierre"     completed/unfinished closure
   habilidades/nueva/ "/habilidades/nueva" create-skill wizard, 4 steps (no sidebar)
   login/             "/login"         email/password + Google sign-in
   registro/          "/registro"      sign-up (email or Google) -> /onboarding
@@ -154,10 +182,14 @@ app/
   api/cron/reminders/ stub — see "Known limitations"
 lib/
   firebase.ts, firestore/*  Firebase client + Firestore data-access layer
-                             (economy.ts: pet/inventory/equipped/ledger + purchase tx)
+                             (economy.ts: pet/inventory/equipped/ledger + purchase tx;
+                              challenges.ts: Retos CRUD + saveChallengeDay)
+  storage/challenge-photos.ts Firebase Storage upload/validate/delete for diary photos
   auth/AuthProvider.tsx     Firebase Auth context (+ sendPasswordReset)
   theme/                    Pegatina design tokens, ThemeProvider, pre-paint bootstrap
   economy.ts, shop.ts        coins/XP/level formulas + shop catalog (pure, unit-tested)
+  challenge.ts, challenge-ui.ts  Retos day-state/streak/projection math (pure,
+                             unit-tested) + shared day-cell color/label mapping
   sticker-rotation.ts        deterministic per-card rotation
   milestones.ts, projection.ts, streak.ts, timer.ts, format.ts, manual-log.ts
                              pure, unit-tested logic (no Firebase imports)
@@ -170,5 +202,6 @@ components/
   layout/, dashboard/, skills/, timer/, achievements/, settings/, stats/, pwa/
 design-reference/
   pegatina/                  current design package (mockups/PNGs/tokens/Rive prompt) — reference only
+  retos/                     Retos (challenges) design package (6 mockups/PNGs/README) — reference only
   (older files)              previous design package, kept as history
 ```
