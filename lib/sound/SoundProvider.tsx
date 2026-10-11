@@ -78,16 +78,19 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
       setAmbientSoundId(id) {
         setAmbientIdState(id);
         if (profile) void updateProfile(profile.uid, { ambientSoundId: id });
-        // Selecting a different ambient sound from a click is itself a user
-        // gesture: if one was already playing (or we're mid-session),
-        // restart immediately with the new choice.
-        if (isAmbientRunning.current) {
-          if (id === "none") {
-            ambient.stopAmbient();
-            isAmbientRunning.current = false;
-          } else {
-            ambient.startAmbient(id);
-          }
+        // Picking a chip is itself a user gesture — play it immediately so
+        // it doubles as a preview, regardless of whether the Pomodoro is
+        // running (e.g. picking it from Ajustes, with no timer in sight,
+        // should still be audible). Previously this only restarted the
+        // engine if ambient was *already* playing, so the very first pick
+        // was always silent — see startAmbientIfSelected() below for the
+        // separate, non-interactive "resume on Play" path.
+        if (id === "none") {
+          ambient.stopAmbient();
+          isAmbientRunning.current = false;
+        } else {
+          ambient.startAmbient(id);
+          isAmbientRunning.current = true;
         }
       },
       setAmbientVolume(next) {
