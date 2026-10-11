@@ -18,18 +18,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   if (authLoading || !user) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <span className="text-muted">Cargando…</span>
+      <div className="flex min-h-screen items-center justify-center bg-paper">
+        <span className="font-bold text-ink">Cargando…</span>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen flex-wrap items-stretch">
+    <div className="flex min-h-screen flex-wrap items-stretch bg-paper">
       <Sidebar streakDays={streak} minMinutes={profile?.dailyMinForStreak ?? 30} />
       <div className="flex min-w-0 flex-1 flex-col">
         <MobileTopBar />
-        <main className="mx-auto flex w-full max-w-[1112px] flex-1 flex-col gap-7 px-5 py-7 pb-24 sm:px-8 sm:py-9 lg:pb-12">
+        <main className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-7 px-5 py-7 pb-24 sm:px-8 sm:py-9 lg:pb-12">
           {children}
         </main>
         <MobileBottomNav />

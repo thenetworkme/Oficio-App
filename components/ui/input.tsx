@@ -6,7 +6,7 @@ export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
     <input
       ref={ref}
       className={cn(
-        "box-border w-full min-h-[46px] rounded-button border border-line bg-bg px-3.5 text-[15px] text-text placeholder:text-muted",
+        "box-border w-full min-h-12 rounded-button border-[3px] border-ink bg-card px-3.5 text-[16px] text-ink placeholder:text-muted",
         className,
       )}
       {...props}
@@ -16,5 +16,5 @@ export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
 Input.displayName = "Input";
 
 export function Label({ className, ...props }: React.LabelHTMLAttributes<HTMLLabelElement>) {
-  return <label className={cn("text-[13px] text-muted", className)} {...props} />;
+  return <label className={cn("label-xs", className)} {...props} />;
 }

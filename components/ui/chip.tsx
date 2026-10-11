@@ -12,8 +12,8 @@ export function Chip({ pressed, dotColor, className, children, ...props }: ChipP
       type="button"
       aria-pressed={pressed}
       className={cn(
-        "min-h-11 inline-flex items-center gap-2 rounded-chip border px-4 text-sm font-semibold transition-colors",
-        pressed ? "border-accent bg-track text-text" : "border-line bg-transparent text-text",
+        "min-h-11 inline-flex items-center gap-2 rounded-chip border-[3px] border-ink px-4 text-[15px] font-bold transition-colors",
+        pressed ? "bg-a1 text-ink" : "bg-card text-ink",
         className,
       )}
       {...props}

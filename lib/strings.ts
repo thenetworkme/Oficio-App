@@ -9,6 +9,7 @@ export const strings = {
     temporizador: "Temporizador",
     estadisticas: "Estadísticas",
     logros: "Logros",
+    tienda: "Tienda",
     recordatorios: "Recordatorios",
     ajustes: "Ajustes",
   },

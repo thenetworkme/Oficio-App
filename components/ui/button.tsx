@@ -3,20 +3,23 @@ import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import { cn } from "@/lib/cn";
 
+// Pegatina sticker button: 3px ink border, hard offset shadow, "squish" on
+// press (shadow shrinks + element shifts toward it).
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 rounded-button font-semibold transition-colors disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap",
+  "inline-flex items-center justify-center gap-2 rounded-button border-[3px] border-ink font-bold transition-[transform,box-shadow] duration-150 disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap shadow-[6px_6px_0_var(--shadow)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[9px_9px_0_var(--shadow)] active:translate-x-1 active:translate-y-1 active:shadow-[2px_2px_0_var(--shadow)]",
   {
     variants: {
       variant: {
-        primary: "bg-accent text-on hover:brightness-110",
-        outline: "border border-line text-text bg-transparent hover:bg-card",
-        ghost: "text-muted hover:text-text bg-transparent",
-        subtle: "bg-card text-text border border-line",
+        primary: "bg-a1 text-ink",
+        outline: "bg-card text-ink",
+        ghost: "border-transparent text-muted shadow-none hover:shadow-none hover:translate-x-0 hover:translate-y-0 hover:text-ink",
+        subtle: "bg-card text-ink",
+        danger: "bg-card text-danger border-danger shadow-[6px_6px_0_var(--danger)] hover:shadow-[9px_9px_0_var(--danger)] active:shadow-[2px_2px_0_var(--danger)]",
       },
       size: {
-        default: "min-h-12 px-5 text-[15px]",
+        default: "min-h-14 px-6 text-[17px]",
         sm: "min-h-11 px-4 text-sm",
-        icon: "size-12 p-0",
+        icon: "size-14 p-0",
         iconSm: "size-11 p-0",
       },
     },
