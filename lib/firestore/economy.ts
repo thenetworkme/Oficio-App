@@ -12,7 +12,7 @@ import {
 import { getDb } from "@/lib/firebase";
 import { coinsPerSession, WELCOME_COINS, xpForSession } from "@/lib/economy";
 import { DEFAULT_OWNED_ITEM_IDS, isUnlocked, shopItem } from "@/lib/shop";
-import { DEFAULT_EQUIPPED, type CoinLedgerEntry, type Equipped, type InventoryItem, type Pet } from "@/lib/types";
+import { DEFAULT_EQUIPPED, type Equipped, type InventoryItem, type Pet } from "@/lib/types";
 
 function petRef(uid: string) {
   return doc(getDb(), "pets", uid);

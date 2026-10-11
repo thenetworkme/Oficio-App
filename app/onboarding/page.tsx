@@ -10,7 +10,6 @@ import { createReminder } from "@/lib/firestore/reminders";
 import { createSkill } from "@/lib/firestore/skills";
 import { updateProfile } from "@/lib/firestore/profiles";
 import { setPetName } from "@/lib/firestore/economy";
-import { formatMinutesLong } from "@/lib/format";
 import { WELCOME_COINS } from "@/lib/economy";
 
 const PALETTE: [string, string][] = [

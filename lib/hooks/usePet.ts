@@ -14,6 +14,7 @@ export function usePet() {
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (!user) {
       setPet(null);
@@ -34,6 +35,7 @@ export function usePet() {
       unsubEq();
       unsubInv();
     };
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [user]);
 
   const progress = levelProgress(pet?.xp ?? 0);
