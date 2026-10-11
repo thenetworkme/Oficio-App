@@ -6,6 +6,7 @@ export const strings = {
   app: { name: "Oficio" },
   nav: {
     panel: "Panel",
+    retos: "Retos",
     temporizador: "Temporizador",
     estadisticas: "Estadísticas",
     logros: "Logros",

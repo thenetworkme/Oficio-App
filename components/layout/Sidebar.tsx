@@ -2,6 +2,7 @@
 
 import {
   BarChart3,
+  Flag,
   LayoutDashboard,
   LogOut,
   SlidersHorizontal,
@@ -18,6 +19,7 @@ import { cn } from "@/lib/cn";
 
 const NAV = [
   { href: "/", label: strings.nav.panel, icon: LayoutDashboard },
+  { href: "/retos", label: strings.nav.retos, icon: Flag },
   { href: "/temporizador", label: strings.nav.temporizador, icon: TimerIcon },
   { href: "/estadisticas", label: strings.nav.estadisticas, icon: BarChart3 },
   { href: "/logros", label: strings.nav.logros, icon: Trophy },
