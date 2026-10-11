@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { createSkill } from "@/lib/firestore/skills";
+import { useSound } from "@/lib/sound/SoundProvider";
 import { formatDecimal, formatInt, formatMinutesLong } from "@/lib/format";
 import { hoursPerWeek, projectTimeRemaining, formatProjection } from "@/lib/projection";
 import { createReminder } from "@/lib/firestore/reminders";
@@ -26,6 +27,7 @@ const STEP_TITLES = ["¿Qué quieres dominar?", "¿Cuánto tiempo le vas a dar?"
 export default function NewSkillPage() {
   const router = useRouter();
   const { user } = useAuth();
+  const sound = useSound();
 
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
@@ -73,6 +75,7 @@ export default function NewSkillPage() {
           enabled: true,
         });
       }
+      sound.playSuccess();
       router.push(`/habilidades/${skillId}`);
     } finally {
       setCreating(false);

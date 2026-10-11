@@ -6,6 +6,7 @@ import { cn } from "@/lib/cn";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { useAppData } from "@/lib/hooks/useAppData";
 import { usePet } from "@/lib/hooks/usePet";
+import { useSound } from "@/lib/sound/SoundProvider";
 import { equipItem, purchaseItem } from "@/lib/firestore/economy";
 import { formatInt } from "@/lib/format";
 import { isUnlocked, SHOP_CATALOG, SHOP_CATEGORY_LABELS, shopItem, type ShopItem } from "@/lib/shop";
@@ -16,6 +17,7 @@ const CATEGORIES: ShopCategory[] = ["hat", "cape", "acc", "bg"];
 export default function TiendaPage() {
   const { user, totalHours } = useAppData();
   const { pet, equipped, ownedIds, level, coins, loading } = usePet();
+  const sound = useSound();
   const [tab, setTab] = useState<ShopCategory>("hat");
   const [toast, setToast] = useState("Cada tomate completo te da monedas.");
   const [toastOk, setToastOk] = useState<boolean | null>(null);
@@ -63,6 +65,7 @@ export default function TiendaPage() {
         await equipItem(user.uid, item.cat, item.id);
         setToast(`¡Compraste ${item.name}!`);
         setToastOk(true);
+        sound.playSuccess();
         setJustPurchased(true);
         setTimeout(() => setJustPurchased(false), 650);
       } else {

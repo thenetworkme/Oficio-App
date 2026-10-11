@@ -8,6 +8,7 @@ import { Chip } from "@/components/ui/chip";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useAppData } from "@/lib/hooks/useAppData";
+import { useSound } from "@/lib/sound/SoundProvider";
 import { getChallenge, getChallengeDay, saveChallengeDay } from "@/lib/firestore/challenges";
 import { listSessionsSince } from "@/lib/firestore/sessions";
 import { coinsPerSession, xpForSession } from "@/lib/economy";
@@ -28,6 +29,7 @@ export default function RetoDiaPage() {
   const { user, profile } = useAuth();
   const { skills } = useAppData();
   const timezone = profile?.timezone ?? "America/Santo_Domingo";
+  const sound = useSound();
 
   const [challenge, setChallenge] = useState<Challenge | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -143,6 +145,7 @@ export default function RetoDiaPage() {
         difficulty,
       });
       setSaved(true);
+      sound.playSuccess();
     } finally {
       setSaving(false);
     }

@@ -9,6 +9,7 @@ import { Input, Label } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useAppData } from "@/lib/hooks/useAppData";
+import { useSound } from "@/lib/sound/SoundProvider";
 import { canStartNewChallenge, createChallenge } from "@/lib/firestore/challenges";
 import { createSkill } from "@/lib/firestore/skills";
 import { formatDateEs, formatMinutesLong } from "@/lib/format";
@@ -35,6 +36,7 @@ export default function NuevoRetoPage() {
   const { user, profile } = useAuth();
   const { skills } = useAppData();
   const timezone = profile?.timezone ?? "America/Santo_Domingo";
+  const sound = useSound();
 
   const [name, setName] = useState("30 días de guitarra");
   const [skillIdx, setSkillIdx] = useState(0); // index into skills, or skills.length for "Nueva habilidad"
@@ -109,6 +111,7 @@ export default function NuevoRetoPage() {
         reminderTime: remindTime,
         reminderEnabled: remind,
       });
+      sound.playSuccess();
       router.push(`/retos/${challengeId}`);
     } finally {
       setCreating(false);

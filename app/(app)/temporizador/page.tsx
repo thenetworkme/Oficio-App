@@ -1,8 +1,10 @@
 "use client";
 
+import { Volume2, VolumeX } from "lucide-react";
 import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { Card, CardHeading } from "@/components/ui/card";
 import { Chip } from "@/components/ui/chip";
+import { AmbientPicker } from "@/components/sound/AmbientPicker";
 import { SessionSaveDialog } from "@/components/timer/SessionSaveDialog";
 import { CelebrationDialog } from "@/components/achievements/CelebrationDialog";
 import { useTimerStore } from "@/store/timer-store";
@@ -10,6 +12,7 @@ import { cycleDotsFilled, modeTotalSeconds, type PomodoroMode } from "@/lib/time
 import { useAppData } from "@/lib/hooks/useAppData";
 import { saveSession } from "@/lib/firestore/sessions";
 import { useCelebration } from "@/lib/hooks/useCelebration";
+import { useSound } from "@/lib/sound/SoundProvider";
 import { resolveSkillColor } from "@/lib/skill-color";
 import { formatMinutes, formatTimeEs } from "@/lib/format";
 import { dateKeyInTz } from "@/lib/tz";
@@ -27,6 +30,7 @@ export default function TemporizadorPage() {
   const { user, skills, profile, sessions, timezone, todayKey } = useAppData();
   const store = useTimerStore();
   const { celebration, enqueueCelebration, closeCelebration } = useCelebration();
+  const sound = useSound();
   const [now, setNow] = useState(() => Date.now());
   const [intention, setIntentionLocal] = useState(store.intention);
 
@@ -53,9 +57,36 @@ export default function TemporizadorPage() {
 
   useEffect(() => {
     if (store.running && remaining <= 0) {
+      sound.playComplete();
+      sound.stopAmbient();
       store.completeFocusPeriod();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [remaining, store.running, store]);
+
+  function handlePlayPause() {
+    if (store.running) {
+      sound.playPause();
+      sound.stopAmbient();
+      store.pause();
+    } else {
+      sound.playStart();
+      sound.startAmbientIfSelected();
+      store.start();
+    }
+  }
+
+  function handleReset() {
+    sound.playClick();
+    sound.stopAmbient();
+    store.reset();
+  }
+
+  function handleSkip() {
+    sound.playClick();
+    sound.stopAmbient();
+    store.skip();
+  }
 
   const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
   const ss = String(remaining % 60).padStart(2, "0");
@@ -122,33 +153,48 @@ export default function TemporizadorPage() {
         </div>
 
         <div className="flex min-w-[300px] flex-1 flex-col gap-5">
-          <div role="group" aria-label="Modo" className="flex flex-wrap gap-2.5">
-            {MODE_TABS.map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                aria-pressed={store.mode === t.id}
-                onClick={() => store.setMode(t.id)}
-                className="bx press min-h-12 px-4.5 text-[16px] font-bold"
-                style={
-                  store.mode === t.id
-                    ? {
-                        background: "var(--a1)",
-                        color: "var(--ink-solid)",
-                        boxShadow: "2px 2px 0 var(--shadow)",
-                        transform: "translate(4px,4px)",
-                      }
-                    : { background: "var(--card)" }
-                }
-              >
-                {t.label}
-              </button>
-            ))}
+          <div className="flex flex-wrap items-center justify-between gap-2.5">
+            <div role="group" aria-label="Modo" className="flex flex-wrap gap-2.5">
+              {MODE_TABS.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  aria-pressed={store.mode === t.id}
+                  onClick={() => store.setMode(t.id)}
+                  className="bx press min-h-12 px-4.5 text-[16px] font-bold"
+                  style={
+                    store.mode === t.id
+                      ? {
+                          background: "var(--a1)",
+                          color: "var(--ink-solid)",
+                          boxShadow: "2px 2px 0 var(--shadow)",
+                          transform: "translate(4px,4px)",
+                        }
+                      : { background: "var(--card)" }
+                  }
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={() => sound.setSoundEffectsEnabled(!sound.soundEffectsEnabled)}
+              aria-label={sound.soundEffectsEnabled ? "Silenciar sonidos" : "Activar sonidos"}
+              title={sound.soundEffectsEnabled ? "Silenciar sonidos" : "Activar sonidos"}
+              className="bx press flex size-12 items-center justify-center bg-card"
+            >
+              {sound.soundEffectsEnabled ? (
+                <Volume2 size={20} aria-hidden="true" />
+              ) : (
+                <VolumeX size={20} aria-hidden="true" />
+              )}
+            </button>
           </div>
 
           <button
             type="button"
-            onClick={store.running ? store.pause : store.start}
+            onClick={handlePlayPause}
             className="bx press min-h-[84px] text-[28px] font-bold"
             style={{ background: "var(--ink)", color: "var(--paper)", boxShadow: "6px 6px 0 var(--a2)" }}
           >
@@ -156,13 +202,18 @@ export default function TemporizadorPage() {
           </button>
 
           <div className="flex gap-3">
-            <button type="button" onClick={store.reset} className="bx press min-h-13 flex-1 bg-card text-[16px] font-bold">
+            <button type="button" onClick={handleReset} className="bx press min-h-13 flex-1 bg-card text-[16px] font-bold">
               Reiniciar
             </button>
-            <button type="button" onClick={store.skip} className="bx press min-h-13 flex-1 bg-card text-[16px] font-bold">
+            <button type="button" onClick={handleSkip} className="bx press min-h-13 flex-1 bg-card text-[16px] font-bold">
               Saltar
             </button>
           </div>
+
+          <Card className="flex flex-col gap-3 p-4.5">
+            <CardHeading className="text-[18px]">Sonido ambiente</CardHeading>
+            <AmbientPicker label="Elige un ambiente" />
+          </Card>
 
           <Card className="flex flex-col gap-3 p-4.5">
             <CardHeading className="text-[18px]">¿Qué vas a practicar?</CardHeading>

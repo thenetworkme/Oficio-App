@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
 import { Mascot } from "@/components/mascot/Mascot";
 import { usePet } from "@/lib/hooks/usePet";
+import { useSound } from "@/lib/sound/SoundProvider";
 import { formatMinutesLong } from "@/lib/format";
 
 /**
@@ -33,6 +34,7 @@ export function SessionSaveDialog({
   const [gains, setGains] = useState<{ coins: number; xp: number } | null>(null);
   const [saving, setSaving] = useState(false);
   const { equipped, level, xpIntoLevel, xpForNext, xpPct } = usePet();
+  const sound = useSound();
 
   const faces = ["🥱", "😕", "🙂", "😄", "🔥"];
   const qLabels = ["Disperso", "Costó enfocarse", "Normal", "Buen enfoque", "En flow"];
@@ -41,7 +43,10 @@ export function SessionSaveDialog({
     setSaving(true);
     try {
       const result = await onSave(quality, note);
-      if (result) setGains({ coins: result.coinsGained, xp: result.xpGained });
+      if (result) {
+        setGains({ coins: result.coinsGained, xp: result.xpGained });
+        sound.playSuccess();
+      }
     } finally {
       setSaving(false);
     }

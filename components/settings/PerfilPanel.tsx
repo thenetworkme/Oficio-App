@@ -7,7 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeading } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { AmbientPicker } from "@/components/sound/AmbientPicker";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { useSound } from "@/lib/sound/SoundProvider";
 import { exportUserDataToCsv } from "@/lib/csv-export";
 import { getFirebaseAuth } from "@/lib/firebase";
 import { formatInt, formatMonthYearEs } from "@/lib/format";
@@ -190,6 +193,7 @@ function DeleteAccountDialog({ open, onOpenChange }: { open: boolean; onOpenChan
 export function PerfilPanel() {
   const { user, profile, signOut, hasPasswordProvider } = useAuth();
   const { skills, dailyMinutes, totalHours } = useAppData();
+  const sound = useSound();
 
   const [displayName, setDisplayName] = useState("");
   const [timezone, setTimezone] = useState("America/Santo_Domingo");
@@ -240,6 +244,7 @@ export function PerfilPanel() {
         await updateAuthProfile(authUser, { displayName: displayName.trim() || null });
       }
       setSavedNote("Cambios guardados");
+      sound.playSuccess();
     } catch {
       setSavedNote("No se pudo guardar. Inténtalo de nuevo.");
     } finally {
@@ -379,6 +384,36 @@ export function PerfilPanel() {
             <Stepper label="Descanso corto" value={shortMin} min={1} max={30} onChange={setShortMin} />
             <Stepper label="Descanso largo" value={longMin} min={1} max={60} onChange={setLongMin} />
           </div>
+        </Card>
+
+        <Card className="flex flex-col gap-5 p-6">
+          <CardHeading>Sonido</CardHeading>
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-ink py-2">
+            <span className="font-semibold">Efectos de sonido</span>
+            <Switch
+              checked={sound.soundEffectsEnabled}
+              onCheckedChange={sound.setSoundEffectsEnabled}
+              label="Efectos de sonido"
+            />
+          </div>
+          <div className="flex items-center gap-3">
+            <label htmlFor="fx-volume" className="text-sm text-muted">
+              Volumen de efectos
+            </label>
+            <input
+              id="fx-volume"
+              type="range"
+              min={0}
+              max={1}
+              step={0.05}
+              value={sound.soundEffectsVolume}
+              disabled={!sound.soundEffectsEnabled}
+              onChange={(e) => sound.setSoundEffectsVolume(Number(e.target.value))}
+              className="h-2 flex-1 accent-[var(--a1)] disabled:opacity-40"
+              aria-label="Volumen de los efectos de sonido"
+            />
+          </div>
+          <AmbientPicker />
         </Card>
 
         <div className="flex flex-wrap items-center justify-end gap-3.5">
