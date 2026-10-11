@@ -3,6 +3,7 @@
 import {
   BarChart3,
   LayoutDashboard,
+  LogOut,
   SlidersHorizontal,
   Timer as TimerIcon,
   Trophy,
@@ -10,6 +11,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/lib/auth/AuthProvider";
 import { strings } from "@/lib/strings";
 import { cn } from "@/lib/cn";
 
@@ -70,6 +72,42 @@ export function Logo() {
   );
 }
 
+function MiniProfile() {
+  const { user, profile, signOut } = useAuth();
+  if (!user) return null;
+  const name = profile?.displayName || user.displayName || user.email || "Cuenta";
+  const initial = name.charAt(0).toUpperCase();
+  return (
+    <div className="flex items-center gap-2">
+      <Link
+        href="/ajustes"
+        aria-label={`Perfil de ${name}`}
+        className="flex min-h-11 min-w-0 flex-1 items-center gap-2.5 rounded-button"
+      >
+        <span
+          aria-hidden="true"
+          className="flex size-9 shrink-0 items-center justify-center rounded-full font-extrabold"
+          style={{ background: "var(--accent)", color: "var(--on)" }}
+        >
+          {initial}
+        </span>
+        <span className="flex min-w-0 flex-col leading-tight">
+          <span className="truncate font-semibold">{name}</span>
+          <span className="text-xs text-muted">Ver perfil</span>
+        </span>
+      </Link>
+      <button
+        type="button"
+        aria-label="Cerrar sesión"
+        onClick={signOut}
+        className="flex size-11 shrink-0 items-center justify-center rounded-button border border-line text-muted"
+      >
+        <LogOut size={20} aria-hidden="true" />
+      </button>
+    </div>
+  );
+}
+
 export function Sidebar({ streakDays, minMinutes }: { streakDays: number; minMinutes: number }) {
   return (
     <nav
@@ -78,8 +116,9 @@ export function Sidebar({ streakDays, minMinutes }: { streakDays: number; minMin
     >
       <Logo />
       <NavLinks />
-      <div className="mt-auto">
+      <div className="mt-auto flex flex-col gap-3">
         <StreakCard days={streakDays} minMinutes={minMinutes} />
+        <MiniProfile />
       </div>
     </nav>
   );
