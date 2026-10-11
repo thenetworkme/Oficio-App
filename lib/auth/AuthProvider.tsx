@@ -47,6 +47,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!user) return;
+    // Reset to "loading" for the newly signed-in user before the profile
+    // subscription below delivers its first snapshot.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setProfileLoading(true);
     // Make sure profiles/{uid} exists on first sign-in, then keep it live.
     ensureProfile(user.uid, user.displayName).catch(() => void 0);

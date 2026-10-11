@@ -23,7 +23,7 @@ const INITIAL: CelebrationState = {
 /** Queues one milestone celebration at a time; if a session crosses several
  * milestones at once, they're shown one after another in ascending order. */
 export function useCelebration() {
-  const [queue, setQueue] = useState<Omit<CelebrationState, "open">[]>([]);
+  const [, setQueue] = useState<Omit<CelebrationState, "open">[]>([]);
   const [current, setCurrent] = useState<CelebrationState>(INITIAL);
 
   const enqueue = useCallback(

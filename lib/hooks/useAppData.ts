@@ -17,6 +17,9 @@ export function useAppData() {
   const [sessions, setSessions] = useState<PracticeSession[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Reset local state when the signed-in user changes (including signing
+  // out), before the subscriptions below deliver their own snapshots.
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (!user) {
       setSkills([]);
@@ -34,6 +37,7 @@ export function useAppData() {
       unsubSkills();
       unsubSessions();
     };
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [user]);
 
   const timezone = profile?.timezone ?? "America/Santo_Domingo";

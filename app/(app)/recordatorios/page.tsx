@@ -26,6 +26,7 @@ export default function RecordatoriosPage() {
   const [notifStatus, setNotifStatus] = useState<NotificationPermission | "unsupported">("default");
 
   const [skillId, setSkillId] = useState<string>("");
+  const selectedSkillId = skillId || skills[0]?.id || "";
   const [time, setTime] = useState("19:00");
   const [days, setDays] = useState<Set<number>>(new Set([1, 2, 3, 4, 5]));
   const [message, setMessage] = useState("Hora de tu bloque de práctica");
@@ -36,10 +37,9 @@ export default function RecordatoriosPage() {
     return watchReminders(user.uid, setReminders);
   }, [user]);
 
-  useEffect(() => {
-    if (!skillId && skills[0]) setSkillId(skills[0].id);
-  }, [skills, skillId]);
-
+  // Reads the current permission from the Notification API on mount; there
+  // is no subscription to hang this off, so a direct setState is the sync.
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (typeof window === "undefined" || !("Notification" in window)) {
       setNotifStatus("unsupported");
@@ -47,6 +47,7 @@ export default function RecordatoriosPage() {
     }
     setNotifStatus(Notification.permission);
   }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   async function handleEnableNotifications() {
     if (!user) return;
@@ -63,12 +64,12 @@ export default function RecordatoriosPage() {
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
-    if (!user || !skillId) return;
+    if (!user || !selectedSkillId) return;
     setSaving(true);
     try {
       await createReminder({
         userId: user.uid,
-        skillId,
+        skillId: selectedSkillId,
         kind: "practice",
         timeOfDay: time,
         days: Array.from(days).sort(),
@@ -143,7 +144,7 @@ export default function RecordatoriosPage() {
                 <Label htmlFor="f-skill">Habilidad</Label>
                 <select
                   id="f-skill"
-                  value={skillId}
+                  value={selectedSkillId}
                   onChange={(e) => setSkillId(e.target.value)}
                   className="box-border min-h-[46px] w-full rounded-button border border-line bg-bg px-3 text-[15px]"
                 >
@@ -188,7 +189,7 @@ export default function RecordatoriosPage() {
               <Input id="f-msg" value={message} onChange={(e) => setMessage(e.target.value)} />
             </div>
 
-            <Button type="submit" disabled={saving || !skillId} className="w-full">
+            <Button type="submit" disabled={saving || !selectedSkillId} className="w-full">
               Guardar recordatorio
             </Button>
           </form>

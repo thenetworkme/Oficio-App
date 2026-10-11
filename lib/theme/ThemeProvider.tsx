@@ -26,6 +26,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Sync local state from the user's profile once it loads.
   useEffect(() => {
     if (!profile) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setThemeId(profile.themeId);
     setAccentIdxState(profile.accentIdx);
     setFollowSystemState(profile.followSystemTheme);

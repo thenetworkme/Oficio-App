@@ -17,7 +17,7 @@ import type { Achievement, PracticeSession } from "@/lib/types";
 
 export default function SkillDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { skills, sessions: allSessions, weekMinutes, todayMinutes } = useAppData();
+  const { skills, sessions: allSessions } = useAppData();
   const skill = skills.find((s) => s.id === id);
   const [recent, setRecent] = useState<PracticeSession[]>([]);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
@@ -27,6 +27,8 @@ export default function SkillDetailPage() {
     listSessionsForSkill(id, 50).then(setRecent);
     listAchievementsForSkill(id).then(setAchievements);
   }, [id]);
+
+  const weeks = useMemo(() => buildWeeklyTotals(recent, 8), [recent]);
 
   if (!skill) {
     return <Card className="p-8 text-center text-muted">Habilidad no encontrada.</Card>;
@@ -44,8 +46,6 @@ export default function SkillDetailPage() {
     .filter((s) => new Date(s.startedAt).toDateString() === new Date().toDateString())
     .reduce((acc, s) => acc + s.durationMin, 0);
   const skillSessionsWeek = weekMinutesForSkill(allSessions, skill.id);
-
-  const weeks = useMemo(() => buildWeeklyTotals(recent, 8), [recent]);
   const maxWeek = Math.max(1, ...weeks.map((w) => w.minutes));
 
   return (

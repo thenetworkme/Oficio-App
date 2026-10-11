@@ -30,8 +30,7 @@ export function computeCurrentStreak(
     cursor = shiftDate(todayStr, -1);
   }
   let streak = 0;
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
+  for (;;) {
     const mins = dailyMinutes[cursor] ?? 0;
     if (mins < minDailyMinutes) break;
     streak += 1;

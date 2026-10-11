@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Designer's reference mockups/screenshots, not part of the app bundle.
+    "design-reference/**",
+    // Hand-written service worker, plain JS running outside the TS project.
+    "public/sw.js",
   ]),
 ]);
 
