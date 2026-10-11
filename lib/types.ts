@@ -69,7 +69,7 @@ export interface Skill {
   createdAt: number;
 }
 
-export type SessionSource = "timer" | "manual" | "challenge";
+export type SessionSource = "timer" | "manual" | "challenge" | "stopwatch";
 
 export interface PracticeSession {
   id: string;

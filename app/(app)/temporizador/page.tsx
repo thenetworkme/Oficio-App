@@ -9,7 +9,9 @@ import { SessionSaveDialog } from "@/components/timer/SessionSaveDialog";
 import { FullscreenTimer } from "@/components/timer/FullscreenTimer";
 import { CelebrationDialog } from "@/components/achievements/CelebrationDialog";
 import { useTimerStore } from "@/store/timer-store";
+import { useStopwatchStore } from "@/store/stopwatch-store";
 import { cycleDotsFilled, modeTotalSeconds, type PomodoroMode } from "@/lib/timer";
+import { formatStopwatchClock, MIN_STOPWATCH_MS } from "@/lib/stopwatch";
 import { useAppData } from "@/lib/hooks/useAppData";
 import { saveSession } from "@/lib/firestore/sessions";
 import { watchChallenges } from "@/lib/firestore/challenges";
@@ -32,14 +34,28 @@ const MODE_TABS: { id: PomodoroMode; label: string }[] = [
 const MODE_FRUIT: Record<PomodoroMode, string> = { focus: "var(--a2)", short: "var(--a3)", long: "#7CC4FF" };
 const MODE_LABEL: Record<PomodoroMode, string> = { focus: "Modo enfoque", short: "Respira", long: "Descanso largo" };
 
+type ScreenMode = "pomodoro" | "libre";
+const SCREEN_TABS: { id: ScreenMode; label: string }[] = [
+  { id: "pomodoro", label: "Pomodoro" },
+  { id: "libre", label: "Libre" },
+];
+
 export default function TemporizadorPage() {
   const { user, skills, profile, sessions, timezone, todayKey } = useAppData();
   const store = useTimerStore();
+  const stopwatch = useStopwatchStore();
   const { celebration, enqueueCelebration, closeCelebration } = useCelebration();
   const sound = useSound();
   const notifications = useNotifications();
   const [now, setNow] = useState(() => Date.now());
+  const [swNow, setSwNow] = useState(() => Date.now());
   const [intention, setIntentionLocal] = useState(store.intention);
+  const [swIntention, setSwIntentionLocal] = useState(stopwatch.intention);
+  const [screenMode, setScreenMode] = useState<ScreenMode>("pomodoro");
+  // Brief inline notice when the user hits "Detener" before the minimum
+  // loggable duration — cleared on the next stopwatch action rather than a
+  // timeout, so it never disappears mid-read if the user is away.
+  const [tooShortNotice, setTooShortNotice] = useState(false);
   // Purely presentational view state for the fullscreen takeover — the
   // store already tracks mode/running/timing, so this doesn't need to live
   // in it; it just resets to "normal" on navigation, which is fine.
@@ -64,6 +80,19 @@ export default function TemporizadorPage() {
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, [store.running]);
+
+  // Same wall-clock resync pattern as above, applied to the "Sesión libre"
+  // stopwatch: without this, resuming after a long pause would briefly show
+  // a stale (too-small) elapsed time until the next 1s tick — the same bug
+  // class the Pomodoro countdown had before this fix (see
+  // tests/timer-clock-sync.test.tsx).
+  useLayoutEffect(() => {
+    if (!stopwatch.running) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSwNow(Date.now());
+    const id = setInterval(() => setSwNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [stopwatch.running]);
 
   // Resets local state when the signed-in user changes, before the
   // subscription below delivers its own snapshot (same pattern as
@@ -150,6 +179,48 @@ export default function TemporizadorPage() {
     store.extend(seconds);
   }
 
+  const stopwatchElapsedMs = stopwatch.getElapsedMs(swNow);
+  const stopwatchSelectedSkill = skills.find((s) => s.id === stopwatch.skillId) ?? skills[0] ?? null;
+  const stopwatchHasTime = stopwatch.running || stopwatchElapsedMs > 0;
+
+  function handleStopwatchPlayPause() {
+    setTooShortNotice(false);
+    if (stopwatch.running) {
+      sound.playPause();
+      sound.stopAmbient();
+      stopwatch.pause();
+    } else if (stopwatchElapsedMs > 0) {
+      sound.playStart();
+      sound.startAmbientIfSelected();
+      stopwatch.resume();
+    } else {
+      sound.playStart();
+      sound.startAmbientIfSelected();
+      stopwatch.start();
+    }
+  }
+
+  function handleStopwatchStop() {
+    sound.stopAmbient();
+    const longEnough = stopwatch.stop();
+    if (longEnough) {
+      sound.playComplete();
+    } else {
+      // Too short to log (see lib/stopwatch's MIN_STOPWATCH_MS): the elapsed
+      // time is still banked (stop() pauses rather than discarding), so the
+      // user can resume and keep practicing instead of losing it.
+      sound.playPause();
+      setTooShortNotice(true);
+    }
+  }
+
+  function handleStopwatchReset() {
+    sound.playClick();
+    sound.stopAmbient();
+    setTooShortNotice(false);
+    stopwatch.reset();
+  }
+
   const todaySessions = useMemo(
     () =>
       sessions
@@ -196,13 +267,77 @@ export default function TemporizadorPage() {
     return result;
   }
 
+  async function handleSaveStopwatchSession(quality: number, note: string) {
+    const pending = stopwatch.pendingSave;
+    if (!pending || !user || !pending.skillId) {
+      stopwatch.clearPendingSave();
+      return;
+    }
+    const skill = skills.find((s) => s.id === pending.skillId);
+    if (!skill) {
+      stopwatch.clearPendingSave();
+      return;
+    }
+    // Same reasoning as handleSaveSession above: pendingSave (persisted in
+    // store/stopwatch-store.ts) is only cleared after a successful write, so
+    // a dropped connection right as the stopwatch stops doesn't silently
+    // lose the session — it survives in localStorage and this dialog stays
+    // open for a retry.
+    const result = await saveSession({
+      userId: user.uid,
+      skillId: skill.id,
+      startedAt: Date.now() - pending.durationMin * 60_000,
+      durationMin: pending.durationMin,
+      quality,
+      note: note || null,
+      pomodoros: 0,
+      source: "stopwatch",
+    });
+    stopwatch.clearPendingSave();
+    enqueueCelebration(result.milestonesCrossed, {
+      skillName: skill.name,
+      skillColor: resolveSkillColor(skill.color),
+      startedAt: skill.createdAt,
+    });
+    return result;
+  }
+
   return (
     <>
-      <div className="label-xs -mb-2 font-bold">
-        Tomate {n} de 4 · {selectedSkill?.name ?? "—"}
+      <div role="group" aria-label="Tipo de sesión" className="flex flex-wrap gap-2.5">
+        {SCREEN_TABS.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            aria-pressed={screenMode === t.id}
+            onClick={() => {
+              sound.playClick();
+              setScreenMode(t.id);
+            }}
+            className="bx press min-h-12 px-4.5 text-[16px] font-bold"
+            style={
+              screenMode === t.id
+                ? {
+                    background: "var(--ink)",
+                    color: "var(--paper)",
+                    boxShadow: "2px 2px 0 var(--shadow)",
+                    transform: "translate(4px,4px)",
+                  }
+                : { background: "var(--card)" }
+            }
+          >
+            {t.label}
+          </button>
+        ))}
       </div>
 
-      <div className="flex flex-wrap items-center justify-center gap-10">
+      {screenMode === "pomodoro" && (
+        <>
+          <div className="label-xs -mb-2 font-bold">
+            Tomate {n} de 4 · {selectedSkill?.name ?? "—"}
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-10">
         <div className="relative flex items-center justify-center">
           <div
             className="bx flex size-[320px] flex-col items-center justify-center gap-1 rounded-full text-ink-solid sm:size-[400px]"
@@ -329,24 +464,139 @@ export default function TemporizadorPage() {
               <span key={i} className="size-9 rounded-full border-[3px] border-ink" style={{ background: i < filled ? "var(--a2)" : "var(--card)" }} />
             ))}
           </div>
+          </div>
+          </div>
+        </>
+      )}
 
-          {todaySessions.length > 0 && (
-            <Card className="flex flex-col gap-1 p-4.5">
-              <CardHeading className="mb-1 text-[16px]">Sesiones de hoy</CardHeading>
-              {todaySessions.map((s) => {
-                const skill = skills.find((sk) => sk.id === s.skillId);
-                return (
-                  <div key={s.id} className="flex flex-wrap items-center gap-3 border-t-2 border-dashed border-ink py-2.5">
-                    <span className="font-num min-w-16 text-[13px] text-muted">{formatTimeEs(new Date(s.startedAt))}</span>
-                    <span className="min-w-[100px] flex-1 font-bold">{skill?.name ?? "—"}</span>
-                    <span className="font-num text-sm">{formatMinutes(s.durationMin)}</span>
-                  </div>
-                );
-              })}
+      {screenMode === "libre" && (
+        <div className="flex flex-wrap items-center justify-center gap-10">
+          <div className="relative flex items-center justify-center">
+            <div
+              className="bx flex size-[320px] flex-col items-center justify-center gap-1 rounded-full text-ink-solid sm:size-[400px]"
+              style={{ background: "var(--a3)", boxShadow: "10px 10px 0 var(--shadow)" }}
+            >
+              <span
+                role="timer"
+                className="font-num text-[72px] font-bold leading-none tracking-tight sm:text-[100px]"
+                style={{ fontVariantNumeric: "tabular-nums" }}
+              >
+                {formatStopwatchClock(stopwatchElapsedMs)}
+              </span>
+              <span className="label-xs !text-ink-solid font-bold opacity-70">Sesión libre</span>
+            </div>
+            <div
+              className="bx absolute -right-3 top-10 px-4 py-2 text-[18px] font-bold text-ink-solid"
+              style={{ background: "var(--a1)", transform: "rotate(8deg)" }}
+            >
+              {stopwatch.running ? "¡Dale que vas bien!" : stopwatchHasTime ? "En pausa" : "¡A darle!"}
+            </div>
+          </div>
+
+          <div className="flex min-w-[300px] flex-1 flex-col gap-5">
+            <div className="flex flex-wrap items-center justify-between gap-2.5">
+              <p className="m-0 max-w-[320px] text-sm text-muted">
+                Sin ciclos ni duración fija: pulsa Dale, practica, y Detener cuando termines.
+              </p>
+              <button
+                type="button"
+                onClick={() => sound.setSoundEffectsEnabled(!sound.soundEffectsEnabled)}
+                aria-label={sound.soundEffectsEnabled ? "Silenciar sonidos" : "Activar sonidos"}
+                title={sound.soundEffectsEnabled ? "Silenciar sonidos" : "Activar sonidos"}
+                className="bx press flex size-12 items-center justify-center bg-card"
+              >
+                {sound.soundEffectsEnabled ? (
+                  <Volume2 size={20} aria-hidden="true" />
+                ) : (
+                  <VolumeX size={20} aria-hidden="true" />
+                )}
+              </button>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleStopwatchPlayPause}
+              className="bx press min-h-[84px] text-[28px] font-bold"
+              style={{ background: "var(--ink)", color: "var(--paper)", boxShadow: "6px 6px 0 var(--a3)" }}
+            >
+              {stopwatch.running ? "Pausa" : "Dale"}
+            </button>
+
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={handleStopwatchStop}
+                disabled={!stopwatchHasTime}
+                className="bx press min-h-13 flex-1 bg-card text-[16px] font-bold disabled:opacity-60"
+              >
+                Detener
+              </button>
+              <button type="button" onClick={handleStopwatchReset} className="bx press min-h-13 flex-1 bg-card text-[16px] font-bold">
+                Reiniciar
+              </button>
+            </div>
+
+            {tooShortNotice && (
+              <div className="bx px-4 py-2.5 text-[15px] font-bold text-ink-solid" style={{ background: "var(--a1)" }}>
+                Practica al menos {MIN_STOPWATCH_MS / 60_000} minuto para poder guardar la sesión. Tu tiempo sigue contando: pulsa Dale para seguir.
+              </div>
+            )}
+
+            <Card className="flex flex-col gap-3 p-4.5">
+              <CardHeading className="text-[18px]">Sonido ambiente</CardHeading>
+              <AmbientPicker label="Elige un ambiente" />
             </Card>
-          )}
+
+            <Card className="flex flex-col gap-3 p-4.5">
+              <CardHeading className="text-[18px]">¿Qué vas a practicar?</CardHeading>
+              <div role="group" aria-label="Habilidad" className="flex flex-wrap gap-2">
+                {skills.map((s) => (
+                  <Chip
+                    key={s.id}
+                    pressed={stopwatch.skillId === s.id}
+                    dotColor={resolveSkillColor(s.color)}
+                    onClick={() => stopwatch.setSkill(s.id)}
+                  >
+                    {s.name}
+                  </Chip>
+                ))}
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="sw-intencion" className="label-xs">
+                  Intención de esta sesión
+                </label>
+                <input
+                  id="sw-intencion"
+                  type="text"
+                  value={swIntention}
+                  onChange={(e) => {
+                    setSwIntentionLocal(e.target.value);
+                    stopwatch.setIntention(e.target.value);
+                  }}
+                  placeholder="Ej. Improvisar sobre un acorde"
+                  className="box-border w-full min-h-12 rounded-button border-[3px] border-ink bg-card px-3.5 text-[15px] placeholder:text-muted"
+                />
+              </div>
+            </Card>
+          </div>
         </div>
-      </div>
+      )}
+
+      {todaySessions.length > 0 && (
+        <Card className="flex flex-col gap-1 p-4.5">
+          <CardHeading className="mb-1 text-[16px]">Sesiones de hoy</CardHeading>
+          {todaySessions.map((s) => {
+            const skill = skills.find((sk) => sk.id === s.skillId);
+            return (
+              <div key={s.id} className="flex flex-wrap items-center gap-3 border-t-2 border-dashed border-ink py-2.5">
+                <span className="font-num min-w-16 text-[13px] text-muted">{formatTimeEs(new Date(s.startedAt))}</span>
+                <span className="min-w-[100px] flex-1 font-bold">{skill?.name ?? "—"}</span>
+                <span className="font-num text-sm">{formatMinutes(s.durationMin)}</span>
+              </div>
+            );
+          })}
+        </Card>
+      )}
 
       <FullscreenTimer
         open={fullscreen}
@@ -377,6 +627,14 @@ export default function TemporizadorPage() {
         skillName={selectedSkill?.name ?? ""}
         onSave={handleSaveSession}
         onDiscard={store.clearPendingSave}
+      />
+
+      <SessionSaveDialog
+        open={Boolean(stopwatch.pendingSave) && stopwatchSelectedSkill != null}
+        durationMin={stopwatch.pendingSave?.durationMin ?? 0}
+        skillName={stopwatchSelectedSkill?.name ?? ""}
+        onSave={handleSaveStopwatchSession}
+        onDiscard={stopwatch.clearPendingSave}
       />
 
       <CelebrationDialog

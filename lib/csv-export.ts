@@ -31,6 +31,13 @@ function skillsCsv(skills: Skill[]): string {
   );
 }
 
+const SESSION_SOURCE_LABEL: Record<PracticeSession["source"], string> = {
+  timer: "temporizador",
+  manual: "manual",
+  challenge: "reto",
+  stopwatch: "libre",
+};
+
 function sessionsCsv(sessions: PracticeSession[], skillNameById: Map<string, string>): string {
   return toCsv(
     ["id", "habilidad", "inicio", "duracion_min", "calidad", "nota", "pomodoros", "origen"],
@@ -42,7 +49,7 @@ function sessionsCsv(sessions: PracticeSession[], skillNameById: Map<string, str
       s.quality,
       s.note,
       s.pomodoros,
-      s.source === "timer" ? "temporizador" : "manual",
+      SESSION_SOURCE_LABEL[s.source] ?? s.source,
     ]),
   );
 }
