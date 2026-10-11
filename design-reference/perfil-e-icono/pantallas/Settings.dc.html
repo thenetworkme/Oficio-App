@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Oficio — Ajustes de apariencia</title>
+<script src="./dc-runtime.js"></script>
+<link rel="icon" type="image/svg+xml" href="../icono/icon.svg">
+<link rel="icon" href="../icono/favicon.ico" sizes="48x48">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#111311}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+a:focus-visible,button:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+</style>
+</helmet>
+<div style="--bg:{{c.bg}};--card:{{c.card}};--line:{{c.line}};--text:{{c.text}};--muted:{{c.muted}};--accent:{{c.accent}};--on:{{c.on}};--a2:{{c.a2}};--a3:{{c.a3}};--track:{{c.track}};--sel:{{c.sel}};--danger:{{c.danger}};background:var(--bg);color:var(--text);font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:15px;line-height:1.45;display:flex;flex-wrap:wrap;align-items:stretch;min-height:1260px">
+
+<nav aria-label="Principal" style="flex:0 0 248px;box-sizing:border-box;padding:28px 20px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:28px;flex-grow:1;max-width:100%">
+<div style="display:flex;align-items:center;gap:10px;padding:0 6px">
+<svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><circle cx="14" cy="14" r="11" stroke="var(--line)" stroke-width="3"/><path d="M14 3a11 11 0 0 1 9.5 5.5" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/></svg>
+<span style="font-size:24px;font-weight:800;letter-spacing:-0.02em">Oficio</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<a href="Main.dc.html" style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 14px;border-radius:10px;color:var(--muted)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+Panel</a>
+<a href="Timer.dc.html" style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 14px;border-radius:10px;color:var(--muted)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg>
+Temporizador</a>
+<a href="Stats.dc.html" style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 14px;border-radius:10px;color:var(--muted)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+Estadísticas</a>
+<a href="Achievements.dc.html" style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 14px;border-radius:10px;color:var(--muted)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>
+Logros</a>
+<a href="Reminders.dc.html" style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 14px;border-radius:10px;color:var(--muted)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17V11a6 6 0 1 1 12 0v6l2 2H4zM10 21h4"/></svg>
+Recordatorios</a>
+<a href="Settings.dc.html" aria-current="page" style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 14px;border-radius:10px;background:var(--sel);color:var(--text);font-weight:600">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h10M4 12h4M4 18h12"/><circle cx="17" cy="6" r="2.5"/><circle cx="11" cy="12" r="2.5"/><circle cx="19" cy="18" r="2.5"/></svg>
+Ajustes</a>
+</div>
+<div style="margin-top:auto;padding:14px;border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;gap:6px">
+<span style="font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted)">Racha</span>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:500;color:var(--accent)">12 días</span>
+<span style="color:var(--muted);font-size:13px">Mínimo diario: 30 min</span>
+</div>
+<div style="display:flex;align-items:center;gap:8px">
+<a href="Settings.dc.html" aria-label="Perfil de {{dispName}}" style="display:flex;align-items:center;gap:10px;min-height:44px;flex:1;min-width:0;border-radius:10px">
+<span aria-hidden="true" style="flex:0 0 36px;width:36px;height:36px;border-radius:50%;background:var(--accent);color:var(--on);display:flex;align-items:center;justify-content:center;font-weight:800">{{initial}}</span>
+<span style="display:flex;flex-direction:column;min-width:0;line-height:1.25"><span style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{dispName}}</span><span style="font-size:12px;color:var(--muted)">Ver perfil</span></span>
+</a>
+<button type="button" aria-label="Cerrar sesión" style="flex:0 0 44px;width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+</button>
+</div>
+</nav>
+
+<main style="flex:999 1 560px;min-width:0;box-sizing:border-box;padding:36px 40px 48px;display:flex;flex-direction:column;gap:28px;max-width:1112px">
+
+<header style="display:flex;flex-direction:column;gap:4px">
+<span style="font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted)">Ajustes · {{tabName}}</span>
+<h1 style="margin:0;font-size:40px;line-height:1.1;font-weight:800;letter-spacing:-0.02em">{{tabTitle}}</h1>
+</header>
+
+<div role="group" aria-label="Secciones de ajustes" style="display:flex;gap:6px;padding:5px;border-radius:14px;background:var(--card);border:1px solid var(--line);align-self:flex-start;flex-wrap:wrap">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="2">
+<button type="button" aria-pressed="{{t.pressed}}" onClick="{{t.pick}}" style="min-height:44px;padding:0 22px;border-radius:10px;border:0;font-size:15px;font-weight:600;background:{{t.bg}};color:{{t.color}}">{{t.label}}</button>
+</sc-for>
+</div>
+
+<sc-if value="{{tabAp}}" hint-placeholder-val="{{false}}">
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+<div style="flex:3 1 520px;min-width:0;display:flex;flex-direction:column;gap:16px">
+
+<section aria-labelledby="h-theme" style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:24px">
+<h2 id="h-theme" style="margin:0;font-size:20px;font-weight:700">Tema</h2>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<h3 style="margin:0;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);font-weight:600">Catppuccin</h3>
+<div role="group" aria-label="Temas Catppuccin" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:12px">
+<sc-for list="{{catppuccin}}" as="t" hint-placeholder-count="4">
+<button type="button" aria-pressed="{{t.pressed}}" onClick="{{t.pick}}" style="display:flex;flex-direction:column;padding:0;text-align:left;border-radius:14px;border:2px solid {{t.border}};background:var(--card);color:var(--text);overflow:hidden">
+<span style="display:block;height:92px;background:{{t.bg}};padding:12px;box-sizing:border-box">
+<span style="display:flex;flex-direction:column;gap:6px;height:100%;box-sizing:border-box;background:{{t.card}};border:1px solid {{t.line}};border-radius:8px;padding:8px">
+<span style="display:block;height:6px;width:55%;border-radius:3px;background:{{t.text}}"></span>
+<span style="display:block;height:6px;width:80%;border-radius:3px;background:{{t.a1}}"></span>
+<span style="display:flex;gap:5px;margin-top:auto"><span style="width:10px;height:10px;border-radius:50%;background:{{t.a1}}"></span><span style="width:10px;height:10px;border-radius:50%;background:{{t.a2}}"></span><span style="width:10px;height:10px;border-radius:50%;background:{{t.a3}}"></span></span>
+</span>
+</span>
+<span style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px;min-height:44px;box-sizing:border-box">
+<span style="display:flex;flex-direction:column"><span style="font-weight:600">{{t.name}}</span><span style="font-size:12px;color:var(--muted)">{{t.mode}}</span></span>
+<sc-if value="{{t.pressed}}" hint-placeholder-val="{{false}}">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+</sc-if>
+</span>
+</button>
+</sc-for>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<h3 style="margin:0;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);font-weight:600">Otros temas</h3>
+<div role="group" aria-label="Otros temas" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:12px">
+<sc-for list="{{others}}" as="t" hint-placeholder-count="4">
+<button type="button" aria-pressed="{{t.pressed}}" onClick="{{t.pick}}" style="display:flex;flex-direction:column;padding:0;text-align:left;border-radius:14px;border:2px solid {{t.border}};background:var(--card);color:var(--text);overflow:hidden">
+<span style="display:block;height:92px;background:{{t.bg}};padding:12px;box-sizing:border-box">
+<span style="display:flex;flex-direction:column;gap:6px;height:100%;box-sizing:border-box;background:{{t.card}};border:1px solid {{t.line}};border-radius:8px;padding:8px">
+<span style="display:block;height:6px;width:55%;border-radius:3px;background:{{t.text}}"></span>
+<span style="display:block;height:6px;width:80%;border-radius:3px;background:{{t.a1}}"></span>
+<span style="display:flex;gap:5px;margin-top:auto"><span style="width:10px;height:10px;border-radius:50%;background:{{t.a1}}"></span><span style="width:10px;height:10px;border-radius:50%;background:{{t.a2}}"></span><span style="width:10px;height:10px;border-radius:50%;background:{{t.a3}}"></span></span>
+</span>
+</span>
+<span style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px;min-height:44px;box-sizing:border-box">
+<span style="display:flex;flex-direction:column"><span style="font-weight:600">{{t.name}}</span><span style="font-size:12px;color:var(--muted)">{{t.mode}}</span></span>
+<sc-if value="{{t.pressed}}" hint-placeholder-val="{{false}}">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+</sc-if>
+</span>
+</button>
+</sc-for>
+</div>
+</div>
+</section>
+
+<section aria-labelledby="h-accent" style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;flex-direction:column;gap:4px">
+<h2 id="h-accent" style="margin:0;font-size:20px;font-weight:700">Color de acento</h2>
+<span style="color:var(--muted);font-size:14px">Se aplica a botones, progreso y gráficos. Las otras habilidades toman los colores siguientes de la paleta.</span>
+</div>
+<div role="group" aria-label="Color de acento" style="display:flex;flex-wrap:wrap;gap:12px">
+<sc-for list="{{accents}}" as="a" hint-placeholder-count="6">
+<button type="button" aria-pressed="{{a.pressed}}" aria-label="{{a.name}}" onClick="{{a.pick}}" style="display:flex;flex-direction:column;align-items:center;gap:6px;min-width:64px;padding:8px 6px;border-radius:12px;border:0;background:transparent;color:var(--text)">
+<span style="display:block;width:44px;height:44px;border-radius:50%;box-sizing:border-box;border:3px solid {{a.ring}};padding:3px"><span style="display:block;width:100%;height:100%;border-radius:50%;background:{{a.hex}}"></span></span>
+<span style="font-size:12px;color:var(--muted)">{{a.name}}</span>
+</button>
+</sc-for>
+</div>
+</section>
+
+<section aria-labelledby="h-auto" style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px 26px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+<div style="display:flex;flex-direction:column;gap:2px;flex:1 1 260px">
+<h2 id="h-auto" style="margin:0;font-size:18px;font-weight:700">Seguir el tema del sistema</h2>
+<span style="color:var(--muted);font-size:14px">Catppuccin Latte de día y Mocha de noche, según tu dispositivo.</span>
+</div>
+<button type="button" role="switch" aria-checked="{{follow}}" aria-label="Seguir el tema del sistema" onClick="{{flipFollow}}" style="position:relative;width:52px;height:44px;border:0;background:transparent;padding:0">
+<span style="position:absolute;left:0;top:8px;width:52px;height:28px;border-radius:999px;background:{{followTrack}}"></span>
+<span style="position:absolute;top:12px;left:{{followKnob}};width:20px;height:20px;border-radius:50%;background:var(--text)"></span>
+</button>
+</section>
+</div>
+
+<aside aria-label="Vista previa" style="flex:2 1 340px;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+<h2 style="margin:0;font-size:18px;font-weight:700">Vista previa</h2>
+<span style="color:var(--muted);font-size:13px">{{themeName}}</span>
+</div>
+<div style="background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:14px">
+<div style="background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+<span style="font-weight:700;font-size:17px">Programación</span>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:12px;padding:3px 9px;border-radius:999px;border:1px solid var(--line)">12,8 %</span>
+</div>
+<div style="display:flex;align-items:baseline;gap:6px">
+<span style="font-family:'IBM Plex Mono',monospace;font-size:30px;font-weight:500;color:var(--accent)">1.284</span>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--muted)">/ 10.000 h</span>
+</div>
+<div style="height:8px;border-radius:999px;background:var(--track)"><div style="height:100%;width:12.84%;border-radius:999px;background:var(--accent)"></div></div>
+<div style="display:flex;align-items:flex-end;gap:6px;height:64px">
+<sc-for list="{{bars}}" as="b" hint-placeholder-count="7">
+<span style="flex:1;display:block;border-radius:4px 4px 1px 1px;height:{{b.h}};background:{{b.bg}}"></span>
+</sc-for>
+</div>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<span style="display:inline-flex;align-items:center;gap:8px;min-height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--line);font-size:13px;font-weight:600"><span style="width:9px;height:9px;border-radius:50%;background:var(--accent)"></span>Programación</span>
+<span style="display:inline-flex;align-items:center;gap:8px;min-height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--line);font-size:13px;font-weight:600"><span style="width:9px;height:9px;border-radius:50%;background:var(--a2)"></span>Inglés</span>
+<span style="display:inline-flex;align-items:center;gap:8px;min-height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--line);font-size:13px;font-weight:600"><span style="width:9px;height:9px;border-radius:50%;background:var(--a3)"></span>Guitarra</span>
+</div>
+<span style="display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;border-radius:10px;background:var(--accent);color:var(--on);font-weight:700">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg>
+Iniciar sesión</span>
+</div>
+<p style="margin:0;color:var(--muted);font-size:13px">Tu elección se guarda en este navegador y se aplica a todas las pantallas.</p>
+</aside>
+</div>
+</sc-if>
+
+<sc-if value="{{tabPf}}" hint-placeholder-val="{{true}}">
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+<div style="flex:3 1 520px;min-width:0;display:flex;flex-direction:column;gap:16px">
+
+<section aria-label="Resumen del perfil" style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+<span aria-hidden="true" style="width:72px;height:72px;border-radius:50%;background:var(--accent);color:var(--on);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800">{{initial}}</span>
+<div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:200px">
+<span style="font-size:24px;font-weight:800;letter-spacing:-0.01em">{{dispName}}</span>
+<span style="color:var(--muted);font-size:14px">tu@correo.com · Miembro desde marzo de 2025</span>
+</div>
+<button type="button" style="min-height:44px;padding:0 18px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--text);font-weight:600;font-size:14px">Cambiar foto</button>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr));gap:12px">
+<div style="padding:14px 16px;border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;gap:2px">
+<span style="font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted)">Horas totales</span>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:500;color:var(--accent)">1.692 h</span>
+</div>
+<div style="padding:14px 16px;border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;gap:2px">
+<span style="font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted)">Habilidades</span>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:500">3</span>
+</div>
+<div style="padding:14px 16px;border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;gap:2px">
+<span style="font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted)">Mejor racha</span>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:500">31 días</span>
+</div>
+</div>
+</section>
+
+<section aria-labelledby="h-data" style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:20px">
+<h2 id="h-data" style="margin:0;font-size:20px;font-weight:700">Datos personales</h2>
+<div style="display:flex;flex-direction:column;gap:6px">
+<label for="p-name" style="font-size:13px;color:var(--muted)">Nombre para mostrar</label>
+<input id="p-name" type="text" value="{{name}}" onChange="{{setName}}" style="box-sizing:border-box;width:100%;min-height:48px;padding:0 14px;border-radius:10px;border:1px solid var(--muted);background:var(--bg);color:var(--text);font-family:inherit;font-size:16px">
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<label for="p-mail" style="font-size:13px;color:var(--muted)">Correo</label>
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+<input id="p-mail" type="email" value="tu@correo.com" readonly style="box-sizing:border-box;flex:1 1 220px;min-height:48px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--muted);font-family:inherit;font-size:16px">
+<span style="font-size:12px;letter-spacing:0.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px;border:1px solid var(--accent);color:var(--accent)">Verificado</span>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:16px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<label for="p-tz" style="font-size:13px;color:var(--muted)">Zona horaria</label>
+<select id="p-tz" style="box-sizing:border-box;width:100%;min-height:48px;padding:0 12px;border-radius:10px;border:1px solid var(--muted);background:var(--bg);color:var(--text);font-family:inherit;font-size:15px">
+<option>America/Santo_Domingo (GMT-4)</option>
+<option>America/Mexico_City (GMT-6)</option>
+<option>America/Bogota (GMT-5)</option>
+<option>America/New_York (GMT-5)</option>
+<option>Europe/Madrid (GMT+1)</option>
+</select>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<label for="p-lang" style="font-size:13px;color:var(--muted)">Idioma</label>
+<select id="p-lang" style="box-sizing:border-box;width:100%;min-height:48px;padding:0 12px;border-radius:10px;border:1px solid var(--muted);background:var(--bg);color:var(--text);font-family:inherit;font-size:15px">
+<option>Español</option>
+<option>English</option>
+</select>
+</div>
+</div>
+</section>
+
+<section aria-labelledby="h-prac" style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:22px">
+<h2 id="h-prac" style="margin:0;font-size:20px;font-weight:700">Práctica</h2>
+<div role="group" aria-label="Mínimo diario para la racha" style="display:flex;flex-direction:column;gap:10px">
+<span style="font-size:13px;color:var(--muted)">Mínimo diario para mantener la racha</span>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<sc-for list="{{streakOpts}}" as="s" hint-placeholder-count="5">
+<button type="button" aria-pressed="{{s.pressed}}" onClick="{{s.pick}}" style="min-height:44px;padding:0 16px;border-radius:10px;border:1px solid {{s.border}};background:{{s.bg}};color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:14px">{{s.label}}</button>
+</sc-for>
+</div>
+</div>
+<div role="group" aria-label="Pomodoro" style="display:flex;flex-direction:column;gap:4px">
+<span style="font-size:13px;color:var(--muted);margin-bottom:6px">Duración del Pomodoro</span>
+<sc-for list="{{pomoRows}}" as="p" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--line);flex-wrap:wrap">
+<span style="font-weight:600">{{p.label}}</span>
+<div style="display:flex;align-items:center;gap:10px">
+<button type="button" aria-label="Restar a {{p.label}}" onClick="{{p.minus}}" style="width:44px;height:44px;border-radius:50%;border:1px solid var(--muted);background:transparent;color:var(--text);font-size:22px;line-height:1">−</button>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:16px;min-width:64px;text-align:center">{{p.value}} min</span>
+<button type="button" aria-label="Sumar a {{p.label}}" onClick="{{p.plus}}" style="width:44px;height:44px;border-radius:50%;border:1px solid var(--muted);background:transparent;color:var(--text);font-size:22px;line-height:1">+</button>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:14px">
+<span role="status" style="color:var(--muted);font-size:14px">{{saveNote}}</span>
+<button type="button" onClick="{{save}}" style="min-height:48px;padding:0 26px;border-radius:12px;border:0;background:var(--accent);color:var(--on);font-weight:700;font-size:16px">{{saveLabel}}</button>
+</div>
+</div>
+
+<aside aria-label="Cuenta" style="flex:2 1 340px;min-width:0;display:flex;flex-direction:column;gap:16px">
+<section aria-labelledby="h-acc" style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:12px">
+<h2 id="h-acc" style="margin:0 0 4px;font-size:18px;font-weight:700">Cuenta</h2>
+<button type="button" style="display:flex;align-items:center;gap:12px;min-height:48px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--text);font-weight:600;font-size:15px;text-align:left">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+Cambiar contraseña</button>
+<button type="button" style="display:flex;align-items:center;gap:12px;min-height:48px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--text);font-weight:600;font-size:15px;text-align:left">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+Exportar mis datos (CSV)</button>
+<button type="button" style="display:flex;align-items:center;gap:12px;min-height:48px;padding:0 16px;border-radius:12px;border:1px solid var(--muted);background:transparent;color:var(--text);font-weight:700;font-size:15px;text-align:left">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+Cerrar sesión</button>
+</section>
+
+<section aria-labelledby="h-del" style="background:var(--card);border:1px solid var(--danger);border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:12px">
+<h2 id="h-del" style="margin:0;font-size:18px;font-weight:700;color:var(--danger)">Zona de riesgo</h2>
+<p style="margin:0;color:var(--muted);font-size:14px">Eliminar tu cuenta borra todas tus habilidades, sesiones y logros. No se puede deshacer.</p>
+<div>
+<button type="button" style="min-height:44px;padding:0 18px;border-radius:10px;border:1px solid var(--danger);background:transparent;color:var(--danger);font-weight:700;font-size:14px">Eliminar cuenta</button>
+</div>
+</section>
+</aside>
+</div>
+</sc-if>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":1400}}'>
+class Component extends DCLogic {
+  themes() {
+    const cat = ['Mauve', 'Peach', 'Teal', 'Blue', 'Green', 'Pink'];
+    return [
+      { id: 'oficio', name: 'Oficio', mode: 'Oscuro', group: 'o', bg: '#111311', card: '#181B18', line: '#2A2F2A', text: '#ECE9E0', muted: '#A3A89E', on: '#111311', track: '#262B26', sel: '#1F231F',
+        acc: [['Ámbar', '#F0A93B'], ['Agua', '#4FC1AC'], ['Lila', '#B5A1F0'], ['Coral', '#F07A5C']] },
+      { id: 'mocha', name: 'Mocha', mode: 'Oscuro', group: 'c', bg: '#181825', card: '#1e1e2e', line: '#313244', text: '#cdd6f4', muted: '#a6adc8', on: '#11111b', track: '#313244', sel: '#313244',
+        acc: [[cat[0], '#cba6f7'], [cat[1], '#fab387'], [cat[2], '#94e2d5'], [cat[3], '#89b4fa'], [cat[4], '#a6e3a1'], [cat[5], '#f5c2e7']] },
+      { id: 'macchiato', name: 'Macchiato', mode: 'Oscuro', group: 'c', bg: '#1e2030', card: '#24273a', line: '#363a4f', text: '#cad3f5', muted: '#a5adcb', on: '#181926', track: '#363a4f', sel: '#363a4f',
+        acc: [[cat[0], '#c6a0f6'], [cat[1], '#f5a97f'], [cat[2], '#8bd5ca'], [cat[3], '#8aadf4'], [cat[4], '#a6da95'], [cat[5], '#f5bde6']] },
+      { id: 'frappe', name: 'Frappé', mode: 'Oscuro', group: 'c', bg: '#292c3c', card: '#303446', line: '#414559', text: '#c6d0f5', muted: '#a5adce', on: '#232634', track: '#414559', sel: '#414559',
+        acc: [[cat[0], '#ca9ee6'], [cat[1], '#ef9f76'], [cat[2], '#81c8be'], [cat[3], '#8caaee'], [cat[4], '#a6d189'], [cat[5], '#f4b8e4']] },
+      { id: 'latte', name: 'Latte', mode: 'Claro', group: 'c', bg: '#e6e9ef', card: '#eff1f5', line: '#ccd0da', text: '#4c4f69', muted: '#5c5f77', on: '#eff1f5', track: '#ccd0da', sel: '#ccd0da',
+        acc: [[cat[0], '#8839ef'], [cat[3], '#1e66f5'], [cat[2], '#179299'], [cat[4], '#40a02b'], [cat[1], '#fe640b'], [cat[5], '#ea76cb']] },
+      { id: 'nord', name: 'Nord', mode: 'Oscuro', group: 'o', bg: '#2e3440', card: '#3b4252', line: '#4c566a', text: '#eceff4', muted: '#b4bdcd', on: '#2e3440', track: '#434c5e', sel: '#434c5e',
+        acc: [['Frost', '#88c0d0'], ['Amarillo', '#ebcb8b'], ['Verde', '#a3be8c'], ['Púrpura', '#b48ead'], ['Naranja', '#d08770'], ['Azul', '#81a1c1']] },
+      { id: 'gruvbox', name: 'Gruvbox', mode: 'Oscuro', group: 'o', bg: '#1d2021', card: '#282828', line: '#3c3836', text: '#ebdbb2', muted: '#a89984', on: '#1d2021', track: '#3c3836', sel: '#3c3836',
+        acc: [['Amarillo', '#fabd2f'], ['Aqua', '#8ec07c'], ['Rosa', '#d3869b'], ['Azul', '#83a598'], ['Naranja', '#fe8019'], ['Verde', '#b8bb26']] },
+      { id: 'rosepine', name: 'Rosé Pine', mode: 'Oscuro', group: 'o', bg: '#191724', card: '#1f1d2e', line: '#26233a', text: '#e0def4', muted: '#908caa', on: '#191724', track: '#26233a', sel: '#26233a',
+        acc: [['Rose', '#ebbcba'], ['Iris', '#c4a7e7'], ['Foam', '#9ccfd8'], ['Gold', '#f6c177'], ['Love', '#eb6f92']] }
+    ];
+  }
+
+  renderVals() {
+    const st = this.state || {};
+    const all = this.themes();
+    const themeId = st.themeId || 'mocha';
+    const th = all.find((t) => t.id === themeId);
+    const ai = st.accentIdx != null && st.accentIdx < th.acc.length ? st.accentIdx : 0;
+    const accentHex = th.acc[ai][1];
+    const rest = th.acc.map((a) => a[1]).filter((h) => h !== accentHex);
+    const c = { bg: th.bg, card: th.card, line: th.line, text: th.text, muted: th.muted, on: th.on, track: th.track, sel: th.sel, accent: accentHex, a2: rest[0], a3: rest[1],
+      danger: { oficio: '#F07A5C', mocha: '#f38ba8', macchiato: '#ed8796', frappe: '#e78284', latte: '#d20f39', nord: '#bf616a', gruvbox: '#fb4934', rosepine: '#eb6f92' }[themeId] };
+
+    const card = (t) => ({
+      name: t.name,
+      mode: t.mode,
+      bg: t.bg,
+      card: t.card,
+      line: t.line,
+      text: t.text,
+      a1: t.acc[0][1],
+      a2: t.acc[1][1],
+      a3: t.acc[2][1],
+      pressed: t.id === themeId,
+      border: t.id === themeId ? accentHex : th.line,
+      pick: () => this.setState({ themeId: t.id, accentIdx: 0 })
+    });
+
+    const accents = th.acc.map((a, i) => ({
+      name: a[0],
+      hex: a[1],
+      pressed: i === ai,
+      ring: i === ai ? th.text : 'transparent',
+      pick: () => this.setState({ accentIdx: i })
+    }));
+
+    const vals = [140, 95, 185, 120, 210, 155, 0];
+    const bars = vals.map((v, i) => ({
+      h: Math.max(3, Math.round((v / 210) * 64)) + 'px',
+      bg: i === 5 ? accentHex : 'color-mix(in srgb, ' + th.text + ' 35%, ' + th.card + ')'
+    }));
+
+    const follow = !!st.follow;
+
+    const tab = st.tab || 'perfil';
+    const name = st.name == null ? 'Kobox' : st.name;
+    const dispName = name.trim() === '' ? 'Sin nombre' : name.trim();
+    const streakMin = st.streakMin || 30;
+    const pomo = st.pomo || { focus: 25, short: 5, long: 15 };
+    const saved = !!st.saved;
+
+    const tabs = [['perfil', 'Perfil'], ['apariencia', 'Apariencia']].map((t) => ({
+      label: t[1],
+      pressed: tab === t[0],
+      bg: tab === t[0] ? accentHex : 'transparent',
+      color: tab === t[0] ? th.on : th.text,
+      pick: () => this.setState({ tab: t[0] })
+    }));
+
+    const streakOpts = [15, 30, 45, 60, 90].map((m) => ({
+      label: m + ' min',
+      pressed: streakMin === m,
+      border: streakMin === m ? accentHex : th.muted,
+      bg: streakMin === m ? th.sel : 'transparent',
+      pick: () => this.setState({ streakMin: m, saved: false })
+    }));
+
+    const pomoRows = [['focus', 'Enfoque', 1, 90, 5], ['short', 'Descanso corto', 1, 30, 1], ['long', 'Descanso largo', 1, 60, 1]].map((r) => ({
+      label: r[1],
+      value: pomo[r[0]],
+      minus: () => this.setState({ pomo: { ...pomo, [r[0]]: Math.max(r[2], pomo[r[0]] - r[4]) }, saved: false }),
+      plus: () => this.setState({ pomo: { ...pomo, [r[0]]: Math.min(r[3], pomo[r[0]] + r[4]) }, saved: false })
+    }));
+
+    return {
+      c,
+      catppuccin: all.filter((t) => t.group === 'c').map(card),
+      others: all.filter((t) => t.group === 'o').map(card),
+      accents,
+      bars,
+      themeName: (th.group === 'c' ? 'Catppuccin ' : '') + th.name + ' · ' + th.acc[ai][0],
+      follow,
+      followTrack: follow ? accentHex : th.line,
+      followKnob: follow ? '28px' : '4px',
+      flipFollow: () => this.setState({ follow: !follow }),
+      tabs,
+      tabAp: tab === 'apariencia',
+      tabPf: tab === 'perfil',
+      tabName: tab === 'perfil' ? 'Perfil' : 'Apariencia',
+      tabTitle: tab === 'perfil' ? 'Tu cuenta, a tu manera.' : 'Hazla tuya.',
+      name,
+      dispName,
+      initial: dispName.charAt(0).toUpperCase(),
+      streakOpts,
+      pomoRows,
+      saveLabel: saved ? 'Cambios guardados' : 'Guardar cambios',
+      saveNote: saved ? 'Todo al día.' : '',
+      save: () => this.setState({ saved: true }),
+      setName: (e) => this.setState({ name: e.target.value, saved: false })
+    };
+  }
+}
+</script>
+</body>
+</html>
