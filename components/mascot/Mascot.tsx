@@ -25,6 +25,9 @@ export interface MascotProps {
   cape?: string | null;
   acc?: string | null;
   bg?: string | null;
+  /** Body color override, used only by /onboarding's color picker (step 1).
+   * Everywhere else Tomi's body stays the mockup's default pink. */
+  bodyColor?: string;
   className?: string;
   onClick?: () => void;
 }
@@ -43,7 +46,7 @@ function moodClass(mood: MascotMood): string {
   return "";
 }
 
-export function Mascot({ size = 200, mood = "idle", hat, cape, acc, bg, className, onClick }: MascotProps) {
+export function Mascot({ size = 200, mood = "idle", hat, cape, acc, bg, bodyColor = "#FF8FB8", className, onClick }: MascotProps) {
   const mBg = (bg && BG_HEX[bg]) || BG_HEX.cream;
   const sleepy = mood === "sleepy";
   const open = mood === "celebrate" || mood === "cheer";
@@ -116,7 +119,7 @@ export function Mascot({ size = 200, mood = "idle", hat, cape, acc, bg, classNam
             <path d="M30 176 L170 176" stroke="#111" strokeWidth={5} fill="none" />
             <circle cx="100" cy="176" r="6" fill="#FF8FB8" />
           </g>
-          <ellipse cx="100" cy="118" rx="60" ry="56" fill="#FF8FB8" />
+          <ellipse cx="100" cy="118" rx="60" ry="56" fill={bodyColor} />
           <g style={{ display: disp.leaf }}>
             <path
               d="M100 64 C88 52 70 54 62 60 C74 70 88 72 100 64Z M100 64 C112 52 130 54 138 60 C126 70 112 72 100 64Z M100 64 L100 50"

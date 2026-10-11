@@ -147,6 +147,11 @@ export async function purchaseItem(uid: string, itemId: string, level: number, t
   return result;
 }
 
+/** Renames the pet (onboarding step 1). No-op-safe: merges into pets/{uid}. */
+export async function setPetName(uid: string, name: string) {
+  await setDoc(petRef(uid), { name }, { merge: true });
+}
+
 /** Equips an already-owned item (or clears a slot with null) — no coins involved. */
 export async function equipItem(uid: string, cat: "hat" | "cape" | "acc" | "bg", itemId: string | null) {
   await setDoc(equippedRef(uid), { [cat]: itemId }, { merge: true });

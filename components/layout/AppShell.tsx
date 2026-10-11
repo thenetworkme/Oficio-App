@@ -16,6 +16,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     if (!authLoading && !user) router.replace("/login");
   }, [authLoading, user, router]);
 
+  // New sign-ups land here right after creating their account/running the
+  // onboarding redirect from /registro; if they somehow reach an app route
+  // without having finished /onboarding, send them there once.
+  useEffect(() => {
+    if (!authLoading && user && profile && !profile.onboardingCompletedAt) router.replace("/onboarding");
+  }, [authLoading, user, profile, router]);
+
   if (authLoading || !user) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-paper">

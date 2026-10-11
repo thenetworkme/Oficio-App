@@ -8,6 +8,7 @@ import {
   onAuthStateChanged,
   reauthenticateWithCredential,
   reauthenticateWithPopup,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut as firebaseSignOut,
@@ -18,6 +19,7 @@ import {
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { getFirebaseAuth } from "@/lib/firebase";
 import { deleteAllUserData } from "@/lib/firestore/account";
+import { ensurePetAndGrantWelcomeBonus } from "@/lib/firestore/economy";
 import { ensureProfile, watchProfile } from "@/lib/firestore/profiles";
 import type { Profile } from "@/lib/types";
 
@@ -29,6 +31,8 @@ interface AuthContextValue {
   signUpWithEmail: (email: string, password: string, displayName: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
+  /** Sends a Firebase Auth password-reset email (see /recuperar). */
+  sendPasswordReset: (email: string) => Promise<void>;
   /** True if the account can reauthenticate with a password (vs. Google-only). */
   hasPasswordProvider: () => boolean;
   changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
@@ -65,6 +69,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setProfileLoading(true);
     // Make sure profiles/{uid} exists on first sign-in, then keep it live.
     ensureProfile(user.uid, user.displayName).catch(() => void 0);
+    // Idempotent (guarded by a transaction): creates pets/{uid} + equipped/{uid}
+    // and grants the one-time 100 welcome coins on the very first sign-in,
+    // regardless of whether the user completes or skips /onboarding.
+    ensurePetAndGrantWelcomeBonus(user.uid, "Tomi").catch(() => void 0);
     const unsub = watchProfile(user.uid, (p) => {
       setProfile(p);
       setProfileLoading(false);
@@ -94,6 +102,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       },
       async signOut() {
         await firebaseSignOut(getFirebaseAuth());
+      },
+      async sendPasswordReset(email) {
+        await sendPasswordResetEmail(getFirebaseAuth(), email);
       },
       hasPasswordProvider() {
         return (user?.providerData ?? []).some((p) => p.providerId === "password");
