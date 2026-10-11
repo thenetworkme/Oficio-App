@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { Pause, Play, RotateCcw, SkipForward } from "lucide-react";
 import { Card, CardHeading } from "@/components/ui/card";
 import { Chip } from "@/components/ui/chip";
@@ -43,8 +43,18 @@ export default function TemporizadorPage() {
 
   // Tick every second while running, purely to re-render; the actual
   // remaining time is always derived from Date.now(), never decremented.
-  useEffect(() => {
+  // Uses useLayoutEffect (not useEffect) so `now` is refreshed synchronously,
+  // before paint, the instant `running` flips to true: while paused the
+  // interval below is torn down, so `now` goes stale; without this, resuming
+  // after any real pause would briefly (until the next 1s tick) compute
+  // `remaining` against that stale `now` instead of the fresh `startedAt`
+  // that start() just set, showing a wrong, inflated time.
+  useLayoutEffect(() => {
     if (!store.running) return;
+    // Synchronous on purpose: this must land before paint (see comment
+    // above), which is exactly what useLayoutEffect + a sync setState gives.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setNow(Date.now());
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, [store.running]);
