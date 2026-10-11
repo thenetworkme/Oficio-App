@@ -54,10 +54,10 @@ export function NavLinks({ onNavigate, className }: { onNavigate?: () => void; c
 
 export function StreakCard({ days, minMinutes }: { days: number; minMinutes: number }) {
   return (
-    <div className="bx flex flex-col gap-1.5 p-3.5" style={{ background: "var(--a3)" }}>
-      <span className="label-xs text-ink">{strings.streak.label}</span>
-      <span className="font-num text-[28px] font-bold text-ink">{strings.streak.days(days)}</span>
-      <span className="text-[13px] font-medium text-ink">{strings.streak.minimum(minMinutes)}</span>
+    <div className="bx flex flex-col gap-1.5 p-3.5 text-ink-solid" style={{ background: "var(--a3)" }}>
+      <span className="label-xs !text-ink-solid opacity-70">{strings.streak.label}</span>
+      <span className="font-num text-[28px] font-bold">{strings.streak.days(days)}</span>
+      <span className="text-[13px] font-medium">{strings.streak.minimum(minMinutes)}</span>
     </div>
   );
 }
@@ -65,7 +65,7 @@ export function StreakCard({ days, minMinutes }: { days: number; minMinutes: num
 export function Logo() {
   return (
     <div className="bx inline-flex items-center gap-2 self-start px-4 py-1.5" style={{ background: "var(--a1)", transform: "rotate(-2deg)" }}>
-      <span className="text-[22px] font-bold tracking-tight text-ink">{strings.app.name}!</span>
+      <span className="text-[22px] font-bold tracking-tight text-ink-solid">{strings.app.name}!</span>
     </div>
   );
 }
@@ -80,17 +80,17 @@ function MiniProfile() {
       <Link
         href="/ajustes"
         aria-label={`Perfil de ${name}`}
-        className="bx flex min-h-11 min-w-0 flex-1 items-center gap-2.5 px-2 py-1"
+        className="bx flex min-h-11 min-w-0 flex-1 items-center gap-2.5 px-2 py-1 text-ink-solid"
         style={{ background: "var(--a3)" }}
       >
         <span
           aria-hidden="true"
-          className="flex size-8 shrink-0 items-center justify-center rounded-full border-[3px] border-ink bg-ink font-bold"
+          className="flex size-8 shrink-0 items-center justify-center rounded-full border-[3px] border-ink bg-ink-solid font-bold"
           style={{ color: "var(--a3)" }}
         >
           {initial}
         </span>
-        <span className="truncate font-bold text-ink">{name}</span>
+        <span className="truncate font-bold">{name}</span>
       </Link>
       <button
         type="button"

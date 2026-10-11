@@ -96,20 +96,23 @@ export function AparienciaPanel() {
       <aside aria-label="Vista previa" className="bx flex min-w-0 flex-[2_1_340px] flex-col gap-4 p-5" style={{ transform: "rotate(1deg)" }}>
         <div className="flex flex-wrap items-baseline justify-between gap-3">
           <CardHeading>Vista previa</CardHeading>
-          <span className="text-[13px] font-bold">
-            {theme.group === "catppuccin" ? "Catppuccin " : ""}
-            {theme.name}
-          </span>
+          <span className="text-[13px] font-bold">{theme.name}</span>
         </div>
-        <div className="bx flex flex-col gap-3.5 p-4" style={{ background: a1 }}>
+        <div className="bx flex flex-col gap-3.5 p-4 text-ink-solid" style={{ background: a1 }}>
           <div className="text-[40px] font-bold leading-none tracking-tight">12 días</div>
           <span className="font-bold">seguidos</span>
         </div>
         <div className="flex gap-2.5">
-          <span className="bx flex-1 px-3 py-2.5 font-bold" style={{ boxShadow: "4px 4px 0 var(--shadow)", background: "var(--a2)" }}>
+          <span
+            className="bx flex-1 px-3 py-2.5 font-bold text-ink-solid"
+            style={{ boxShadow: "4px 4px 0 var(--shadow)", background: "var(--a2)" }}
+          >
             Inglés
           </span>
-          <span className="bx flex-1 px-3 py-2.5 font-bold" style={{ boxShadow: "4px 4px 0 var(--shadow)", background: "var(--a3)" }}>
+          <span
+            className="bx flex-1 px-3 py-2.5 font-bold text-ink-solid"
+            style={{ boxShadow: "4px 4px 0 var(--shadow)", background: "var(--a3)" }}
+          >
             Guitarra
           </span>
         </div>

@@ -50,7 +50,7 @@ export function MobileBottomNav() {
             aria-label={label}
             className={cn(
               "flex min-h-14 min-w-14 flex-1 flex-col items-center justify-center gap-0.5 text-[10px] font-bold",
-              active ? "text-ink" : "text-muted",
+              active ? "text-ink-solid" : "text-muted",
             )}
             style={active ? { background: "var(--a1)" } : undefined}
           >

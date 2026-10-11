@@ -138,7 +138,12 @@ export default function RegistroPage() {
           </p>
         )}
 
-        <button type="submit" disabled={submitting} className="bx press min-h-14 w-full text-[18px] font-bold disabled:opacity-60" style={{ background: "var(--a2)" }}>
+        <button
+          type="submit"
+          disabled={submitting}
+          className="bx press min-h-14 w-full text-[18px] font-bold text-ink-solid disabled:opacity-60"
+          style={{ background: "var(--a2)" }}
+        >
           {submitting ? "¡Cuenta creada!" : "Crear cuenta"}
         </button>
       </form>

@@ -75,7 +75,7 @@ export default function SkillDetailPage() {
           <Link
             href="/temporizador"
             className="inline-flex min-h-12 items-center gap-2.5 rounded-button px-6 text-[16px] font-bold"
-            style={{ background: "var(--a1)", color: "var(--ink)" }}
+            style={{ background: "var(--a1)", color: "var(--ink-solid)" }}
           >
             <Play size={18} fill="currentColor" aria-hidden="true" />
             Practicar ahora

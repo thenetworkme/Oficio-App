@@ -13,7 +13,7 @@ export function Chip({ pressed, dotColor, className, children, ...props }: ChipP
       aria-pressed={pressed}
       className={cn(
         "min-h-11 inline-flex items-center gap-2 rounded-chip border-[3px] border-ink px-4 text-[15px] font-bold transition-colors",
-        pressed ? "bg-a1 text-ink" : "bg-card text-ink",
+        pressed ? "bg-a1 text-ink-solid" : "bg-card text-ink",
         className,
       )}
       {...props}

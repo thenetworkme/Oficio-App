@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Mascot } from "@/components/mascot/Mascot";
+import { cn } from "@/lib/cn";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { useAppData } from "@/lib/hooks/useAppData";
 import { usePet } from "@/lib/hooks/usePet";
@@ -92,13 +93,18 @@ export default function TiendaPage() {
             .
           </span>
         </h1>
-        <div className="bx flex items-center gap-3 px-5 py-3" style={{ background: "var(--a1)", transform: "rotate(1.5deg)" }} role="status" aria-label="Monedas disponibles">
-          <span aria-hidden="true" className="flex size-11 items-center justify-center rounded-full border-[3px] border-ink bg-paper text-[22px] font-bold">
+        <div
+          className="bx flex items-center gap-3 px-5 py-3 text-ink-solid"
+          style={{ background: "var(--a1)", transform: "rotate(1.5deg)" }}
+          role="status"
+          aria-label="Monedas disponibles"
+        >
+          <span aria-hidden="true" className="flex size-11 items-center justify-center rounded-full border-[3px] border-ink bg-paper text-ink text-[22px] font-bold">
             $
           </span>
           <div>
             <div className="font-num text-[36px] font-bold leading-none">{loading ? "…" : formatInt(coins)}</div>
-            <span className="label-xs">monedas</span>
+            <span className="label-xs !text-ink-solid opacity-70">monedas</span>
           </div>
         </div>
       </section>
@@ -108,7 +114,10 @@ export default function TiendaPage() {
           <div className="bx flex flex-col gap-3.5 p-5">
             <div className="relative self-center">
               <Mascot size={320} mood={justPurchased ? "cheer" : "idle"} hat={equipped.hat} cape={equipped.cape} acc={equipped.acc} bg={equipped.bg} />
-              <div className="bx absolute -right-1.5 -top-2.5 px-3.5 py-1.5 font-bold" style={{ background: "var(--a2)", transform: "rotate(6deg)" }}>
+              <div
+                className="bx absolute -right-1.5 -top-2.5 px-3.5 py-1.5 font-bold text-ink-solid"
+                style={{ background: "var(--a2)", transform: "rotate(6deg)" }}
+              >
                 {toastOk ? "¡Me queda genial!" : "¡Hola!"}
               </div>
             </div>
@@ -124,8 +133,8 @@ export default function TiendaPage() {
                 .join(", ") || "nada todavía"}
             </span>
           </div>
-          <div className="bx p-4.5" style={{ background: "var(--a3)", transform: "rotate(-1deg)" }}>
-            <span className="label-xs">Tu armario</span>
+          <div className="bx p-4.5 text-ink-solid" style={{ background: "var(--a3)", transform: "rotate(-1deg)" }}>
+            <span className="label-xs !text-ink-solid opacity-70">Tu armario</span>
             <div className="text-[26px] font-bold tracking-tight">
               {ownedCount} de {SHOP_CATALOG.length} cosas
             </div>
@@ -143,7 +152,16 @@ export default function TiendaPage() {
                 aria-selected={tab === c}
                 onClick={() => setTab(c)}
                 className="bx press min-h-12 px-5 text-[16px] font-bold"
-                style={tab === c ? { background: "var(--a1)", boxShadow: "2px 2px 0 var(--shadow)", transform: "translate(4px,4px)" } : { background: "var(--card)" }}
+                style={
+                  tab === c
+                    ? {
+                        background: "var(--a1)",
+                        color: "var(--ink-solid)",
+                        boxShadow: "2px 2px 0 var(--shadow)",
+                        transform: "translate(4px,4px)",
+                      }
+                    : { background: "var(--card)" }
+                }
               >
                 {SHOP_CATEGORY_LABELS[c]}
               </button>
@@ -151,7 +169,7 @@ export default function TiendaPage() {
           </div>
           <div role="status" className="min-h-11 flex items-center">
             <span
-              className="rounded-chip border-[3px] border-ink px-4 py-1 font-bold"
+              className="rounded-chip border-[3px] border-ink px-4 py-1 font-bold text-ink-solid"
               style={{ background: toastOk === false ? "#FF9C9C" : "var(--a3)" }}
             >
               {toast}
@@ -175,8 +193,16 @@ export default function TiendaPage() {
                     ? "Comprar"
                     : `Te faltan ${item.price - coins}`;
               const btnBg = locked ? "var(--card)" : owned ? (on ? "var(--card)" : "var(--a3)") : afford ? "var(--a2)" : "var(--card)";
+              // Every branch of btnBg/article bg is either --card (safe with
+              // the normal theme-adaptive --ink text) or an a1/a2/a3 accent
+              // chip (needs the constant --ink-solid instead).
+              const btnIsAccent = !locked && ((owned && !on) || (!owned && afford));
               return (
-                <article key={item.id} className="bx flex flex-col gap-2.5 p-4" style={{ background: on ? "var(--a1)" : "var(--card)", opacity: locked ? 0.65 : 1 }}>
+                <article
+                  key={item.id}
+                  className={cn("bx flex flex-col gap-2.5 p-4", on && "text-ink-solid")}
+                  style={{ background: on ? "var(--a1)" : "var(--card)", opacity: locked ? 0.65 : 1 }}
+                >
                   <div
                     aria-hidden="true"
                     className="flex h-[92px] items-center justify-center rounded-button border-[3px] border-ink text-[44px]"
@@ -192,7 +218,7 @@ export default function TiendaPage() {
                     type="button"
                     disabled={locked || busyId === item.id || (!owned && !afford)}
                     onClick={() => handleAction(item)}
-                    className="bx press mt-auto min-h-12 font-bold disabled:opacity-60"
+                    className={cn("bx press mt-auto min-h-12 font-bold disabled:opacity-60", btnIsAccent && "text-ink-solid")}
                     style={{ background: btnBg }}
                   >
                     {busyId === item.id ? "Comprando…" : label}

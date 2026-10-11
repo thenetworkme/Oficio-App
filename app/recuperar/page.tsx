@@ -76,7 +76,12 @@ export default function RecuperarPage() {
             </p>
           )}
 
-          <button type="submit" disabled={status === "sending"} className="bx press min-h-14 w-full text-[18px] font-bold disabled:opacity-60" style={{ background: "var(--a1)" }}>
+          <button
+            type="submit"
+            disabled={status === "sending"}
+            className="bx press min-h-14 w-full text-[18px] font-bold text-ink-solid disabled:opacity-60"
+            style={{ background: "var(--a1)" }}
+          >
             {status === "sending" ? "Enviando…" : "Enviar enlace"}
           </button>
         </form>
@@ -84,7 +89,7 @@ export default function RecuperarPage() {
 
       {status === "sent" && (
         <div className="flex flex-col gap-4">
-          <div className="bx flex flex-col gap-2 p-5" style={{ background: "var(--a3)" }}>
+          <div className="bx flex flex-col gap-2 p-5 text-ink-solid" style={{ background: "var(--a3)" }}>
             <span className="text-[20px] font-bold">Revisa tu correo</span>
             <p className="m-0 font-medium">
               Te mandamos un enlace a <b>{email}</b> para que elijas una contraseña nueva.

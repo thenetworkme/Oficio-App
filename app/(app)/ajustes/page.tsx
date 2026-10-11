@@ -32,7 +32,12 @@ export default function AjustesPage() {
             className="bx press min-h-13 px-6 text-[18px] font-bold"
             style={
               tab === t.id
-                ? { background: "var(--a1)", boxShadow: "2px 2px 0 var(--shadow)", transform: "translate(4px,4px)" }
+                ? {
+                    background: "var(--a1)",
+                    color: "var(--ink-solid)",
+                    boxShadow: "2px 2px 0 var(--shadow)",
+                    transform: "translate(4px,4px)",
+                  }
                 : { background: "var(--card)" }
             }
           >

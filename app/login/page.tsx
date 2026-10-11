@@ -109,7 +109,12 @@ export default function LoginPage() {
           </p>
         )}
 
-        <button type="submit" disabled={submitting} className="bx press min-h-14 w-full text-[18px] font-bold disabled:opacity-60" style={{ background: "var(--a1)" }}>
+        <button
+          type="submit"
+          disabled={submitting}
+          className="bx press min-h-14 w-full text-[18px] font-bold text-ink-solid disabled:opacity-60"
+          style={{ background: "var(--a1)" }}
+        >
           {submitting ? "¡Entrando…!" : "Entrar"}
         </button>
       </form>

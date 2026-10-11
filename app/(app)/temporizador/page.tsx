@@ -105,15 +105,18 @@ export default function TemporizadorPage() {
       <div className="flex flex-wrap items-center justify-center gap-10">
         <div className="relative flex items-center justify-center">
           <div
-            className="bx flex size-[320px] flex-col items-center justify-center gap-1 rounded-full sm:size-[400px]"
+            className="bx flex size-[320px] flex-col items-center justify-center gap-1 rounded-full text-ink-solid sm:size-[400px]"
             style={{ background: MODE_FRUIT[store.mode], boxShadow: "10px 10px 0 var(--shadow)" }}
           >
             <span role="timer" className="font-num text-[88px] font-bold leading-none tracking-tight sm:text-[120px]">
               {mm}:{ss}
             </span>
-            <span className="label-xs font-bold">{MODE_LABEL[store.mode]}</span>
+            <span className="label-xs !text-ink-solid font-bold opacity-70">{MODE_LABEL[store.mode]}</span>
           </div>
-          <div className="bx absolute -right-3 top-10 px-4 py-2 text-[18px] font-bold" style={{ background: "var(--a1)", transform: "rotate(8deg)" }}>
+          <div
+            className="bx absolute -right-3 top-10 px-4 py-2 text-[18px] font-bold text-ink-solid"
+            style={{ background: "var(--a1)", transform: "rotate(8deg)" }}
+          >
             {store.running ? "¡Sin distraerte!" : remaining === total ? "¡A darle!" : "En pausa"}
           </div>
         </div>
@@ -129,7 +132,12 @@ export default function TemporizadorPage() {
                 className="bx press min-h-12 px-4.5 text-[16px] font-bold"
                 style={
                   store.mode === t.id
-                    ? { background: "var(--a1)", boxShadow: "2px 2px 0 var(--shadow)", transform: "translate(4px,4px)" }
+                    ? {
+                        background: "var(--a1)",
+                        color: "var(--ink-solid)",
+                        boxShadow: "2px 2px 0 var(--shadow)",
+                        transform: "translate(4px,4px)",
+                      }
                     : { background: "var(--card)" }
                 }
               >

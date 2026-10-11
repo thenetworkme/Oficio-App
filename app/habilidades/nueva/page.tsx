@@ -234,8 +234,11 @@ export default function NewSkillPage() {
                     >
                       <span className="absolute left-0 top-2 h-7 w-13 rounded-chip border-[3px] border-ink" style={{ background: remind ? colorHex : "var(--card)" }} />
                       <span
-                        className="absolute top-3 size-5 rounded-full bg-ink transition-transform"
-                        style={{ transform: remind ? "translateX(28px)" : "translateX(4px)" }}
+                        className="absolute top-3 size-5 rounded-full transition-transform"
+                        style={{
+                          transform: remind ? "translateX(28px)" : "translateX(4px)",
+                          background: remind ? "var(--ink-solid)" : "var(--ink)",
+                        }}
                       />
                     </button>
                   </div>

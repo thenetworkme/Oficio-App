@@ -271,7 +271,7 @@ export function PerfilPanel() {
             <span
               aria-hidden="true"
               className="flex size-18 shrink-0 items-center justify-center rounded-full text-[32px] font-bold"
-              style={{ background: "var(--a1)", color: "var(--ink)" }}
+              style={{ background: "var(--a1)", color: "var(--ink-solid)" }}
             >
               {initialOf(displayName, user.email)}
             </span>
@@ -313,9 +313,7 @@ export function PerfilPanel() {
             <div className="flex flex-wrap items-center gap-2.5">
               <Input id="p-mail" type="email" value={user.email ?? ""} readOnly className="flex-1 basis-56 text-muted" />
               {user.emailVerified ? (
-                <span
-                  className="label-xs rounded-chip border-[3px] border-ink bg-a3 px-2.5 py-1 text-ink"
-                >
+                <span className="label-xs !text-ink-solid rounded-chip border-[3px] border-ink bg-a3 px-2.5 py-1">
                   Verificado
                 </span>
               ) : (

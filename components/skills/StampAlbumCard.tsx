@@ -21,7 +21,7 @@ export function StampAlbumCard({ skill }: { skill: Skill }) {
   const left = Math.max(0, skill.goalHours - hours);
   const color = resolveSkillColor(skill.color);
   const cells = Array.from({ length: 100 }, (_, i) => {
-    if (i < stamps) return "var(--ink)";
+    if (i < stamps) return "var(--ink-solid)";
     if (i === stamps) return "rgba(17,17,17,.35)";
     return "var(--card)";
   });
@@ -29,12 +29,12 @@ export function StampAlbumCard({ skill }: { skill: Skill }) {
   return (
     <Link
       href={`/habilidades/${skill.id}`}
-      className="bx hov flex min-w-0 flex-1 basis-[250px] flex-col gap-3.5 p-6 text-ink"
+      className="bx hov flex min-w-0 flex-1 basis-[250px] flex-col gap-3.5 p-6 text-ink-solid"
       style={{ background: color, "--sticker-rot": stickerRotationDeg(skill.id), "--r": stickerRotationDeg(skill.id) } as React.CSSProperties}
     >
       <div className="flex items-start justify-between gap-2">
         <h3 className="m-0 text-[26px] font-bold tracking-tight">{skill.name}</h3>
-        <span className="font-num shrink-0 whitespace-nowrap rounded-chip bg-ink px-2.5 py-0.5 text-[13px] font-bold" style={{ color }}>
+        <span className="font-num shrink-0 whitespace-nowrap rounded-chip bg-ink-solid px-2.5 py-0.5 text-[13px] font-bold" style={{ color }}>
           {stamps} {stamps === 1 ? "sello" : "sellos"}
         </span>
       </div>
@@ -44,10 +44,10 @@ export function StampAlbumCard({ skill }: { skill: Skill }) {
       </div>
       <div aria-hidden="true" className="grid grid-cols-[repeat(20,1fr)] gap-[3px]">
         {cells.map((bg, i) => (
-          <span key={i} className="aspect-square rounded-[2px] border-2 border-ink" style={{ background: bg }} />
+          <span key={i} className="aspect-square rounded-[2px] border-2 border-ink-solid" style={{ background: bg }} />
         ))}
       </div>
-      <span className="label-xs font-bold text-ink">
+      <span className="label-xs !text-ink-solid font-bold opacity-80">
         {stamps} de 100 sellos · faltan {formatInt(left)} h
       </span>
     </Link>

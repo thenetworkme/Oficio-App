@@ -76,7 +76,12 @@ export function SessionSaveDialog({
                   className="bx press flex size-14 items-center justify-center text-[26px]"
                   style={
                     quality === i + 1
-                      ? { background: "var(--a1)", boxShadow: "2px 2px 0 var(--shadow)", transform: "translate(4px,4px)" }
+                      ? {
+                          background: "var(--a1)",
+                          color: "var(--ink-solid)",
+                          boxShadow: "2px 2px 0 var(--shadow)",
+                          transform: "translate(4px,4px)",
+                        }
                       : { background: "var(--card)" }
                   }
                 >
@@ -99,7 +104,7 @@ export function SessionSaveDialog({
                 type="button"
                 disabled={saving}
                 onClick={handleSave}
-                className="bx press min-h-13 px-6 font-bold disabled:opacity-60"
+                className="bx press min-h-13 px-6 font-bold text-ink-solid disabled:opacity-60"
                 style={{ background: "var(--a2)" }}
               >
                 {saving ? "Guardando…" : "Guardar sesión"}
@@ -120,13 +125,13 @@ export function SessionSaveDialog({
                 <div className="font-num text-[28px] font-bold leading-none">+{formatMinutesLong(durationMin)}</div>
                 <span className="label-xs">a {skillName}</span>
               </div>
-              <div className="bx px-4 py-2.5" style={{ background: "var(--a2)" }}>
+              <div className="bx px-4 py-2.5 text-ink-solid" style={{ background: "var(--a2)" }}>
                 <div className="font-num text-[28px] font-bold leading-none">+{gains.coins} $</div>
-                <span className="label-xs">monedas</span>
+                <span className="label-xs !text-ink-solid opacity-70">monedas</span>
               </div>
-              <div className="bx px-4 py-2.5" style={{ background: "var(--a3)" }}>
+              <div className="bx px-4 py-2.5 text-ink-solid" style={{ background: "var(--a3)" }}>
                 <div className="font-num text-[28px] font-bold leading-none">+{gains.xp} XP</div>
-                <span className="label-xs">nivel {level}</span>
+                <span className="label-xs !text-ink-solid opacity-70">nivel {level}</span>
               </div>
             </div>
             <div className="flex w-full flex-col gap-1.5">
@@ -141,10 +146,19 @@ export function SessionSaveDialog({
               </div>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Link href="/tienda" className="bx hov press inline-flex min-h-13 items-center px-5 font-bold" style={{ background: "var(--a3)" }}>
+              <Link
+                href="/tienda"
+                className="bx hov press inline-flex min-h-13 items-center px-5 font-bold text-ink-solid"
+                style={{ background: "var(--a3)" }}
+              >
                 Gastar monedas en la tienda →
               </Link>
-              <button type="button" onClick={() => handleClose(false)} className="bx hov press inline-flex min-h-13 items-center px-5 font-bold" style={{ background: "var(--a1)" }}>
+              <button
+                type="button"
+                onClick={() => handleClose(false)}
+                className="bx hov press inline-flex min-h-13 items-center px-5 font-bold text-ink-solid"
+                style={{ background: "var(--a1)" }}
+              >
                 Cerrar
               </button>
             </div>

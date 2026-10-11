@@ -24,8 +24,14 @@ export function Switch({ checked, onCheckedChange, label, className }: SwitchPro
       style={{ background: checked ? "var(--a3)" : "var(--card)" }}
     >
       <SwitchPrimitive.Thumb
-        className="block size-7 rounded-full bg-ink transition-transform"
-        style={{ transform: checked ? "translateX(32px)" : "translateX(3px)" }}
+        className="block size-7 rounded-full transition-transform"
+        style={{
+          transform: checked ? "translateX(32px)" : "translateX(3px)",
+          // Checked: the track is --a3 (always a light pastel), so the knob
+          // needs the constant dark ink-solid to stay visible. Unchecked:
+          // the track is --card, which --ink is already calibrated against.
+          background: checked ? "var(--ink-solid)" : "var(--ink)",
+        }}
       />
     </SwitchPrimitive.Root>
   );

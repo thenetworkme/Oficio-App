@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Mascot } from "@/components/mascot/Mascot";
 import { Input, Label } from "@/components/ui/input";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { cn } from "@/lib/cn";
 import { createReminder } from "@/lib/firestore/reminders";
 import { createSkill } from "@/lib/firestore/skills";
 import { updateProfile } from "@/lib/firestore/profiles";
@@ -109,7 +110,7 @@ export default function OnboardingPage() {
   return (
     <div className="flex min-h-screen flex-col gap-7 bg-paper px-5 py-7 sm:px-12 sm:py-9">
       <header className="flex flex-wrap items-center gap-5">
-        <div className="bx inline-flex bg-a1 px-4.5 py-1.5" style={{ transform: "rotate(-2deg)" }}>
+        <div className="bx inline-flex bg-a1 px-4.5 py-1.5 text-ink-solid" style={{ transform: "rotate(-2deg)" }}>
           <span className="text-[26px] font-bold tracking-tight">oficio!</span>
         </div>
         <div className="ml-auto flex max-w-[420px] flex-1 gap-2.5" role="progressbar" aria-valuenow={step} aria-valuemin={1} aria-valuemax={4} aria-label="Progreso del inicio">
@@ -177,7 +178,10 @@ export default function OnboardingPage() {
                       setSkillIdx(i);
                       setCustom("");
                     }}
-                    className="bx press min-h-12 px-4 text-[16px] font-bold"
+                    className={cn(
+                      "bx press min-h-12 px-4 text-[16px] font-bold",
+                      !custom.trim() && skillIdx === i && "text-ink-solid",
+                    )}
                     style={{ background: !custom.trim() && skillIdx === i ? PALETTE[colorIdx][1] : "var(--card)" }}
                   >
                     {icon} {name}
@@ -198,7 +202,14 @@ export default function OnboardingPage() {
                 <span className="label-xs">Tiempo por día</span>
                 <div className="flex flex-wrap gap-2">
                   {DAILY_OPTS.map((m) => (
-                    <button key={m} type="button" aria-pressed={daily === m} onClick={() => setDaily(m)} className="bx press min-h-12 px-4 font-bold" style={{ background: daily === m ? PALETTE[colorIdx][1] : "var(--card)" }}>
+                    <button
+                      key={m}
+                      type="button"
+                      aria-pressed={daily === m}
+                      onClick={() => setDaily(m)}
+                      className={cn("bx press min-h-12 px-4 font-bold", daily === m && "text-ink-solid")}
+                      style={{ background: daily === m ? PALETTE[colorIdx][1] : "var(--card)" }}
+                    >
                       {hm(m)}
                     </button>
                   ))}
@@ -208,7 +219,14 @@ export default function OnboardingPage() {
                 <span className="label-xs">Días por semana</span>
                 <div className="flex gap-2">
                   {[1, 2, 3, 4, 5, 6, 7].map((n) => (
-                    <button key={n} type="button" aria-pressed={days === n} onClick={() => setDays(n)} className="bx press min-h-13 flex-1 text-[18px] font-bold" style={{ background: days === n ? PALETTE[colorIdx][1] : "var(--card)" }}>
+                    <button
+                      key={n}
+                      type="button"
+                      aria-pressed={days === n}
+                      onClick={() => setDays(n)}
+                      className={cn("bx press min-h-13 flex-1 text-[18px] font-bold", days === n && "text-ink-solid")}
+                      style={{ background: days === n ? PALETTE[colorIdx][1] : "var(--card)" }}
+                    >
                       {n}
                     </button>
                   ))}
@@ -218,8 +236,8 @@ export default function OnboardingPage() {
                 <Label htmlFor="rt">Te aviso a las</Label>
                 <Input id="rt" type="time" value={time} onChange={(e) => setTime(e.target.value)} />
               </div>
-              <div className="bx p-4.5" style={{ background: "var(--a1)", transform: "rotate(-1deg)" }}>
-                <span className="label-xs">A este ritmo</span>
+              <div className="bx p-4.5 text-ink-solid" style={{ background: "var(--a1)", transform: "rotate(-1deg)" }}>
+                <span className="label-xs !text-ink-solid opacity-70">A este ritmo</span>
                 <div className="text-[26px] font-bold tracking-tight">
                   {hm(weeklyMin)} por semana · llegas en {eta}
                 </div>
@@ -240,8 +258,8 @@ export default function OnboardingPage() {
                   <span className="text-[18px] font-bold">{v}</span>
                 </div>
               ))}
-              <div className="bx flex items-center gap-3.5 p-4.5" style={{ background: "var(--a3)", transform: "rotate(1deg)" }}>
-                <span aria-hidden="true" className="flex size-11 items-center justify-center rounded-full border-[3px] border-ink bg-paper text-[22px] font-bold">
+              <div className="bx flex items-center gap-3.5 p-4.5 text-ink-solid" style={{ background: "var(--a3)", transform: "rotate(1deg)" }}>
+                <span aria-hidden="true" className="flex size-11 items-center justify-center rounded-full border-[3px] border-ink bg-paper text-ink text-[22px] font-bold">
                   $
                 </span>
                 <div>
@@ -257,11 +275,22 @@ export default function OnboardingPage() {
               Atrás
             </button>
             {step < 4 ? (
-              <button type="button" onClick={() => setStep((s) => Math.min(4, s + 1))} className="bx press min-h-13 px-5 text-[18px] font-bold" style={{ background: "var(--a1)" }}>
+              <button
+                type="button"
+                onClick={() => setStep((s) => Math.min(4, s + 1))}
+                className="bx press min-h-13 px-5 text-[18px] font-bold text-ink-solid"
+                style={{ background: "var(--a1)" }}
+              >
                 Siguiente
               </button>
             ) : (
-              <button type="button" onClick={finish} disabled={finishing} className="bx press min-h-13 px-5 text-[18px] font-bold disabled:opacity-60" style={{ background: "var(--a2)" }}>
+              <button
+                type="button"
+                onClick={finish}
+                disabled={finishing}
+                className="bx press min-h-13 px-5 text-[18px] font-bold text-ink-solid disabled:opacity-60"
+                style={{ background: "var(--a2)" }}
+              >
                 {finishing ? "Un momento…" : "Entrar a mi panel →"}
               </button>
             )}

@@ -59,7 +59,7 @@ export default function PanelPage() {
           </h1>
           <p className="m-0 max-w-[520px] text-[18px] sm:text-[22px]">
             Hoy llevas{" "}
-            <b className="bg-a1 px-1.5" style={{ color: "var(--ink)" }}>
+            <b className="bg-a1 px-1.5" style={{ color: "var(--ink-solid)" }}>
               {formatMinutesLong(todayMinutes)}
             </b>
             . {minutesLeftToday > 0 ? `Faltan ${minutesLeftToday} para no romper la racha.` : "¡Meta de hoy cumplida!"}
@@ -67,7 +67,7 @@ export default function PanelPage() {
           <div className="flex flex-wrap gap-4">
             <Link
               href="/temporizador"
-              className="bx hov press inline-flex min-h-14 items-center px-7 text-[18px] font-bold sm:text-[22px]"
+              className="bx hov press inline-flex min-h-14 items-center px-7 text-[18px] font-bold text-ink-solid sm:text-[22px]"
               style={{ background: "var(--a2)", "--r": "-1deg" } as React.CSSProperties}
             >
               Empezar un tomate →
@@ -86,7 +86,10 @@ export default function PanelPage() {
         >
           <div className="relative">
             <Mascot size={230} hat={equipped.hat} cape={equipped.cape} acc={equipped.acc} bg={equipped.bg} />
-            <div className="bx absolute -right-3.5 -top-3 px-3 py-1.5 text-[13px] font-bold" style={{ background: "var(--a2)", transform: "rotate(6deg)" }}>
+            <div
+              className="bx absolute -right-3.5 -top-3 px-3 py-1.5 text-[13px] font-bold text-ink-solid"
+              style={{ background: "var(--a2)", transform: "rotate(6deg)" }}
+            >
               ¡Racha {streak}!
             </div>
           </div>
@@ -99,10 +102,10 @@ export default function PanelPage() {
         </Link>
 
         <div
-          className="bx flex min-w-0 flex-[1_1_300px] flex-col gap-3 p-6"
+          className="bx flex min-w-0 flex-[1_1_300px] flex-col gap-3 p-6 text-ink-solid"
           style={{ background: "var(--a3)", transform: "rotate(1.5deg)" }}
         >
-          <span className="label-xs font-bold text-ink">Esta semana</span>
+          <span className="label-xs !text-ink-solid font-bold opacity-70">Esta semana</span>
           <div className="font-num text-[56px] font-bold leading-none tracking-tight sm:text-[72px]">
             {formatInt(weekMinutes / 60)}
             <span className="text-[22px] sm:text-[28px]"> / {formatInt(weekGoalMin / 60)} h</span>

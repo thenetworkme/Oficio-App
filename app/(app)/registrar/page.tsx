@@ -150,7 +150,7 @@ export default function RegistrarPage() {
                   aria-label={`Calidad ${n} de 5`}
                   onClick={() => setQuality(n)}
                   className="bx press font-num flex size-11 items-center justify-center text-[15px] font-bold"
-                  style={quality === n ? { background: "var(--a1)" } : { background: "var(--card)" }}
+                  style={quality === n ? { background: "var(--a1)", color: "var(--ink-solid)" } : { background: "var(--card)" }}
                 >
                   {n}
                 </button>
@@ -167,21 +167,26 @@ export default function RegistrarPage() {
             <button type="button" onClick={() => router.push("/")} className="bx press min-h-13 bg-card px-5 font-bold">
               Cancelar
             </button>
-            <button type="submit" disabled={saving || !skill} className="bx press min-h-13 px-6 font-bold disabled:opacity-60" style={{ background: "var(--a2)" }}>
+            <button
+              type="submit"
+              disabled={saving || !skill}
+              className="bx press min-h-13 px-6 font-bold text-ink-solid disabled:opacity-60"
+              style={{ background: "var(--a2)" }}
+            >
               {saved ? "¡Sesión guardada!" : "Guardar sesión"}
             </button>
           </div>
         </form>
 
         <aside aria-label="Resumen" className="flex min-w-0 flex-[2_1_320px] flex-col gap-4">
-          <Card className="flex flex-col gap-4.5 p-5.5" style={{ background: "var(--a1)" }}>
+          <Card className="flex flex-col gap-4.5 p-5.5 text-ink-solid" style={{ background: "var(--a1)" }}>
             <CardHeading>Esta sesión sumará</CardHeading>
             <div className="flex flex-wrap items-baseline gap-2.5">
               <span className="font-num text-[40px] font-bold">+{formatMinutesLong(minutes)}</span>
               <span>a {skill?.name}</span>
             </div>
             <div className="flex flex-col gap-1 border-t-2 border-dashed border-ink pt-4">
-              <span className="label-xs">Total acumulado</span>
+              <span className="label-xs !text-ink-solid opacity-70">Total acumulado</span>
               <div className="flex flex-wrap items-baseline gap-2">
                 <span className="font-num text-2xl font-bold">{formatDecimal(newTotalHours)} h</span>
                 <span className="font-num text-sm">antes {formatDecimal(oldTotalHours)} h</span>

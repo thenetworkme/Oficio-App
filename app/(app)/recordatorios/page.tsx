@@ -175,7 +175,11 @@ export default function RecordatoriosPage() {
                       aria-label={DAY_FULL[i]}
                       onClick={() => toggleDay(d)}
                       className="font-num flex size-11 items-center justify-center rounded-full border font-bold"
-                      style={{ borderColor: on ? "var(--a1)" : "var(--ink)", background: on ? "var(--a1)" : "transparent", color: on ? "var(--ink)" : "var(--ink)" }}
+                      style={{
+                        borderColor: on ? "var(--a1)" : "var(--ink)",
+                        background: on ? "var(--a1)" : "transparent",
+                        color: on ? "var(--ink-solid)" : "var(--ink)",
+                      }}
                     >
                       {label}
                     </button>
