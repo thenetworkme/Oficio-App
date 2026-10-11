@@ -1,6 +1,12 @@
 import { type FirebaseApp, getApps, initializeApp } from "firebase/app";
 import { type Auth, getAuth } from "firebase/auth";
-import { type Firestore, getFirestore } from "firebase/firestore";
+import {
+  type Firestore,
+  getFirestore,
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+} from "firebase/firestore";
 import { type FirebaseStorage, getStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -29,8 +35,33 @@ export function getFirebaseAuth(): Auth {
   return authInstance;
 }
 
+/**
+ * In the browser, backs Firestore with IndexedDB-persisted offline cache
+ * (synced across tabs) instead of the default memory-only cache: reads keep
+ * working from cache while offline, and plain `setDoc`/`updateDoc`/`addDoc`
+ * writes are queued locally and resent automatically once connectivity
+ * returns, instead of being silently dropped on a brief network loss.
+ *
+ * `persistentLocalCache` throws in a Node.js environment (SSR/build), so
+ * this falls back to the default (memory) cache there — `getFirestore`
+ * already behaves that way and never touches IndexedDB.
+ *
+ * Note this does NOT make `runTransaction` work offline — Firestore
+ * transactions always require a live round trip to the server, with or
+ * without this cache enabled. Callers around transactional writes (e.g.
+ * `saveSession` in lib/firestore/sessions.ts) still need their own
+ * online-aware handling; see that file's offline-safety note.
+ */
 export function getDb(): Firestore {
-  if (!dbInstance) dbInstance = getFirestore(getFirebaseApp());
+  if (dbInstance) return dbInstance;
+  const app = getFirebaseApp();
+  if (typeof window !== "undefined" && "indexedDB" in window) {
+    dbInstance = initializeFirestore(app, {
+      localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+    });
+  } else {
+    dbInstance = getFirestore(app);
+  }
   return dbInstance;
 }
 

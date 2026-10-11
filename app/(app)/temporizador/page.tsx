@@ -155,10 +155,23 @@ export default function TemporizadorPage() {
 
   async function handleSaveSession(quality: number, note: string) {
     const pending = store.pendingSave;
-    store.clearPendingSave();
-    if (!pending || !user || !pending.skillId) return;
+    if (!pending || !user || !pending.skillId) {
+      store.clearPendingSave();
+      return;
+    }
     const skill = skills.find((s) => s.id === pending.skillId);
-    if (!skill) return;
+    if (!skill) {
+      store.clearPendingSave();
+      return;
+    }
+    // Note: pendingSave is NOT cleared until the write below actually
+    // succeeds. pendingSave is itself persisted (store/timer-store.ts), so
+    // if saveSession throws — e.g. connectivity drops right as the focus
+    // period ends, and the transaction it runs can't reach Firestore — the
+    // just-completed session isn't lost: it survives in localStorage and
+    // this dialog stays open (SessionSaveDialog is keyed off
+    // `store.pendingSave`) so the user can retry once back online, instead
+    // of the completed Pomodoro silently vanishing.
     const result = await saveSession({
       userId: user.uid,
       skillId: skill.id,
@@ -169,6 +182,7 @@ export default function TemporizadorPage() {
       pomodoros: pending.pomodoros,
       source: "timer",
     });
+    store.clearPendingSave();
     enqueueCelebration(result.milestonesCrossed, {
       skillName: skill.name,
       skillColor: resolveSkillColor(skill.color),
