@@ -1,21 +1,25 @@
 "use client";
 
-import { Volume2, VolumeX } from "lucide-react";
+import { Maximize2, Volume2, VolumeX } from "lucide-react";
 import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { Card, CardHeading } from "@/components/ui/card";
 import { Chip } from "@/components/ui/chip";
 import { AmbientPicker } from "@/components/sound/AmbientPicker";
 import { SessionSaveDialog } from "@/components/timer/SessionSaveDialog";
+import { FullscreenTimer } from "@/components/timer/FullscreenTimer";
 import { CelebrationDialog } from "@/components/achievements/CelebrationDialog";
 import { useTimerStore } from "@/store/timer-store";
 import { cycleDotsFilled, modeTotalSeconds, type PomodoroMode } from "@/lib/timer";
 import { useAppData } from "@/lib/hooks/useAppData";
 import { saveSession } from "@/lib/firestore/sessions";
+import { watchChallenges } from "@/lib/firestore/challenges";
+import { dayNumberForDate } from "@/lib/challenge";
 import { useCelebration } from "@/lib/hooks/useCelebration";
 import { useSound } from "@/lib/sound/SoundProvider";
 import { resolveSkillColor } from "@/lib/skill-color";
 import { formatMinutes, formatTimeEs } from "@/lib/format";
 import { dateKeyInTz } from "@/lib/tz";
+import type { Challenge } from "@/lib/types";
 
 const MODE_TABS: { id: PomodoroMode; label: string }[] = [
   { id: "focus", label: "Enfoque" },
@@ -33,6 +37,12 @@ export default function TemporizadorPage() {
   const sound = useSound();
   const [now, setNow] = useState(() => Date.now());
   const [intention, setIntentionLocal] = useState(store.intention);
+  // Purely presentational view state for the fullscreen takeover — the
+  // store already tracks mode/running/timing, so this doesn't need to live
+  // in it; it just resets to "normal" on navigation, which is fine.
+  const [fullscreen, setFullscreen] = useState(false);
+  const [zen, setZen] = useState(false);
+  const [challenges, setChallenges] = useState<Challenge[]>([]);
 
   useEffect(() => {
     if (!profile) return;
@@ -51,6 +61,26 @@ export default function TemporizadorPage() {
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, [store.running]);
+
+  // Resets local state when the signed-in user changes, before the
+  // subscription below delivers its own snapshot (same pattern as
+  // useAppData's skills/sessions reset).
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    if (!user) {
+      setChallenges([]);
+      return;
+    }
+    return watchChallenges(user.uid, setChallenges);
+  }, [user]);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  // Zen is a focus-only variant (there's no zen chrome for the break
+  // screens in the design): rather than an effect fighting the mode change,
+  // this is derived directly so leaving focus mode (a break starting, or
+  // skipping/resetting) drops back to the regular colored fullscreen view
+  // with no extra render.
+  const zenActive = zen && store.mode === "focus";
 
   const total = modeTotalSeconds(store.mode, store.durations);
   const remaining = store.getRemainingSeconds(now);
@@ -94,6 +124,26 @@ export default function TemporizadorPage() {
   const n = Math.min(filled + (store.mode === "focus" ? 1 : 0), 4);
 
   const selectedSkill = skills.find((s) => s.id === store.skillId) ?? skills[0] ?? null;
+
+  const challengeDayLabel = useMemo(() => {
+    if (!selectedSkill) return null;
+    const active = challenges.find((c) => c.skillId === selectedSkill.id && c.status === "active");
+    if (!active) return null;
+    const startKey = dateKeyInTz(new Date(active.startedAt), timezone);
+    const day = dayNumberForDate(startKey, todayKey);
+    return day >= 1 ? `reto día ${day}` : null;
+  }, [selectedSkill, challenges, timezone, todayKey]);
+
+  function handleFinishNow() {
+    sound.playComplete();
+    sound.stopAmbient();
+    store.completeFocusPeriod();
+  }
+
+  function handleExtend(seconds: number) {
+    sound.playClick();
+    store.extend(seconds);
+  }
 
   const todaySessions = useMemo(
     () =>
@@ -139,7 +189,11 @@ export default function TemporizadorPage() {
             className="bx flex size-[320px] flex-col items-center justify-center gap-1 rounded-full text-ink-solid sm:size-[400px]"
             style={{ background: MODE_FRUIT[store.mode], boxShadow: "10px 10px 0 var(--shadow)" }}
           >
-            <span role="timer" className="font-num text-[88px] font-bold leading-none tracking-tight sm:text-[120px]">
+            <span
+              role="timer"
+              className="font-num text-[88px] font-bold leading-none tracking-tight sm:text-[120px]"
+              style={{ fontVariantNumeric: "tabular-nums" }}
+            >
               {mm}:{ss}
             </span>
             <span className="label-xs !text-ink-solid font-bold opacity-70">{MODE_LABEL[store.mode]}</span>
@@ -210,6 +264,15 @@ export default function TemporizadorPage() {
             </button>
           </div>
 
+          <button
+            type="button"
+            onClick={() => setFullscreen(true)}
+            className="bx press flex min-h-13 items-center justify-center gap-2 bg-card text-[16px] font-bold"
+          >
+            <Maximize2 size={18} aria-hidden="true" />
+            Modo enfoque (pantalla completa)
+          </button>
+
           <Card className="flex flex-col gap-3 p-4.5">
             <CardHeading className="text-[18px]">Sonido ambiente</CardHeading>
             <AmbientPicker label="Elige un ambiente" />
@@ -265,6 +328,29 @@ export default function TemporizadorPage() {
           )}
         </div>
       </div>
+
+      <FullscreenTimer
+        open={fullscreen}
+        mode={store.mode}
+        zen={zenActive}
+        running={store.running}
+        remaining={remaining}
+        total={total}
+        dotsFilled={filled}
+        currentTomato={n}
+        skill={selectedSkill}
+        intention={intention}
+        challengeDayLabel={challengeDayLabel}
+        onToggleRunning={handlePlayPause}
+        onExtend={handleExtend}
+        onFinishNow={handleFinishNow}
+        onSkipBreak={handleSkip}
+        onToggleZen={() => setZen((z) => !z)}
+        onExit={() => {
+          setZen(false);
+          setFullscreen(false);
+        }}
+      />
 
       <SessionSaveDialog
         open={Boolean(store.pendingSave) && selectedSkill != null}
