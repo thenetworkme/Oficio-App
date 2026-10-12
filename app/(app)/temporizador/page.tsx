@@ -7,6 +7,7 @@ import { Chip } from "@/components/ui/chip";
 import { AmbientPicker } from "@/components/sound/AmbientPicker";
 import { SessionSaveDialog } from "@/components/timer/SessionSaveDialog";
 import { FullscreenTimer } from "@/components/timer/FullscreenTimer";
+import { FullscreenStopwatch } from "@/components/timer/FullscreenStopwatch";
 import { CelebrationDialog } from "@/components/achievements/CelebrationDialog";
 import { useTimerStore } from "@/store/timer-store";
 import { useStopwatchStore } from "@/store/stopwatch-store";
@@ -61,6 +62,7 @@ export default function TemporizadorPage() {
   // in it; it just resets to "normal" on navigation, which is fine.
   const [fullscreen, setFullscreen] = useState(false);
   const [zen, setZen] = useState(false);
+  const [libreFullscreen, setLibreFullscreen] = useState(false);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
 
   useEffect(() => {
@@ -200,7 +202,7 @@ export default function TemporizadorPage() {
     }
   }
 
-  function handleStopwatchStop() {
+  function handleStopwatchStop(): boolean {
     sound.stopAmbient();
     const longEnough = stopwatch.stop();
     if (longEnough) {
@@ -212,6 +214,7 @@ export default function TemporizadorPage() {
       sound.playPause();
       setTooShortNotice(true);
     }
+    return longEnough;
   }
 
   function handleStopwatchReset() {
@@ -536,6 +539,15 @@ export default function TemporizadorPage() {
               </button>
             </div>
 
+            <button
+              type="button"
+              onClick={() => setLibreFullscreen(true)}
+              className="bx press flex min-h-13 items-center justify-center gap-2 bg-card text-[16px] font-bold"
+            >
+              <Maximize2 size={18} aria-hidden="true" />
+              Modo libre (pantalla completa)
+            </button>
+
             {tooShortNotice && (
               <div className="bx px-4 py-2.5 text-[15px] font-bold text-ink-solid" style={{ background: "var(--a1)" }}>
                 Practica al menos {MIN_STOPWATCH_MS / 60_000} minuto para poder guardar la sesión. Tu tiempo sigue contando: pulsa Dale para seguir.
@@ -619,6 +631,24 @@ export default function TemporizadorPage() {
           setZen(false);
           setFullscreen(false);
         }}
+      />
+
+      <FullscreenStopwatch
+        open={libreFullscreen}
+        running={stopwatch.running}
+        elapsedMs={stopwatchElapsedMs}
+        hasTime={stopwatchHasTime}
+        tooShortNotice={tooShortNotice}
+        skill={stopwatchSelectedSkill}
+        intention={swIntention}
+        onToggleRunning={handleStopwatchPlayPause}
+        onStop={() => {
+          // Only exit fullscreen once the session actually saved (banked a
+          // pendingSave); if it was too short, stay on screen so the
+          // "too short" notice is visible and the user can keep practicing.
+          if (handleStopwatchStop()) setLibreFullscreen(false);
+        }}
+        onExit={() => setLibreFullscreen(false)}
       />
 
       <SessionSaveDialog

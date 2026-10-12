@@ -41,7 +41,7 @@ const LONG_BREAK_TIPS = ["Camina 5 minutos", "Come algo y toma agua", "Diez minu
  * knows how to change/mute the ambient sound. Collapsed by default so it
  * doesn't clutter the giant time display; the whole point of focus mode.
  */
-function SoundControl({ zen = false }: { zen?: boolean }) {
+export function SoundControl({ zen = false }: { zen?: boolean }) {
   const sound = useSound();
   const [open, setOpen] = useState(false);
 
@@ -212,7 +212,7 @@ export function FullscreenTimer({
   );
 }
 
-function ExitChip({ onClick, children, zen = false }: { onClick: () => void; children: React.ReactNode; zen?: boolean }) {
+export function ExitChip({ onClick, children, zen = false }: { onClick: () => void; children: React.ReactNode; zen?: boolean }) {
   return (
     <button
       id="fs-timer-exit"
