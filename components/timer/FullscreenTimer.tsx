@@ -34,12 +34,17 @@ const LONG_BREAK_TIPS = ["Camina 5 minutos", "Come algo y toma agua", "Diez minu
 
 /**
  * Sound control for the fullscreen views: a speaker icon that both shows
- * whether UI effects are muted and toggles a small popover with the real
- * effects mute switch plus the same AmbientPicker (Silencio/Lluvia/Olas/
- * Lofi + volume) used on the normal Temporizador screen and in Ajustes —
- * reused as-is rather than reimplemented, so there's exactly one place that
- * knows how to change/mute the ambient sound. Collapsed by default so it
- * doesn't clutter the giant time display; the whole point of focus mode.
+ * whether sound is muted and toggles a small popover with a single
+ * "mute everything right now" switch plus the same AmbientPicker
+ * (Lluvia/Olas/Lofi/... + volume) used on the normal Temporizador screen and
+ * in Ajustes. The mute switch here calls sound.toggleAllSound() rather than
+ * setSoundEffectsEnabled() directly — toggleAllSound also stops/resumes any
+ * currently-playing ambient loop, so this one button genuinely silences (and
+ * restores) everything audible during a session, not just the short effect
+ * chimes. Ajustes -> Perfil's own "Efectos de sonido" switch still calls
+ * setSoundEffectsEnabled() and stays a narrower, effects-only toggle on
+ * purpose. Collapsed by default so it doesn't clutter the giant time
+ * display; the whole point of focus mode.
  */
 export function SoundControl({ zen = false }: { zen?: boolean }) {
   const sound = useSound();
@@ -69,16 +74,16 @@ export function SoundControl({ zen = false }: { zen?: boolean }) {
         <div className="bx absolute right-0 top-[calc(100%+10px)] z-10 flex w-[280px] flex-col gap-4 p-4.5 text-ink">
           <button
             type="button"
-            onClick={() => sound.setSoundEffectsEnabled(!sound.soundEffectsEnabled)}
+            onClick={() => sound.toggleAllSound()}
             className="bx press flex min-h-11 items-center justify-center gap-2.5 bg-card text-[14px] font-bold"
           >
             {sound.soundEffectsEnabled ? (
               <>
-                <Volume2 size={18} aria-hidden="true" /> Efectos activados
+                <Volume2 size={18} aria-hidden="true" /> Sonido activado
               </>
             ) : (
               <>
-                <VolumeX size={18} aria-hidden="true" /> Efectos silenciados
+                <VolumeX size={18} aria-hidden="true" /> Sonido silenciado
               </>
             )}
           </button>

@@ -9,6 +9,7 @@ import { SessionSaveDialog } from "@/components/timer/SessionSaveDialog";
 import { FullscreenTimer } from "@/components/timer/FullscreenTimer";
 import { FullscreenStopwatch } from "@/components/timer/FullscreenStopwatch";
 import { CelebrationDialog } from "@/components/achievements/CelebrationDialog";
+import { BreakNotifyInline } from "@/components/notifications/BreakNotifyInline";
 import { useTimerStore } from "@/store/timer-store";
 import { useStopwatchStore } from "@/store/stopwatch-store";
 import { cycleDotsFilled, modeTotalSeconds, type PomodoroMode } from "@/lib/timer";
@@ -211,11 +212,16 @@ export default function TemporizadorPage() {
   // time has passed since the last break, auto-pause and start the break
   // countdown. The in-app sound plays regardless of tab visibility — the
   // whole point is interrupting active practice, so it can't depend on the
-  // tab being "visible" — while the OS notification (inside
-  // notifyLibreBreak) is the secondary channel for when it isn't.
+  // tab being "visible". This moment uses playBreakReminder() rather than
+  // playComplete() specifically so it's unmistakable without looking at the
+  // screen (the user's explicit ask) — every other "something finished"
+  // moment in this app (Pomodoro periods, achievements, break-END below)
+  // shares the same soft completion chime, which is exactly what made this
+  // feel unrecognizable before. notifyLibreBreak no longer only fires when
+  // the tab isn't visible — see its doc comment in browserNotify.ts.
   useEffect(() => {
     if (stopwatch.running && !stopwatch.onBreak && breakThresholdMs != null && msSinceLastBreak >= breakThresholdMs) {
-      sound.playComplete();
+      sound.playBreakReminder();
       notifyLibreBreak("start", notifications.notificationsEnabled);
       stopwatch.triggerBreak();
     }
@@ -658,6 +664,7 @@ export default function TemporizadorPage() {
               <p className="m-0 text-sm text-muted">
                 Opcional: pausa automáticamente la sesión libre para avisarte de tomar un descanso.
               </p>
+              <BreakNotifyInline />
               <div className="grid grid-cols-[repeat(auto-fit,minmax(min(180px,100%),1fr))] gap-3">
                 <div className="flex flex-col gap-1.5">
                   <label htmlFor="sw-break-min" className="label-xs">

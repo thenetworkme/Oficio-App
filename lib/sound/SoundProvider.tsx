@@ -25,6 +25,21 @@ interface SoundContextValue {
   playPause: () => void;
   playComplete: () => void;
   playSuccess: () => void;
+  playBreakReminder: () => void;
+  /**
+   * All-in-one-mute for the fullscreen quick-access popover (SoundControl in
+   * FullscreenTimer.tsx/FullscreenStopwatch.tsx): flips soundEffectsEnabled
+   * (silencing playClick/playStart/.../playBreakReminder the same as always)
+   * AND, unlike setSoundEffectsEnabled alone, also stops/resumes any
+   * currently-playing ambient loop. Deliberately separate from
+   * setSoundEffectsEnabled so Ajustes -> Perfil's own "Efectos de sonido"
+   * switch stays a narrow, granular toggle that never touches ambient sound
+   * out from under the user — only this quick-access button means "silence
+   * everything right now". See AGENTS task notes: a user with an ambient
+   * loop playing clicked "Efectos activados" expecting total silence and
+   * got none, because that toggle only ever gated the short effect chimes.
+   */
+  toggleAllSound: () => void;
 }
 
 const SoundContext = createContext<SoundContextValue | null>(null);
@@ -38,6 +53,12 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
   // Tracks whether ambient audio is actually playing right now, so a change
   // of selection while running can restart the engine; never auto-started.
   const isAmbientRunning = useRef(false);
+  // Separate from isAmbientRunning above: remembers whether ambient was
+  // playing at the exact moment toggleAllSound() muted it, so toggling back
+  // on resumes the SAME sound rather than guessing from whatever
+  // isAmbientRunning happens to be (which toggleAllSound itself just set to
+  // false while muting).
+  const wasAmbientPlayingBeforeMute = useRef(false);
 
   useEffect(() => {
     if (!profile) return;
@@ -121,6 +142,32 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
       },
       playSuccess() {
         if (enabled) engine.playSuccess(fxVolume);
+      },
+      playBreakReminder() {
+        if (enabled) engine.playBreakReminder(fxVolume);
+      },
+      toggleAllSound() {
+        const next = !enabled;
+        setEnabled(next);
+        if (profile) void updateProfile(profile.uid, { soundEffectsEnabled: next });
+        if (!next) {
+          // Muting: remember whether ambient was actually playing right
+          // now, then silence it too — this is what makes the button a
+          // genuine "mute everything" control instead of only gating the
+          // short effect chimes.
+          wasAmbientPlayingBeforeMute.current = isAmbientRunning.current;
+          if (isAmbientRunning.current) {
+            ambient.stopAmbient();
+            isAmbientRunning.current = false;
+          }
+        } else if (wasAmbientPlayingBeforeMute.current && ambientId !== "none") {
+          // Unmuting from this same button, with a user gesture (the click
+          // itself), so resuming audio here is allowed — bring back the
+          // same ambient sound that was playing when it got muted.
+          ambient.startAmbient(ambientId);
+          isAmbientRunning.current = true;
+          wasAmbientPlayingBeforeMute.current = false;
+        }
       },
     }),
     [enabled, fxVolume, ambientId, ambientVol, profile],

@@ -4,6 +4,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Coffee } from "lucide-react";
 import { useState } from "react";
 import { formatStopwatchClock, MIN_STOPWATCH_MS } from "@/lib/stopwatch";
+import { BreakNotifyInline } from "@/components/notifications/BreakNotifyInline";
 import { ExitChip, SoundControl } from "@/components/timer/FullscreenTimer";
 import type { Skill } from "@/lib/types";
 
@@ -62,6 +63,7 @@ export function BreakSettingsControl({
       {open && (
         <div className="bx absolute right-0 top-[calc(100%+10px)] z-10 flex w-[280px] flex-col gap-3.5 p-4.5 text-ink">
           <span className="label-xs">Recordatorio de descanso</span>
+          <BreakNotifyInline />
           <div className="flex flex-col gap-1.5">
             <label htmlFor="fs-break-min" className="text-[13px] text-muted">
               Avisar cada (min, 0 = desactivado)

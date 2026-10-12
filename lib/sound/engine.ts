@@ -52,6 +52,23 @@ const SUCCESS = {
   type: "sine" as OscillatorType,
 };
 
+// Three-note ascending pattern, clearly distinct from COMPLETE's soft
+// two-partial simultaneous bell: these notes play one after another
+// (like START/PAUSE's two-tone blip, but three notes instead of two and
+// stepping upward rather than just high/low), so it reads as its own
+// little "ta-da, time's up" phrase rather than another variant of the
+// generic completion chime — the whole point per the user's report: they
+// need to recognize break time without looking at the screen. Still a
+// plain triangle wave at a gentle volume/duration, matching this file's
+// calm-productivity-app tone rather than anything alarm-like.
+const BREAK_REMINDER = {
+  notes: [-5, 0, 7], // stepwise-ish ascending triad, ending on the fifth
+  duration: 0.16,
+  gap: 0.1,
+  gainDb: -11,
+  type: "triangle" as OscillatorType,
+};
+
 /** Plays one oscillator tone with a short linear attack + exponential release envelope. */
 function tone(
   audio: AudioContext,
@@ -128,4 +145,27 @@ export function playSuccess(volume = 1): void {
   const audio = getCtx();
   if (!audio) return;
   chime(audio, SUCCESS.partials, SUCCESS.type, SUCCESS.attack, SUCCESS.decay, volume);
+}
+
+/**
+ * A distinctive three-note ascending phrase for "it's break time" in Sesión
+ * libre — deliberately NOT the same sound as playComplete() (which also
+ * covers Pomodoro period completion, achievement saves, etc.), so this one
+ * moment is instantly recognizable without looking at the screen.
+ */
+export function playBreakReminder(volume = 1): void {
+  const audio = getCtx();
+  if (!audio) return;
+  const now = audio.currentTime;
+  BREAK_REMINDER.notes.forEach((semitones, i) => {
+    tone(
+      audio,
+      noteFreq(semitones),
+      BREAK_REMINDER.type,
+      BREAK_REMINDER.gainDb,
+      volume,
+      now + i * BREAK_REMINDER.gap,
+      BREAK_REMINDER.duration,
+    );
+  });
 }

@@ -71,22 +71,37 @@ const LIBRE_BREAK_COPY: Record<"start" | "end", { title: string; body: string }>
 };
 
 /**
- * Fires a native OS notification for the "Sesión libre" break reminder —
- * the SECONDARY feedback channel, for when the tab isn't focused. The
- * PRIMARY feedback (the break actually starting/ending, with its own sound
- * and the fullscreen/inline break view appearing) happens regardless of tab
- * visibility, from the same spot in temporizador/page.tsx that calls this.
+ * Fires a native OS notification for the "Sesión libre" break reminder.
  *
- * Same guard conditions as notifyPeriodComplete, including the
- * visibility check — that guard only prevents a REDUNDANT OS notification
- * on top of the in-app feedback while the tab is visible, it never
- * suppresses the in-app feedback itself.
+ * Unlike notifyPeriodComplete, this intentionally does NOT skip when the
+ * tab is visible/focused. Rationale (from a real user report): a libre
+ * break interrupting an ACTIVE session is, by definition, happening while
+ * the tab is fully visible at that exact moment — "visible" does not mean
+ * "looking at it", the user may well be deep in focused work, in another
+ * window, or just not looking at the corner of the screen. The user
+ * explicitly asked for a real OS-level notification precisely because they
+ * were actively working when they missed the in-app cue, so suppressing it
+ * whenever the tab happens to be visible defeated the entire feature for
+ * this specific use case (it would ALWAYS be visible at break-start, since
+ * the session the break interrupts is the one on screen). Pomodoro's
+ * notifyPeriodComplete keeps its original visible-tab guard — that one is a
+ * secondary channel for when the tab is in the background, which stays a
+ * reasonable distinction there; this function is scoped narrowly to the
+ * libre break reminder per the bug report, not Pomodoro.
+ *
+ * Break-END gets the same treatment for the same reason: the user wants to
+ * know their break is over even if they stepped away and aren't looking at
+ * the screen when the countdown hits zero.
+ *
+ * The notificationsEnabled opt-in and Notification.permission === "granted"
+ * checks are unchanged and still both required — this never shows a
+ * notification the user didn't opt into, and never attempts past a stored
+ * "denied".
  */
 export function notifyLibreBreak(kind: "start" | "end", notificationsEnabled: boolean): void {
   if (!notificationsEnabled) return;
   if (!isNotificationSupported()) return;
   if (Notification.permission !== "granted") return;
-  if (document.visibilityState === "visible") return;
 
   const { title, body } = LIBRE_BREAK_COPY[kind];
   try {
