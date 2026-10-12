@@ -12,12 +12,17 @@
  * playback starts a moment later once decoding finishes.
  */
 
-export type AmbientKind = "rain" | "waves" | "lofi";
+export type AmbientKind = "rain" | "waves" | "lofi" | "thunder" | "fireplace" | "night" | "forest" | "coffeeshop";
 
 const RECORDED_SOUND_URL: Record<AmbientKind, string> = {
   rain: "/sounds/ambient/rain.mp3",
   waves: "/sounds/ambient/waves.mp3",
   lofi: "/sounds/ambient/lofi.mp3",
+  thunder: "/sounds/ambient/thunder.mp3",
+  fireplace: "/sounds/ambient/fireplace.mp3",
+  night: "/sounds/ambient/night.mp3",
+  forest: "/sounds/ambient/forest.mp3",
+  coffeeshop: "/sounds/ambient/coffeeshop.mp3",
 };
 
 let ctx: AudioContext | null = null;

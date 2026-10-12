@@ -5,10 +5,14 @@ import { useSound } from "@/lib/sound/SoundProvider";
 import type { AmbientSoundId } from "@/lib/types";
 
 const AMBIENT_OPTIONS: { id: AmbientSoundId; label: string }[] = [
-  { id: "none", label: "Silencio" },
   { id: "rain", label: "Lluvia" },
   { id: "waves", label: "Olas" },
   { id: "lofi", label: "Lofi" },
+  { id: "thunder", label: "Tormenta" },
+  { id: "fireplace", label: "Chimenea" },
+  { id: "night", label: "Grillos" },
+  { id: "forest", label: "Bosque" },
+  { id: "coffeeshop", label: "Cafetería" },
 ];
 
 /**
@@ -20,6 +24,10 @@ const AMBIENT_OPTIONS: { id: AmbientSoundId; label: string }[] = [
  * click itself is the user gesture); picking one while idle just saves the
  * preference for next time — SoundProvider decides which, based on whether
  * ambient is currently marked as running.
+ *
+ * There's no explicit "Silencio" chip: clicking the chip that's already
+ * selected toggles it off (switches to "none"), which is how you stop
+ * ambient sound from here.
  */
 export function AmbientPicker({ label = "Sonido ambiente" }: { label?: string }) {
   const { ambientSoundId, setAmbientSoundId, ambientVolume, setAmbientVolume } = useSound();
@@ -29,7 +37,11 @@ export function AmbientPicker({ label = "Sonido ambiente" }: { label?: string })
       <span className="label-xs">{label}</span>
       <div role="group" aria-label={label} className="flex flex-wrap gap-2">
         {AMBIENT_OPTIONS.map((opt) => (
-          <Chip key={opt.id} pressed={ambientSoundId === opt.id} onClick={() => setAmbientSoundId(opt.id)}>
+          <Chip
+            key={opt.id}
+            pressed={ambientSoundId === opt.id}
+            onClick={() => setAmbientSoundId(ambientSoundId === opt.id ? "none" : opt.id)}
+          >
             {opt.label}
           </Chip>
         ))}

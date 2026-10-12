@@ -32,7 +32,7 @@ export interface Profile {
   createdAt: number; // epoch ms
 }
 
-export type AmbientSoundId = "none" | "rain" | "waves" | "lofi";
+export type AmbientSoundId = "none" | "rain" | "waves" | "lofi" | "thunder" | "fireplace" | "night" | "forest" | "coffeeshop";
 
 export const DEFAULT_PROFILE: Omit<Profile, "uid" | "createdAt"> = {
   displayName: null,

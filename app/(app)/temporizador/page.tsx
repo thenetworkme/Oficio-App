@@ -232,6 +232,11 @@ export default function TemporizadorPage() {
     [sessions, timezone, todayKey],
   );
 
+  // "Sesión libre" equivalent of the Pomodoro "Tomate n de 4" counter: how
+  // much free-session practice happened today, at a glance.
+  const todayLibreSessions = useMemo(() => todaySessions.filter((s) => s.source === "stopwatch"), [todaySessions]);
+  const todayLibreMinutes = todayLibreSessions.reduce((a, s) => a + s.durationMin, 0);
+
   async function handleSaveSession(quality: number, note: string) {
     const pending = store.pendingSave;
     if (!pending || !user || !pending.skillId) {
@@ -473,7 +478,16 @@ export default function TemporizadorPage() {
       )}
 
       {screenMode === "libre" && (
-        <div className="flex flex-wrap items-center justify-center gap-10">
+        <>
+          <div className="label-xs -mb-2 font-bold">
+            Hoy: {todayLibreSessions.length === 0
+              ? "ninguna sesión libre aún"
+              : `${todayLibreSessions.length} sesión${todayLibreSessions.length === 1 ? "" : "es"} libre${todayLibreSessions.length === 1 ? "" : "s"} · ${formatMinutes(todayLibreMinutes)}`}
+            {" · "}
+            {stopwatchSelectedSkill?.name ?? "—"}
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-10">
           <div className="relative flex items-center justify-center">
             <div
               className="bx flex size-[320px] flex-col items-center justify-center gap-1 rounded-full text-ink-solid sm:size-[400px]"
@@ -591,7 +605,8 @@ export default function TemporizadorPage() {
               </div>
             </Card>
           </div>
-        </div>
+          </div>
+        </>
       )}
 
       {todaySessions.length > 0 && (
