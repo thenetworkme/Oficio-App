@@ -15,10 +15,11 @@ import { cycleDotsFilled, modeTotalSeconds, type PomodoroMode } from "@/lib/time
 import { formatStopwatchClock, MIN_STOPWATCH_MS } from "@/lib/stopwatch";
 import { useAppData } from "@/lib/hooks/useAppData";
 import { saveSession } from "@/lib/firestore/sessions";
+import { updateProfile } from "@/lib/firestore/profiles";
 import { watchChallenges } from "@/lib/firestore/challenges";
 import { dayNumberForDate } from "@/lib/challenge";
 import { useCelebration } from "@/lib/hooks/useCelebration";
-import { notifyPeriodComplete } from "@/lib/notifications/browserNotify";
+import { notifyLibreBreak, notifyPeriodComplete } from "@/lib/notifications/browserNotify";
 import { useNotifications } from "@/lib/notifications/NotificationProvider";
 import { useSound } from "@/lib/sound/SoundProvider";
 import { resolveSkillColor } from "@/lib/skill-color";
@@ -75,6 +76,16 @@ export default function TemporizadorPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile?.pomodoroFocusMin, profile?.pomodoroShortMin, profile?.pomodoroLongMin]);
 
+  // Same pattern as the Pomodoro durations sync above, for the libre
+  // break-reminder settings: read from Profile on mount/sync so the user's
+  // choice (made from either the fullscreen popover or the normal panel
+  // card below) follows them across sessions/devices.
+  useEffect(() => {
+    if (!profile) return;
+    stopwatch.setBreakSettings(profile.libreBreakReminderMin, profile.libreBreakLengthMin);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.libreBreakReminderMin, profile?.libreBreakLengthMin]);
+
   useLayoutEffect(() => {
     if (!store.running) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -87,14 +98,16 @@ export default function TemporizadorPage() {
   // stopwatch: without this, resuming after a long pause would briefly show
   // a stale (too-small) elapsed time until the next 1s tick — the same bug
   // class the Pomodoro countdown had before this fix (see
-  // tests/timer-clock-sync.test.tsx).
+  // tests/timer-clock-sync.test.tsx). Also ticks while `onBreak` (even
+  // though `running` is false during a break) so the break countdown
+  // resyncs on resume/reopen with the exact same correctness.
   useLayoutEffect(() => {
-    if (!stopwatch.running) return;
+    if (!stopwatch.running && !stopwatch.onBreak) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSwNow(Date.now());
     const id = setInterval(() => setSwNow(Date.now()), 1000);
     return () => clearInterval(id);
-  }, [stopwatch.running]);
+  }, [stopwatch.running, stopwatch.onBreak]);
 
   // Resets local state when the signed-in user changes, before the
   // subscription below delivers its own snapshot (same pattern as
@@ -184,6 +197,52 @@ export default function TemporizadorPage() {
   const stopwatchElapsedMs = stopwatch.getElapsedMs(swNow);
   const stopwatchSelectedSkill = skills.find((s) => s.id === stopwatch.skillId) ?? skills[0] ?? null;
   const stopwatchHasTime = stopwatch.running || stopwatchElapsedMs > 0;
+
+  // --- Libre break reminder ---------------------------------------------
+  // msSinceLastBreak and breakRemainingMs are recomputed every render from
+  // swNow (the same 1s wall-clock tick driving stopwatchElapsedMs above),
+  // so both the trigger check and the countdown display share one ticking
+  // mechanism rather than a second timer.
+  const msSinceLastBreak = stopwatch.getMsSinceLastBreak(swNow);
+  const breakThresholdMs = stopwatch.breakReminderMin ? stopwatch.breakReminderMin * 60_000 : null;
+  const breakRemainingMs = stopwatch.getBreakRemainingMs(swNow);
+
+  // Mirrors the Pomodoro "remaining <= 0" effect below: when enough RUNNING
+  // time has passed since the last break, auto-pause and start the break
+  // countdown. The in-app sound plays regardless of tab visibility — the
+  // whole point is interrupting active practice, so it can't depend on the
+  // tab being "visible" — while the OS notification (inside
+  // notifyLibreBreak) is the secondary channel for when it isn't.
+  useEffect(() => {
+    if (stopwatch.running && !stopwatch.onBreak && breakThresholdMs != null && msSinceLastBreak >= breakThresholdMs) {
+      sound.playComplete();
+      notifyLibreBreak("start", notifications.notificationsEnabled);
+      stopwatch.triggerBreak();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [msSinceLastBreak, stopwatch.running, stopwatch.onBreak, breakThresholdMs, stopwatch]);
+
+  // When the break countdown reaches zero, notify and end the break —
+  // WITHOUT auto-resuming (see store/stopwatch-store.ts's endBreak): the
+  // stopwatch stays paused so the user has to deliberately come back.
+  useEffect(() => {
+    if (stopwatch.onBreak && breakRemainingMs <= 0) {
+      sound.playComplete();
+      notifyLibreBreak("end", notifications.notificationsEnabled);
+      stopwatch.endBreak();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [breakRemainingMs, stopwatch.onBreak, stopwatch]);
+
+  function handleChangeBreakSettings(reminderMin: number | null, lengthMin: number) {
+    stopwatch.setBreakSettings(reminderMin, lengthMin);
+    if (user) void updateProfile(user.uid, { libreBreakReminderMin: reminderMin, libreBreakLengthMin: lengthMin });
+  }
+
+  function handleEndBreakNow() {
+    sound.playClick();
+    stopwatch.endBreak();
+  }
 
   function handleStopwatchPlayPause() {
     setTooShortNotice(false);
@@ -568,9 +627,76 @@ export default function TemporizadorPage() {
               </div>
             )}
 
+            {/* Break reminder is store state (not fullscreen-local), so it must
+                show up here too if it triggers while the user is on this
+                normal panel rather than in fullscreen — the polished
+                dedicated break view with tips is fullscreen-only, but this
+                inline banner (same visual pattern as tooShortNotice above)
+                keeps the normal panel from looking broken or stuck. */}
+            {stopwatch.onBreak && (
+              <div className="bx flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 text-[15px] font-bold text-ink-solid" style={{ background: "var(--a1)" }}>
+                <span>
+                  Es hora de un descanso de {stopwatch.breakLengthMin} min · quedan {formatStopwatchClock(breakRemainingMs)}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleEndBreakNow}
+                  className="bx press min-h-9 rounded-chip border-[3px] border-ink bg-card px-3 text-[13px] font-bold text-ink"
+                >
+                  Terminar descanso ahora
+                </button>
+              </div>
+            )}
+
             <Card className="flex flex-col gap-3 p-4.5">
               <CardHeading className="text-[18px]">Sonido ambiente</CardHeading>
               <AmbientPicker label="Elige un ambiente" />
+            </Card>
+
+            <Card className="flex flex-col gap-3 p-4.5">
+              <CardHeading className="text-[18px]">Recordatorio de descanso</CardHeading>
+              <p className="m-0 text-sm text-muted">
+                Opcional: pausa automáticamente la sesión libre para avisarte de tomar un descanso.
+              </p>
+              <div className="grid grid-cols-[repeat(auto-fit,minmax(min(180px,100%),1fr))] gap-3">
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="sw-break-min" className="label-xs">
+                    Avisar cada (min, 0 = desactivado)
+                  </label>
+                  <input
+                    id="sw-break-min"
+                    type="number"
+                    min={0}
+                    max={240}
+                    inputMode="numeric"
+                    value={stopwatch.breakReminderMin ?? 0}
+                    onChange={(e) => {
+                      const v = Math.max(0, Math.round(Number(e.target.value) || 0));
+                      handleChangeBreakSettings(v > 0 ? v : null, stopwatch.breakLengthMin);
+                    }}
+                    className="box-border w-full min-h-12 rounded-button border-[3px] border-ink bg-card px-3.5 text-[15px]"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="sw-break-length" className="label-xs">
+                    Duración del descanso (min)
+                  </label>
+                  <input
+                    id="sw-break-length"
+                    type="number"
+                    min={1}
+                    max={60}
+                    inputMode="numeric"
+                    disabled={!stopwatch.breakReminderMin}
+                    value={stopwatch.breakLengthMin}
+                    onChange={(e) => {
+                      const v = Math.max(1, Math.round(Number(e.target.value) || 1));
+                      handleChangeBreakSettings(stopwatch.breakReminderMin, v);
+                    }}
+                    className="box-border w-full min-h-12 rounded-button border-[3px] border-ink bg-card px-3.5 text-[15px] disabled:opacity-50"
+                  />
+                </div>
+              </div>
             </Card>
 
             <Card className="flex flex-col gap-3 p-4.5">
@@ -656,6 +782,12 @@ export default function TemporizadorPage() {
         tooShortNotice={tooShortNotice}
         skill={stopwatchSelectedSkill}
         intention={swIntention}
+        breakReminderMin={stopwatch.breakReminderMin}
+        breakLengthMin={stopwatch.breakLengthMin}
+        onBreak={stopwatch.onBreak}
+        breakRemainingMs={breakRemainingMs}
+        onChangeBreakSettings={handleChangeBreakSettings}
+        onEndBreakNow={handleEndBreakNow}
         onToggleRunning={handleStopwatchPlayPause}
         onStop={() => {
           // Only exit fullscreen once the session actually saved (banked a

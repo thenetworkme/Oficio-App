@@ -58,3 +58,40 @@ export function notifyPeriodComplete(mode: PomodoroMode, notificationsEnabled: b
     // timer flow.
   }
 }
+
+const LIBRE_BREAK_COPY: Record<"start" | "end", { title: string; body: string }> = {
+  start: {
+    title: "Hora de un descanso",
+    body: "Llevas un buen rato en sesión libre. Tu tiempo quedó en pausa — vuelve cuando quieras.",
+  },
+  end: {
+    title: "¿Seguimos?",
+    body: "Tu descanso terminó. Tu sesión libre te espera, pulsa Dale cuando estés listo.",
+  },
+};
+
+/**
+ * Fires a native OS notification for the "Sesión libre" break reminder —
+ * the SECONDARY feedback channel, for when the tab isn't focused. The
+ * PRIMARY feedback (the break actually starting/ending, with its own sound
+ * and the fullscreen/inline break view appearing) happens regardless of tab
+ * visibility, from the same spot in temporizador/page.tsx that calls this.
+ *
+ * Same guard conditions as notifyPeriodComplete, including the
+ * visibility check — that guard only prevents a REDUNDANT OS notification
+ * on top of the in-app feedback while the tab is visible, it never
+ * suppresses the in-app feedback itself.
+ */
+export function notifyLibreBreak(kind: "start" | "end", notificationsEnabled: boolean): void {
+  if (!notificationsEnabled) return;
+  if (!isNotificationSupported()) return;
+  if (Notification.permission !== "granted") return;
+  if (document.visibilityState === "visible") return;
+
+  const { title, body } = LIBRE_BREAK_COPY[kind];
+  try {
+    new Notification(title, { body, icon: "/icons/icon-192.png" });
+  } catch {
+    // See notifyPeriodComplete's identical catch above.
+  }
+}

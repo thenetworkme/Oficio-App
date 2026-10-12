@@ -29,6 +29,13 @@ export interface Profile {
    * the user explicitly turned it on AND the browser granted permission; see
    * lib/notifications/NotificationProvider.tsx. */
   notificationsEnabled: boolean;
+  /** Minutes of RUNNING time in "Sesión libre" (stopwatch) mode before the
+   * user is prompted to take a break — see store/stopwatch-store.ts. Opt-in
+   * only: null (the default) means the break-reminder feature is off, never
+   * forced on a user who just wants a plain stopwatch. */
+  libreBreakReminderMin: number | null;
+  /** Break duration in minutes, used once libreBreakReminderMin is set. */
+  libreBreakLengthMin: number;
   createdAt: number; // epoch ms
 }
 
@@ -50,6 +57,8 @@ export const DEFAULT_PROFILE: Omit<Profile, "uid" | "createdAt"> = {
   ambientSoundId: "none",
   ambientVolume: 0.5,
   notificationsEnabled: false,
+  libreBreakReminderMin: null,
+  libreBreakLengthMin: 5,
 };
 
 export interface Skill {
