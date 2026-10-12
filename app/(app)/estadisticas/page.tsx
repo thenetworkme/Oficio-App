@@ -7,10 +7,11 @@ import { MonthlyHoursChart, type MonthDatum } from "@/components/stats/MonthlyHo
 import { ConsistencyHeatmap } from "@/components/dashboard/ConsistencyHeatmap";
 import { useAppData } from "@/lib/hooks/useAppData";
 import { resolveSkillColor } from "@/lib/skill-color";
-import { formatDecimal, formatInt, formatMinutes, formatPercent } from "@/lib/format";
+import { formatDecimal, formatInt, formatMinutes, formatPercent, formatShortDateEs } from "@/lib/format";
 import { hoursPerWeek, projectTimeRemaining, formatProjection, recentWeeklyPace, projectTenThousandHours } from "@/lib/projection";
 import { computeBestStreak } from "@/lib/streak";
 import { buildSkillDailyMinutes } from "@/lib/heatmap";
+import { summarizeLibreSessions } from "@/lib/libre-sessions";
 
 const MONTH_NAMES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 const TIME_SLOTS = [
@@ -69,6 +70,7 @@ export default function EstadisticasPage() {
   const avgDailyMin = activeDays > 0 ? monthSessions.reduce((a, s) => a + s.durationMin, 0) / activeDays : 0;
   const longestSession = Math.max(0, ...sessions.map((s) => s.durationMin));
   const bestStreak = computeBestStreak(dailyMinutes, 30);
+  const libreSummary = useMemo(() => summarizeLibreSessions(sessions, monthStart), [sessions, monthStart]);
 
   if (!activeSkill) {
     return <Card className="p-8 text-center text-muted">Crea una habilidad para ver tus estadísticas.</Card>;
@@ -210,6 +212,43 @@ export default function EstadisticasPage() {
           <Metric label="Mejor racha" value={`${bestStreak} días`} />
         </Card>
       </section>
+
+      <Card className="flex flex-col gap-4 p-5.5">
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
+          <CardHeading>Sesión libre</CardHeading>
+          <span className="text-[13px] text-muted">Todas las habilidades</span>
+        </div>
+
+        {!libreSummary.hasAny ? (
+          <p className="m-0 text-muted">Aún no registras sesiones libres. Pruébalas desde el Temporizador.</p>
+        ) : (
+          <>
+            <div className="flex flex-wrap gap-6">
+              <Metric label="Sesiones libres del mes" value={formatInt(libreSummary.monthCount)} />
+              <Metric label="Tiempo libre del mes" value={formatMinutes(libreSummary.monthMinutes)} />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <span className="label-xs font-bold">En qué trabajaste</span>
+              <div className="flex flex-col gap-1">
+                {libreSummary.recent.map((s) => {
+                  const skill = skills.find((sk) => sk.id === s.skillId);
+                  return (
+                    <div key={s.id} className="flex flex-wrap items-center gap-3 border-t-2 border-dashed border-ink py-2.5">
+                      <span className="font-num min-w-20 text-[13px] text-muted">{formatShortDateEs(new Date(s.startedAt))}</span>
+                      <span className="min-w-[90px] font-bold">{skill?.name ?? "—"}</span>
+                      <span className="font-num min-w-16 text-sm text-muted">{formatMinutes(s.durationMin)}</span>
+                      <span className="min-w-[140px] flex-1 text-sm">
+                        {s.note && s.note.trim() ? s.note : <span className="text-muted">Sin objetivo anotado</span>}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </>
+        )}
+      </Card>
     </>
   );
 }

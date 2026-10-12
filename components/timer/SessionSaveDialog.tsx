@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
@@ -20,21 +20,40 @@ export function SessionSaveDialog({
   open,
   durationMin,
   skillName,
+  initialNote,
   onSave,
   onDiscard,
 }: {
   open: boolean;
   durationMin: number;
   skillName: string;
+  /** The session's "Intención de esta sesión" text, used to pre-fill the
+   * note below so the objective the user already typed isn't thrown away
+   * on save by default (see app/(app)/temporizador/page.tsx). Still freely
+   * editable/clearable before saving. */
+  initialNote?: string;
   onSave: (quality: number, note: string) => Promise<{ coinsGained: number; xpGained: number } | void>;
   onDiscard: () => void;
 }) {
   const [quality, setQuality] = useState(4);
-  const [note, setNote] = useState("");
+  const [note, setNote] = useState(initialNote ?? "");
   const [gains, setGains] = useState<{ coins: number; xp: number } | null>(null);
   const [saving, setSaving] = useState(false);
   const { equipped, level, xpIntoLevel, xpForNext, xpPct } = usePet();
   const sound = useSound();
+
+  // Re-initialize the note from the (possibly new) session's intention each
+  // time the dialog opens. Both call sites in temporizador/page.tsx reuse
+  // the same <SessionSaveDialog> instance across sessions (it's keyed off
+  // store.pendingSave/stopwatch.pendingSave, not unmounted between saves),
+  // so without this a second session's dialog could show the first
+  // session's leftover note text instead of its own intention.
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    if (open) setNote(initialNote ?? "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const faces = ["🥱", "😕", "🙂", "😄", "🔥"];
   const qLabels = ["Disperso", "Costó enfocarse", "Normal", "Buen enfoque", "En flow"];

@@ -670,6 +670,7 @@ export default function TemporizadorPage() {
         open={Boolean(store.pendingSave) && selectedSkill != null}
         durationMin={store.pendingSave?.durationMin ?? 0}
         skillName={selectedSkill?.name ?? ""}
+        initialNote={intention}
         onSave={handleSaveSession}
         onDiscard={store.clearPendingSave}
       />
@@ -678,6 +679,7 @@ export default function TemporizadorPage() {
         open={Boolean(stopwatch.pendingSave) && stopwatchSelectedSkill != null}
         durationMin={stopwatch.pendingSave?.durationMin ?? 0}
         skillName={stopwatchSelectedSkill?.name ?? ""}
+        initialNote={swIntention}
         onSave={handleSaveStopwatchSession}
         onDiscard={stopwatch.clearPendingSave}
       />
