@@ -64,6 +64,15 @@ describe("summarizeLibreSessions", () => {
     expect(result.recent).toHaveLength(3);
   });
 
+  it("carries a null skillId through untouched, for a genuinely skill-less libre session", () => {
+    const monthStart = new Date(2026, 9, 1).getTime();
+    const sessions = [session({ id: "a", skillId: null, startedAt: new Date(2026, 9, 5).getTime() })];
+    const result = summarizeLibreSessions(sessions, monthStart);
+    expect(result.recent[0].skillId).toBeNull();
+    expect(result.hasAny).toBe(true);
+    expect(result.monthCount).toBe(1);
+  });
+
   it("sorts recent sessions newest first and respects the limit cap", () => {
     const monthStart = new Date(2026, 9, 1).getTime();
     const sessions = [

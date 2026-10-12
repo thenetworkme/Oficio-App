@@ -35,6 +35,11 @@ export function SessionSaveDialog({
   onSave: (quality: number, note: string) => Promise<{ coinsGained: number; xpGained: number } | void>;
   onDiscard: () => void;
 }) {
+  // Stopwatch-sourced "Sesión libre" sessions are intentionally not tied to
+  // any skill (see PracticeSession.skillId in lib/types.ts), so skillName
+  // arrives as "" for that flow. Pomodoro always passes a real skill name,
+  // so this fallback never changes its copy.
+  const skillLabel = skillName.trim() ? skillName : "práctica libre";
   const [quality, setQuality] = useState(4);
   const [note, setNote] = useState(initialNote ?? "");
   const [gains, setGains] = useState<{ coins: number; xp: number } | null>(null);
@@ -87,7 +92,7 @@ export function SessionSaveDialog({
           <div className="flex flex-col gap-5">
             <DialogTitle className="m-0 text-[28px] font-bold tracking-tight">Cierra la sesión</DialogTitle>
             <p className="m-0 text-muted">
-              Guarda {formatMinutesLong(durationMin)} de {skillName}. ¿Qué tan enfocado estuviste?
+              Guarda {formatMinutesLong(durationMin)} de {skillLabel}. ¿Qué tan enfocado estuviste?
             </p>
             <div role="group" aria-label="¿Qué tan enfocado estuviste?" className="flex flex-wrap gap-3">
               {faces.map((face, i) => (
@@ -147,7 +152,7 @@ export function SessionSaveDialog({
             <div className="flex flex-wrap gap-3">
               <div className="bx bg-card px-4 py-2.5">
                 <div className="font-num text-[28px] font-bold leading-none">+{formatMinutesLong(durationMin)}</div>
-                <span className="label-xs">a {skillName}</span>
+                <span className="label-xs">a {skillLabel}</span>
               </div>
               <div className="bx px-4 py-2.5 text-ink-solid" style={{ background: "var(--a2)" }}>
                 <div className="font-num text-[28px] font-bold leading-none">+{gains.coins} $</div>

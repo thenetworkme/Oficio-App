@@ -3,7 +3,9 @@ import type { PracticeSession } from "@/lib/types";
 /** One "Sesión libre" entry as shown in the Estadísticas recent-sessions list. */
 export interface LibreSessionEntry {
   id: string;
-  skillId: string;
+  /** null for a genuinely skill-less libre session — see
+   * PracticeSession.skillId in lib/types.ts. */
+  skillId: string | null;
   startedAt: number;
   durationMin: number;
   note: string | null;

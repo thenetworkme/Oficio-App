@@ -196,7 +196,13 @@ export default function TemporizadorPage() {
   }
 
   const stopwatchElapsedMs = stopwatch.getElapsedMs(swNow);
-  const stopwatchSelectedSkill = skills.find((s) => s.id === stopwatch.skillId) ?? skills[0] ?? null;
+  // "Sesión libre" no longer has a skill picker (the user's explicit ask:
+  // libre sessions are only identified by their free-text intention, and
+  // their hours aren't counted toward any skill's goal), so this is only
+  // ever non-null for a leftover persisted skillId from before that change
+  // — never defaults to the first skill the way Pomodoro's selectedSkill
+  // does above.
+  const stopwatchSelectedSkill = stopwatch.skillId ? skills.find((s) => s.id === stopwatch.skillId) ?? null : null;
   const stopwatchHasTime = stopwatch.running || stopwatchElapsedMs > 0;
 
   // --- Libre break reminder ---------------------------------------------
@@ -342,15 +348,15 @@ export default function TemporizadorPage() {
 
   async function handleSaveStopwatchSession(quality: number, note: string) {
     const pending = stopwatch.pendingSave;
-    if (!pending || !user || !pending.skillId) {
+    if (!pending || !user) {
       stopwatch.clearPendingSave();
       return;
     }
-    const skill = skills.find((s) => s.id === pending.skillId);
-    if (!skill) {
-      stopwatch.clearPendingSave();
-      return;
-    }
+    // "Sesión libre" sessions have no skill (the user's explicit ask: these
+    // hours are general free time, not counted toward any skill's goal) —
+    // pending.skillId is null in the normal case, but this stays null-safe
+    // in case a leftover persisted skillId exists from before that change.
+    const skill = pending.skillId ? skills.find((s) => s.id === pending.skillId) ?? null : null;
     // Same reasoning as handleSaveSession above: pendingSave (persisted in
     // store/stopwatch-store.ts) is only cleared after a successful write, so
     // a dropped connection right as the stopwatch stops doesn't silently
@@ -358,7 +364,7 @@ export default function TemporizadorPage() {
     // open for a retry.
     const result = await saveSession({
       userId: user.uid,
-      skillId: skill.id,
+      skillId: pending.skillId,
       startedAt: Date.now() - pending.durationMin * 60_000,
       durationMin: pending.durationMin,
       quality,
@@ -367,11 +373,18 @@ export default function TemporizadorPage() {
       source: "stopwatch",
     });
     stopwatch.clearPendingSave();
-    enqueueCelebration(result.milestonesCrossed, {
-      skillName: skill.name,
-      skillColor: resolveSkillColor(skill.color),
-      startedAt: skill.createdAt,
-    });
+    // Milestones can't be crossed with no skill (result.milestonesCrossed
+    // is always [] in that case, which enqueueCelebration already no-ops
+    // on), and there's no skill name/color to show without one, so this
+    // only ever enqueues a celebration for the (now rare) legacy case where
+    // a skill was still attached.
+    if (skill) {
+      enqueueCelebration(result.milestonesCrossed, {
+        skillName: skill.name,
+        skillColor: resolveSkillColor(skill.color),
+        startedAt: skill.createdAt,
+      });
+    }
     return result;
   }
 
@@ -548,8 +561,6 @@ export default function TemporizadorPage() {
             Hoy: {todayLibreSessions.length === 0
               ? "ninguna sesión libre aún"
               : `${todayLibreSessions.length} sesión${todayLibreSessions.length === 1 ? "" : "es"} libre${todayLibreSessions.length === 1 ? "" : "s"} · ${formatMinutes(todayLibreMinutes)}`}
-            {" · "}
-            {stopwatchSelectedSkill?.name ?? "—"}
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-10">
@@ -707,19 +718,7 @@ export default function TemporizadorPage() {
             </Card>
 
             <Card className="flex flex-col gap-3 p-4.5">
-              <CardHeading className="text-[18px]">¿Qué vas a practicar?</CardHeading>
-              <div role="group" aria-label="Habilidad" className="flex flex-wrap gap-2">
-                {skills.map((s) => (
-                  <Chip
-                    key={s.id}
-                    pressed={stopwatch.skillId === s.id}
-                    dotColor={resolveSkillColor(s.color)}
-                    onClick={() => stopwatch.setSkill(s.id)}
-                  >
-                    {s.name}
-                  </Chip>
-                ))}
-              </div>
+              <CardHeading className="text-[18px]">¿En qué vas a trabajar?</CardHeading>
               <div className="flex flex-col gap-1.5">
                 <label htmlFor="sw-intencion" className="label-xs">
                   Intención de esta sesión
@@ -787,7 +786,6 @@ export default function TemporizadorPage() {
         elapsedMs={stopwatchElapsedMs}
         hasTime={stopwatchHasTime}
         tooShortNotice={tooShortNotice}
-        skill={stopwatchSelectedSkill}
         intention={swIntention}
         breakReminderMin={stopwatch.breakReminderMin}
         breakLengthMin={stopwatch.breakLengthMin}
@@ -815,7 +813,7 @@ export default function TemporizadorPage() {
       />
 
       <SessionSaveDialog
-        open={Boolean(stopwatch.pendingSave) && stopwatchSelectedSkill != null}
+        open={Boolean(stopwatch.pendingSave)}
         durationMin={stopwatch.pendingSave?.durationMin ?? 0}
         skillName={stopwatchSelectedSkill?.name ?? ""}
         initialNote={swIntention}

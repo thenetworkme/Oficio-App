@@ -232,11 +232,11 @@ export default function EstadisticasPage() {
               <span className="label-xs font-bold">En qué trabajaste</span>
               <div className="flex flex-col gap-1">
                 {libreSummary.recent.map((s) => {
-                  const skill = skills.find((sk) => sk.id === s.skillId);
+                  const skill = s.skillId ? skills.find((sk) => sk.id === s.skillId) : null;
                   return (
                     <div key={s.id} className="flex flex-wrap items-center gap-3 border-t-2 border-dashed border-ink py-2.5">
                       <span className="font-num min-w-20 text-[13px] text-muted">{formatShortDateEs(new Date(s.startedAt))}</span>
-                      <span className="min-w-[90px] font-bold">{skill?.name ?? "—"}</span>
+                      <span className="min-w-[90px] font-bold">{skill?.name ?? "General"}</span>
                       <span className="font-num min-w-16 text-sm text-muted">{formatMinutes(s.durationMin)}</span>
                       <span className="min-w-[140px] flex-1 text-sm">
                         {s.note && s.note.trim() ? s.note : <span className="text-muted">Sin objetivo anotado</span>}

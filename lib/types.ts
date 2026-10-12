@@ -83,7 +83,12 @@ export type SessionSource = "timer" | "manual" | "challenge" | "stopwatch";
 export interface PracticeSession {
   id: string;
   userId: string;
-  skillId: string;
+  /** null for stopwatch-sourced ("Sesión libre") sessions, which are
+   * intentionally NOT tied to any skill — their only identity is the
+   * free-text intention/task the user typed in. Always a real skill id for
+   * every other source (timer/manual/challenge), same precedent as
+   * Reminder.skillId below. */
+  skillId: string | null;
   startedAt: number; // epoch ms
   durationMin: number;
   quality: number | null; // 1-5

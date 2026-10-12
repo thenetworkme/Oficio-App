@@ -6,7 +6,6 @@ import { useState } from "react";
 import { formatStopwatchClock, MIN_STOPWATCH_MS } from "@/lib/stopwatch";
 import { BreakNotifyInline } from "@/components/notifications/BreakNotifyInline";
 import { ExitChip, SoundControl } from "@/components/timer/FullscreenTimer";
-import type { Skill } from "@/lib/types";
 
 /**
  * Fullscreen takeover for "Sesión libre" (the count-up stopwatch mode),
@@ -113,7 +112,6 @@ export interface FullscreenStopwatchProps {
   elapsedMs: number;
   hasTime: boolean;
   tooShortNotice: boolean;
-  skill: Skill | null;
   intention: string;
   breakReminderMin: number | null;
   breakLengthMin: number;
@@ -132,7 +130,6 @@ export function FullscreenStopwatch({
   elapsedMs,
   hasTime,
   tooShortNotice,
-  skill,
   intention,
   breakReminderMin,
   breakLengthMin,
@@ -168,13 +165,6 @@ export function FullscreenStopwatch({
           ) : (
             <>
               <div className="flex flex-wrap items-center gap-3.5">
-                <span
-                  className="bx inline-flex min-h-11 items-center gap-2.5 rounded-chip border-[3px] border-ink px-4.5 text-[15px] font-bold text-ink-solid"
-                  style={{ background: "var(--a3)" }}
-                >
-                  <span aria-hidden="true" className="size-3.5 rounded-full border-[3px] border-ink" style={{ background: "var(--a1)" }} />
-                  {skill?.name ?? "Sin habilidad"}
-                </span>
                 <span className="bx inline-flex min-h-11 items-center rounded-chip border-[3px] border-ink bg-card px-4.5 text-[15px] font-bold">
                   Sesión libre
                 </span>

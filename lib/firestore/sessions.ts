@@ -1,5 +1,6 @@
 import {
   collection,
+  deleteDoc,
   doc,
   getDocs,
   limit as fsLimit,
@@ -7,6 +8,7 @@ import {
   orderBy,
   query,
   runTransaction,
+  setDoc,
   where,
 } from "firebase/firestore";
 import { getDb } from "@/lib/firebase";
@@ -20,7 +22,10 @@ function sessionsCol() {
 
 export interface NewSessionInput {
   userId: string;
-  skillId: string;
+  /** null for stopwatch-sourced ("Sesión libre") sessions — see
+   * PracticeSession.skillId in lib/types.ts. Always a real skill id for
+   * every other source. */
+  skillId: string | null;
   startedAt: number;
   durationMin: number;
   quality: number | null;
@@ -39,17 +44,27 @@ export interface SaveSessionResult {
 }
 
 /**
- * Saves a practice session and atomically bumps the skill's denormalized
- * totalMinutes counter, then records any milestone achievements the session
- * just crossed. The transaction keeps the counter authoritative even under
- * concurrent writes; achievement bookkeeping happens right after, using
- * idempotent deterministic ids so a retry can't double-record a milestone.
+ * Saves a practice session. When linked to a skill (input.skillId set), this
+ * atomically bumps the skill's denormalized totalMinutes counter inside a
+ * transaction, then records any milestone achievements the session just
+ * crossed (idempotent deterministic ids so a retry can't double-record a
+ * milestone). When NOT linked to a skill — stopwatch-sourced "Sesión libre"
+ * sessions, which are intentionally skill-less (see PracticeSession.skillId
+ * in lib/types.ts) — there's no skill total to bump and no milestones that
+ * could be crossed, so this skips the skill transaction/lookup entirely and
+ * just writes the session doc directly.
  */
 export async function saveSession(input: NewSessionInput): Promise<SaveSessionResult> {
   const db = getDb();
   const sessionRef = doc(sessionsCol());
-  const skillRef = doc(db, "skills", input.skillId);
 
+  if (input.skillId == null) {
+    await setDoc(sessionRef, { ...input, createdAt: Date.now() });
+    const { coinsGained, xpGained } = await awardSessionEconomy(input.userId, input.durationMin, input.quality);
+    return { sessionId: sessionRef.id, beforeHours: 0, afterHours: 0, milestonesCrossed: [], coinsGained, xpGained };
+  }
+
+  const skillRef = doc(db, "skills", input.skillId);
   const { beforeMinutes, afterMinutes } = await runTransaction(db, async (tx) => {
     const skillSnap = await tx.get(skillRef);
     if (!skillSnap.exists()) throw new Error("Skill not found");
@@ -71,10 +86,16 @@ export async function saveSession(input: NewSessionInput): Promise<SaveSessionRe
   return { sessionId: sessionRef.id, beforeHours, afterHours, milestonesCrossed: crossed, coinsGained, xpGained };
 }
 
-/** Reverses a session's effect on the skill's total (used when deleting a logged entry). */
-export async function deleteSession(sessionId: string, skillId: string, durationMin: number) {
+/** Reverses a session's effect on the skill's total (used when deleting a
+ * logged entry). skillId null (a skill-less "Sesión libre" entry) just
+ * deletes the session doc — there's no skill total to reverse. */
+export async function deleteSession(sessionId: string, skillId: string | null, durationMin: number) {
   const db = getDb();
   const sessionRef = doc(db, "sessions", sessionId);
+  if (skillId == null) {
+    await deleteDoc(sessionRef);
+    return;
+  }
   const skillRef = doc(db, "skills", skillId);
   await runTransaction(db, async (tx) => {
     const skillSnap = await tx.get(skillRef);

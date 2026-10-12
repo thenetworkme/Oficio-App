@@ -38,12 +38,15 @@ const SESSION_SOURCE_LABEL: Record<PracticeSession["source"], string> = {
   stopwatch: "libre",
 };
 
-function sessionsCsv(sessions: PracticeSession[], skillNameById: Map<string, string>): string {
+/** Exported for direct unit testing (see tests/csv-export.test.ts) — every
+ * other *Csv builder here is internal-only, but this one has the
+ * skillId-can-be-null fallback that's worth covering directly. */
+export function sessionsCsv(sessions: PracticeSession[], skillNameById: Map<string, string>): string {
   return toCsv(
     ["id", "habilidad", "inicio", "duracion_min", "calidad", "nota", "pomodoros", "origen"],
     sessions.map((s) => [
       s.id,
-      skillNameById.get(s.skillId) ?? s.skillId,
+      s.skillId ? (skillNameById.get(s.skillId) ?? s.skillId) : "General",
       new Date(s.startedAt).toISOString(),
       s.durationMin,
       s.quality,
