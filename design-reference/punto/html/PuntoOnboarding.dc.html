@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Punto — Primeros pasos</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit;color:inherit}
+button{cursor:pointer}
+*{box-sizing:border-box}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.mono{font-family:'Geist Mono',ui-monospace,monospace;letter-spacing:.04em}
+.lab{font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8A8A90}
+.dot{aspect-ratio:1/1;border-radius:50%;transition:background .2s}
+.tab{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#8A8A90;padding:24px 0;position:relative;transition:color .15s}
+.tab:hover{color:#F4F4F1}
+.tab[aria-current="page"]{color:#F4F4F1}
+.tab[aria-current="page"]::before{content:'';position:absolute;left:-14px;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:#FF4A1C}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;height:52px;padding:0 26px;border-radius:999px;border:1px solid #3A3A3F;background:transparent;color:#F4F4F1;font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;transition:background .15s,border-color .15s,transform .15s;white-space:nowrap}
+.btn:hover{background:#17171A;border-color:#55555B}
+.btn.sig{background:#FF4A1C;border-color:#FF4A1C;color:#0A0A0B;font-weight:500}
+.btn.sig:hover{background:#FF6038;transform:translateY(-1px)}
+.btn.sm{height:40px;padding:0 18px;font-size:11px}
+.btn.danger{border-color:#7A2A18;color:#FF6A47}
+.btn.danger:hover{background:#1A0E0B;border-color:#FF4A1C}
+.opt{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#6E6E74;background:none;border:0;padding:0;transition:color .15s;display:inline-flex;gap:8px;align-items:center}
+.opt:hover{color:#F4F4F1}
+.opt[aria-pressed="true"]{color:#F4F4F1}
+.opt[aria-pressed="true"]::before{content:'';width:6px;height:6px;border-radius:50%;background:#FF4A1C}
+.chip{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;border:1px solid #3A3A3F;border-radius:999px;padding:9px 18px;background:transparent;color:#8A8A90;transition:all .15s}
+.chip:hover{border-color:#6E6E74;color:#F4F4F1}
+.chip[aria-pressed="true"]{background:#F4F4F1;border-color:#F4F4F1;color:#0A0A0B}
+.inp{width:100%;background:transparent;border:0;border-bottom:1px solid #3A3A3F;color:#F4F4F1;font-size:18px;padding:8px 0 12px;font-family:inherit;transition:border-color .15s;border-radius:0}
+.inp::placeholder{color:#55555B}
+.inp:focus{outline:none;border-bottom-color:#FF4A1C}
+textarea.inp{border:1px solid #2E2E33;border-radius:14px;padding:14px 16px;min-height:130px;resize:vertical;line-height:1.55;font-size:16px}
+textarea.inp:focus{border-color:#FF4A1C}
+.tg{width:48px;height:28px;border-radius:999px;border:1px solid #3A3A3F;background:transparent;position:relative;transition:border-color .2s;flex:none}
+.tg::after{content:'';position:absolute;top:5px;left:5px;width:16px;height:16px;border-radius:50%;background:#6E6E74;transition:transform .2s,background .2s}
+.tg[aria-pressed="true"]{border-color:#FF4A1C}
+.tg[aria-pressed="true"]::after{transform:translateX(20px);background:#FF4A1C}
+.sq{width:44px;height:44px;border-radius:50%;border:1px solid #3A3A3F;background:transparent;color:#F4F4F1;font-size:20px;line-height:1;transition:background .15s,border-color .15s;flex:none}
+.sq:hover{background:#17171A;border-color:#55555B}
+.row{display:grid;align-items:center;gap:24px;padding:20px 0;border-top:1px solid #232326}
+.box{border:1px solid #232326;border-radius:22px;padding:28px}
+.link{color:#8A8A90;border-bottom:1px solid #3A3A3F;transition:color .15s}
+.link:hover{color:#F4F4F1}
+.dd{display:flex;gap:6px}
+.dd button{width:34px;height:34px;border-radius:50%;border:1px solid #3A3A3F;background:transparent;color:#6E6E74;font-family:'Geist Mono',monospace;font-size:11px;transition:all .15s}
+.dd button[aria-pressed="true"]{background:#F4F4F1;border-color:#F4F4F1;color:#0A0A0B}
+.kp>div:first-child{border-left:0!important;padding-left:0!important}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #FF4A1C;outline-offset:3px}
+@keyframes blink{50%{opacity:.15}}
+@keyframes breathe{0%,100%{transform:scale(.62);opacity:.7}50%{transform:scale(1);opacity:1}}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}}
+.pop{animation:pop .4s ease both}
+
+</style>
+</helmet>
+<div style="min-height:900px;background:#0A0A0B;color:#F4F4F1;font-family:'Geist',system-ui,sans-serif;font-size:15px;line-height:1.5">
+<header style="display:flex;align-items:center;padding:0 40px;height:68px;border-bottom:1px solid #232326"><a href="PuntoPanel.dc.html" style="flex:1;font-weight:600;font-size:20px;letter-spacing:-.02em;display:flex;align-items:center;gap:3px">oficio<i style="width:7px;height:7px;border-radius:50%;background:#FF4A1C;margin-top:9px"></i></a><span class="lab" style="margin-right:28px">Paso {{stepN}} de 4</span><a href="PuntoPanel.dc.html" class="lab link" style="border:0">Saltar</a></header>
+<main style="max-width:860px;margin:0 auto;padding:56px 40px 64px"><div style="display:flex;gap:6px;margin-bottom:56px"><sc-for list="{{bars}}" as="b" hint-placeholder-count="4"><i style="flex:1;height:4px;border-radius:3px;background:{{b.bg}};transition:background .3s"></i></sc-for></div>
+<section style="display:{{d0}}" class="pop"><div class="lab" style="margin-bottom:14px">01 · Tu primera habilidad</div><h1 style="margin:0 0 36px;font-size:72px;font-weight:300;letter-spacing:-.05em;line-height:.98">¿Qué quieres<br>dominar?</h1><input class="inp" placeholder="Escribe una habilidad…" value="{{skill}}" onChange="{{typeS}}" style="font-size:36px;font-weight:300;letter-spacing:-.03em;padding-bottom:16px"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:26px"><sc-for list="{{sugg}}" as="s" hint-placeholder-count="6"><button type="button" class="chip" aria-pressed="{{s.on}}" onClick="{{s.pick}}">{{s.l}}</button></sc-for></div></section>
+<section style="display:{{d1}}" class="pop"><div class="lab" style="margin-bottom:14px">02 · Tu meta</div><h1 style="margin:0 0 36px;font-size:72px;font-weight:300;letter-spacing:-.05em;line-height:.98">¿Cuántas horas<br>quieres sumar?</h1><div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{goals}}" as="g" hint-placeholder-count="4"><button type="button" class="chip" aria-pressed="{{g.on}}" onClick="{{g.pick}}">{{g.l}}</button></sc-for></div><p style="color:#8A8A90;font-size:17px;margin:26px 0 0;max-width:520px">{{goalHint}}</p></section>
+<section style="display:{{d2}}" class="pop"><div class="lab" style="margin-bottom:14px">03 · Tu ritmo</div><h1 style="margin:0 0 36px;font-size:72px;font-weight:300;letter-spacing:-.05em;line-height:.98">¿Cuánto vas a<br>practicar?</h1><div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap"><button type="button" class="sq" aria-label="Menos" onClick="{{dec}}">−</button><span class="mono" style="font-size:56px;letter-spacing:-.04em;min-width:210px;text-align:center">{{minsText}}</span><button type="button" class="sq" aria-label="Más" onClick="{{inc}}">+</button><span style="color:#8A8A90">por día</span></div><div class="row" style="grid-template-columns:1fr auto;margin-top:36px"><div><div style="font-size:19px">Recordatorio diario</div><div style="color:#8A8A90;font-size:14px">Te avisamos a las 19:00 para practicar</div></div><button type="button" class="tg" aria-label="Recordatorio" aria-pressed="{{rem}}" onClick="{{toggleRem}}"></button></div></section>
+<section style="display:{{d3}}" class="pop"><div class="lab" style="margin-bottom:14px">04 · Listo</div><h1 style="margin:0 0 36px;font-size:72px;font-weight:300;letter-spacing:-.05em;line-height:.98">Todo listo,<br>{{who}}.</h1><sc-for list="{{summary}}" as="f" hint-placeholder-count="4"><div class="row" style="grid-template-columns:1fr auto;padding:18px 0"><span class="lab">{{f.l}}</span><span class="mono" style="font-size:18px">{{f.v}}</span></div></sc-for></section>
+<div style="display:flex;gap:12px;margin-top:48px"><button type="button" class="btn" style="display:{{dBack}}" onClick="{{prev}}">Atrás</button><button type="button" class="btn sig" style="display:{{dNext}}" onClick="{{next}}">Continuar</button><a href="PuntoPanel.dc.html" class="btn sig" style="display:{{dGo}}">Empezar a practicar</a></div></main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const st = this.state || {}; const set = (o) => this.setState(o); const step = st.step ?? 0; const goal = st.goal ?? 2; const mins = st.mins ?? 120; const skill = st.skill ?? ''; const sg = st.sg ?? -1;
+    const SG = ['Programación', 'Inglés', 'Guitarra', 'Dibujo', 'Piano', 'Escritura']; const G = [1000, 5000, 10000, 20000]; const fm = (n) => n >= 1000 ? Math.floor(n / 1000) + '.' + String(n % 1000).padStart(3, '0') : String(n);
+    const yearsN = G[goal] / (mins / 60 * 5 * 52); const mt = Math.floor(mins / 60) + 'h ' + String(mins % 60).padStart(2, '0') + 'm';
+    return {
+      stepN: step + 1, bars: [0, 1, 2, 3].map(i => ({ bg: i <= step ? '#F4F4F1' : '#232326' })), d0: step === 0 ? 'block' : 'none', d1: step === 1 ? 'block' : 'none', d2: step === 2 ? 'block' : 'none', d3: step === 3 ? 'block' : 'none',
+      skill, typeS: (e) => set({ skill: e.target.value, sg: -1 }), sugg: SG.map((l, i) => ({ l, on: sg === i, pick: () => set({ sg: i, skill: l }) })),
+      goals: G.map((v, i) => ({ l: fm(v) + ' h', on: goal === i, pick: () => set({ goal: i }) })), goalHint: ['Una base sólida: suficiente para practicar con confianza.', 'Nivel avanzado. Se nota en lo que haces todos los días.', 'La regla clásica de la maestría. Constancia durante años.', 'Para quienes buscan excelencia de élite.'][goal],
+      minsText: mt, dec: () => set({ mins: Math.max(15, mins - 15) }), inc: () => set({ mins: Math.min(480, mins + 15) }), rem: st.rem ?? true, toggleRem: () => set({ rem: !(st.rem ?? true) }),
+      who: 'Kobox', summary: [['Habilidad', skill || 'Programación'], ['Meta', fm(G[goal]) + ' horas'], ['Ritmo', mt + ' · 5 días a la semana'], ['Llegarías en', yearsN.toFixed(1).replace('.', ',') + ' años']].map(([l, v]) => ({ l, v })),
+      dBack: step > 0 ? 'inline-flex' : 'none', dNext: step < 3 ? 'inline-flex' : 'none', dGo: step === 3 ? 'inline-flex' : 'none', prev: () => set({ step: Math.max(0, step - 1) }), next: () => set({ step: Math.min(3, step + 1) })
+    };
+  }
+}
+</script>
+</body>
+</html>

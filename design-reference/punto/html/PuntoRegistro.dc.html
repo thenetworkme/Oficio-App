@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Punto — Registro manual</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit;color:inherit}
+button{cursor:pointer}
+*{box-sizing:border-box}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.mono{font-family:'Geist Mono',ui-monospace,monospace;letter-spacing:.04em}
+.lab{font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8A8A90}
+.dot{aspect-ratio:1/1;border-radius:50%;transition:background .2s}
+.tab{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#8A8A90;padding:24px 0;position:relative;transition:color .15s}
+.tab:hover{color:#F4F4F1}
+.tab[aria-current="page"]{color:#F4F4F1}
+.tab[aria-current="page"]::before{content:'';position:absolute;left:-14px;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:#FF4A1C}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;height:52px;padding:0 26px;border-radius:999px;border:1px solid #3A3A3F;background:transparent;color:#F4F4F1;font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;transition:background .15s,border-color .15s,transform .15s;white-space:nowrap}
+.btn:hover{background:#17171A;border-color:#55555B}
+.btn.sig{background:#FF4A1C;border-color:#FF4A1C;color:#0A0A0B;font-weight:500}
+.btn.sig:hover{background:#FF6038;transform:translateY(-1px)}
+.btn.sm{height:40px;padding:0 18px;font-size:11px}
+.btn.danger{border-color:#7A2A18;color:#FF6A47}
+.btn.danger:hover{background:#1A0E0B;border-color:#FF4A1C}
+.opt{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#6E6E74;background:none;border:0;padding:0;transition:color .15s;display:inline-flex;gap:8px;align-items:center}
+.opt:hover{color:#F4F4F1}
+.opt[aria-pressed="true"]{color:#F4F4F1}
+.opt[aria-pressed="true"]::before{content:'';width:6px;height:6px;border-radius:50%;background:#FF4A1C}
+.chip{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;border:1px solid #3A3A3F;border-radius:999px;padding:9px 18px;background:transparent;color:#8A8A90;transition:all .15s}
+.chip:hover{border-color:#6E6E74;color:#F4F4F1}
+.chip[aria-pressed="true"]{background:#F4F4F1;border-color:#F4F4F1;color:#0A0A0B}
+.inp{width:100%;background:transparent;border:0;border-bottom:1px solid #3A3A3F;color:#F4F4F1;font-size:18px;padding:8px 0 12px;font-family:inherit;transition:border-color .15s;border-radius:0}
+.inp::placeholder{color:#55555B}
+.inp:focus{outline:none;border-bottom-color:#FF4A1C}
+textarea.inp{border:1px solid #2E2E33;border-radius:14px;padding:14px 16px;min-height:130px;resize:vertical;line-height:1.55;font-size:16px}
+textarea.inp:focus{border-color:#FF4A1C}
+.tg{width:48px;height:28px;border-radius:999px;border:1px solid #3A3A3F;background:transparent;position:relative;transition:border-color .2s;flex:none}
+.tg::after{content:'';position:absolute;top:5px;left:5px;width:16px;height:16px;border-radius:50%;background:#6E6E74;transition:transform .2s,background .2s}
+.tg[aria-pressed="true"]{border-color:#FF4A1C}
+.tg[aria-pressed="true"]::after{transform:translateX(20px);background:#FF4A1C}
+.sq{width:44px;height:44px;border-radius:50%;border:1px solid #3A3A3F;background:transparent;color:#F4F4F1;font-size:20px;line-height:1;transition:background .15s,border-color .15s;flex:none}
+.sq:hover{background:#17171A;border-color:#55555B}
+.row{display:grid;align-items:center;gap:24px;padding:20px 0;border-top:1px solid #232326}
+.box{border:1px solid #232326;border-radius:22px;padding:28px}
+.link{color:#8A8A90;border-bottom:1px solid #3A3A3F;transition:color .15s}
+.link:hover{color:#F4F4F1}
+.dd{display:flex;gap:6px}
+.dd button{width:34px;height:34px;border-radius:50%;border:1px solid #3A3A3F;background:transparent;color:#6E6E74;font-family:'Geist Mono',monospace;font-size:11px;transition:all .15s}
+.dd button[aria-pressed="true"]{background:#F4F4F1;border-color:#F4F4F1;color:#0A0A0B}
+.kp>div:first-child{border-left:0!important;padding-left:0!important}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #FF4A1C;outline-offset:3px}
+@keyframes blink{50%{opacity:.15}}
+@keyframes breathe{0%,100%{transform:scale(.62);opacity:.7}50%{transform:scale(1);opacity:1}}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}}
+.pop{animation:pop .4s ease both}
+
+</style>
+</helmet>
+<div style="min-height:900px;background:#0A0A0B;color:#F4F4F1;font-family:'Geist',system-ui,sans-serif;font-size:15px;line-height:1.5">
+<header style="display:flex;align-items:center;padding:0 40px;height:68px;border-bottom:1px solid #232326"><a href="PuntoPanel.dc.html" style="flex:1;font-weight:600;font-size:20px;letter-spacing:-.02em;display:flex;align-items:center;gap:3px">oficio<i style="width:7px;height:7px;border-radius:50%;background:#FF4A1C;margin-top:9px"></i></a><nav aria-label="Principal" style="display:flex;gap:32px;padding-left:14px"><a class="tab" href="PuntoPanel.dc.html" aria-current="page">Hoy</a><a class="tab" href="PuntoTimer.dc.html" >Práctica</a><a class="tab" href="PuntoStats.dc.html" >Datos</a><a class="tab" href="PuntoRetos.dc.html" >Retos</a><a class="tab" href="PuntoLogros.dc.html" >Logros</a><a class="tab" href="PuntoTienda.dc.html" >Tienda</a></nav><div style="flex:1;display:flex;justify-content:flex-end;align-items:center;gap:16px"><span class="lab">Mié 14.10.2026</span><a href="PuntoAvisos.dc.html" aria-label="Avisos" style="color:#8A8A90;position:relative;display:flex"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0112 0v5l2 2H4zM10 21h4"/></svg><i style="position:absolute;right:-1px;top:-1px;width:6px;height:6px;border-radius:50%;background:#FF4A1C"></i></a><a href="PuntoAjustes.dc.html" aria-label="Ajustes" style="width:34px;height:34px;border-radius:50%;border:1px solid #3A3A3F;display:flex;align-items:center;justify-content:center;font-family:'Geist Mono',monospace;font-size:12px">K</a></div></header><main style="padding:0 40px 64px"><div style="padding:44px 0 34px;display:flex;align-items:flex-end;gap:32px;flex-wrap:wrap"><div style="flex:1;min-width:320px"><a href="PuntoPanel.dc.html" class="lab link" style="display:inline-block;margin-bottom:18px;border:0">← Hoy</a><br><div class="lab" style="margin-bottom:14px">Registro manual</div><h1 style="margin:0;font-size:76px;font-weight:300;letter-spacing:-.05em;line-height:.95">Añadir horas</h1></div><div style="display:flex;gap:12px;align-items:center"></div></div>
+<section style="display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);border-top:1px solid #232326"><div style="padding:36px 56px 0 0;border-right:1px solid #232326;display:flex;flex-direction:column;gap:36px">
+<div><span class="lab" style="display:block;margin-bottom:14px">Habilidad</span><div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{skills}}" as="k" hint-placeholder-count="3"><button type="button" class="chip" aria-pressed="{{k.on}}" onClick="{{k.pick}}">{{k.n}}</button></sc-for></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:36px"><div><span class="lab" style="display:block;margin-bottom:14px">Día</span><div style="display:flex;gap:8px"><sc-for list="{{days}}" as="d" hint-placeholder-count="3"><button type="button" class="chip" aria-pressed="{{d.on}}" onClick="{{d.pick}}">{{d.l}}</button></sc-for></div></div><label><span class="lab" style="display:block;margin-bottom:2px">Hora de inicio</span><input class="inp mono" value="{{start}}" onChange="{{typeS}}"></label></div>
+<div><span class="lab" style="display:block;margin-bottom:14px">Duración</span><div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap"><button type="button" class="sq" aria-label="Menos 5 minutos" onClick="{{dec}}">−</button><span class="mono" style="font-size:56px;letter-spacing:-.04em;min-width:190px;text-align:center">{{durText}}</span><button type="button" class="sq" aria-label="Más 5 minutos" onClick="{{inc}}">+</button><div style="display:flex;gap:8px;margin-left:12px"><sc-for list="{{quick}}" as="q" hint-placeholder-count="4"><button type="button" class="chip" aria-pressed="{{q.on}}" onClick="{{q.pick}}">{{q.l}}</button></sc-for></div></div></div>
+<div><span class="lab" style="display:block;margin-bottom:14px">Calidad del enfoque</span><div style="display:flex;gap:14px;align-items:center"><sc-for list="{{qual}}" as="q" hint-placeholder-count="5"><button type="button" aria-label="{{q.l}}" onClick="{{q.pick}}" style="width:34px;height:34px;border-radius:50%;border:1px solid {{q.bd}};background:{{q.bg}};transition:all .15s"></button></sc-for><span class="mono" style="color:#8A8A90;font-size:12px;margin-left:8px">{{qualText}}</span></div></div>
+<label><span class="lab" style="display:block;margin-bottom:12px">Nota (opcional)</span><textarea class="inp" placeholder="Qué practicaste, qué te costó…" value="{{note}}" onChange="{{typeN}}"></textarea></label></div>
+<div style="padding:36px 0 0 56px"><div class="lab">Se registrará</div><div role="img" aria-label="Duración" style="{{gridStyle}};margin:26px 0 34px"><sc-for list="{{dots}}" as="d" hint-placeholder-count="175"><i class="dot" style="background:{{d.bg}}"></i></sc-for></div>
+<sc-for list="{{facts}}" as="f" hint-placeholder-count="4"><div class="row" style="grid-template-columns:1fr auto;padding:14px 0"><span class="lab">{{f.l}}</span><span class="mono" style="font-size:15px;color:{{f.c}}">{{f.v}}</span></div></sc-for>
+<div style="display:flex;gap:12px;margin-top:32px"><a href="PuntoPanel.dc.html" class="btn sig">Guardar registro</a><a href="PuntoPanel.dc.html" class="btn">Cancelar</a></div></div></section></main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":900}}'>
+class Component extends DCLogic {
+  dm(str, on, off, sig, running) {
+    const G = { '0': ['01110', '10001', '10011', '10101', '11001', '10001', '01110'], '1': ['00100', '01100', '00100', '00100', '00100', '00100', '01110'], '2': ['01110', '10001', '00001', '00010', '00100', '01000', '11111'], '3': ['11110', '00001', '00001', '01110', '00001', '00001', '11110'], '4': ['00010', '00110', '01010', '10010', '11111', '00010', '00010'], '5': ['11111', '10000', '11110', '00001', '00001', '10001', '01110'], '6': ['00110', '01000', '10000', '11110', '10001', '10001', '01110'], '7': ['11111', '00001', '00010', '00100', '01000', '01000', '01000'], '8': ['01110', '10001', '10001', '01110', '10001', '10001', '01110'], '9': ['01110', '10001', '10001', '01111', '00001', '00010', '01100'], ':': ['0', '0', '1', '0', '1', '0', '0'], '/': ['00001', '00010', '00010', '00100', '01000', '01000', '10000'], '+': ['0', '0', '0', '0', '0', '0', '0'] };
+    const cols = [];
+    str.split('').forEach((ch, i) => { const g = G[ch]; for (let c = 0; c < g[0].length; c++) cols.push({ colon: ch === ':', rows: g.map(r => r[c] === '1') }); if (i < str.length - 1) cols.push({ colon: false, rows: Array(7).fill(false) }); });
+    const dots = [];
+    for (let r = 0; r < 7; r++) for (let c = 0; c < cols.length; c++) { const lit = cols[c].rows[r]; const colon = cols[c].colon; dots.push({ bg: lit ? (colon ? sig : on) : off, an: colon && lit && running ? 'blink 1s steps(1) infinite' : 'none' }); }
+    return { dots, n: cols.length };
+  }
+  hm(min) { return String(Math.floor(min / 60)).padStart(2, '0') + ':' + String(min % 60).padStart(2, '0'); }
+  fm(n) { return n >= 1000 ? Math.floor(n / 1000) + '.' + String(n % 1000).padStart(3, '0') : String(n); }
+  renderVals() {
+    const st = this.state || {}; const names = ['Programación', 'Inglés', 'Guitarra']; const base = [1284, 612, 244];
+    const sk = st.sk ?? 0; const dur = st.dur ?? 45; const q = st.q ?? 4; const day = st.day ?? 0; const set = (o) => this.setState(o);
+    const m = this.dm(this.hm(dur), '#F4F4F1', '#19191C', '#FF4A1C', false);
+    const total = base[sk] + dur / 60; const tot = this.fm(Math.floor(total)) + ',' + Math.round((total % 1) * 10);
+    const today = day === 0 ? 110 + dur : 110; const ql = ['Disperso', 'Regular', 'Bien', 'Muy bien', 'En flujo'];
+    return {
+      skills: names.map((n, i) => ({ n, on: sk === i, pick: () => set({ sk: i }) })), days: ['Hoy', 'Ayer', 'Otro'].map((l, i) => ({ l, on: day === i, pick: () => set({ day: i }) })),
+      start: st.start ?? '20:15', typeS: (e) => set({ start: e.target.value }), durText: dur + ' min', dec: () => set({ dur: Math.max(5, dur - 5) }), inc: () => set({ dur: Math.min(480, dur + 5) }),
+      quick: [15, 25, 45, 60].map(v => ({ l: v + '', on: dur === v, pick: () => set({ dur: v }) })),
+      qual: [1, 2, 3, 4, 5].map(i => ({ l: ql[i - 1], bg: i <= q ? '#F4F4F1' : 'transparent', bd: i <= q ? '#F4F4F1' : '#3A3A3F', pick: () => set({ q: i }) })), qualText: ql[q - 1],
+      note: st.note ?? '', typeN: (e) => set({ note: e.target.value }),
+      dots: m.dots, gridStyle: 'display:grid;grid-template-columns:repeat(' + m.n + ',1fr);gap:7px',
+      facts: [['Habilidad', names[sk], '#F4F4F1'], ['Nuevo total', tot + ' h', '#F4F4F1'], ['Avance a 10.000 h', (total / 100).toFixed(2).replace('.', ',') + ' %', '#F4F4F1'], ['Hoy', this.hm(today) + (today >= 120 ? ' · meta cumplida' : ' / 02:00'), today >= 120 ? '#FF4A1C' : '#F4F4F1']].map(([l, v, c]) => ({ l, v, c }))
+    };
+  }
+}
+</script>
+</body>
+</html>

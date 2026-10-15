@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Punto — Logros</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit;color:inherit}
+button{cursor:pointer}
+*{box-sizing:border-box}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.mono{font-family:'Geist Mono',ui-monospace,monospace;letter-spacing:.04em}
+.lab{font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8A8A90}
+.dot{aspect-ratio:1/1;border-radius:50%;transition:background .2s}
+.tab{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#8A8A90;padding:24px 0;position:relative;transition:color .15s}
+.tab:hover{color:#F4F4F1}
+.tab[aria-current="page"]{color:#F4F4F1}
+.tab[aria-current="page"]::before{content:'';position:absolute;left:-14px;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:#FF4A1C}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;height:52px;padding:0 26px;border-radius:999px;border:1px solid #3A3A3F;background:transparent;color:#F4F4F1;font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;transition:background .15s,border-color .15s,transform .15s;white-space:nowrap}
+.btn:hover{background:#17171A;border-color:#55555B}
+.btn.sig{background:#FF4A1C;border-color:#FF4A1C;color:#0A0A0B;font-weight:500}
+.btn.sig:hover{background:#FF6038;transform:translateY(-1px)}
+.btn.sm{height:40px;padding:0 18px;font-size:11px}
+.btn.danger{border-color:#7A2A18;color:#FF6A47}
+.btn.danger:hover{background:#1A0E0B;border-color:#FF4A1C}
+.opt{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#6E6E74;background:none;border:0;padding:0;transition:color .15s;display:inline-flex;gap:8px;align-items:center}
+.opt:hover{color:#F4F4F1}
+.opt[aria-pressed="true"]{color:#F4F4F1}
+.opt[aria-pressed="true"]::before{content:'';width:6px;height:6px;border-radius:50%;background:#FF4A1C}
+.chip{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;border:1px solid #3A3A3F;border-radius:999px;padding:9px 18px;background:transparent;color:#8A8A90;transition:all .15s}
+.chip:hover{border-color:#6E6E74;color:#F4F4F1}
+.chip[aria-pressed="true"]{background:#F4F4F1;border-color:#F4F4F1;color:#0A0A0B}
+.inp{width:100%;background:transparent;border:0;border-bottom:1px solid #3A3A3F;color:#F4F4F1;font-size:18px;padding:8px 0 12px;font-family:inherit;transition:border-color .15s;border-radius:0}
+.inp::placeholder{color:#55555B}
+.inp:focus{outline:none;border-bottom-color:#FF4A1C}
+textarea.inp{border:1px solid #2E2E33;border-radius:14px;padding:14px 16px;min-height:130px;resize:vertical;line-height:1.55;font-size:16px}
+textarea.inp:focus{border-color:#FF4A1C}
+.tg{width:48px;height:28px;border-radius:999px;border:1px solid #3A3A3F;background:transparent;position:relative;transition:border-color .2s;flex:none}
+.tg::after{content:'';position:absolute;top:5px;left:5px;width:16px;height:16px;border-radius:50%;background:#6E6E74;transition:transform .2s,background .2s}
+.tg[aria-pressed="true"]{border-color:#FF4A1C}
+.tg[aria-pressed="true"]::after{transform:translateX(20px);background:#FF4A1C}
+.sq{width:44px;height:44px;border-radius:50%;border:1px solid #3A3A3F;background:transparent;color:#F4F4F1;font-size:20px;line-height:1;transition:background .15s,border-color .15s;flex:none}
+.sq:hover{background:#17171A;border-color:#55555B}
+.row{display:grid;align-items:center;gap:24px;padding:20px 0;border-top:1px solid #232326}
+.box{border:1px solid #232326;border-radius:22px;padding:28px}
+.link{color:#8A8A90;border-bottom:1px solid #3A3A3F;transition:color .15s}
+.link:hover{color:#F4F4F1}
+.dd{display:flex;gap:6px}
+.dd button{width:34px;height:34px;border-radius:50%;border:1px solid #3A3A3F;background:transparent;color:#6E6E74;font-family:'Geist Mono',monospace;font-size:11px;transition:all .15s}
+.dd button[aria-pressed="true"]{background:#F4F4F1;border-color:#F4F4F1;color:#0A0A0B}
+.kp>div:first-child{border-left:0!important;padding-left:0!important}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #FF4A1C;outline-offset:3px}
+@keyframes blink{50%{opacity:.15}}
+@keyframes breathe{0%,100%{transform:scale(.62);opacity:.7}50%{transform:scale(1);opacity:1}}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}}
+.pop{animation:pop .4s ease both}
+
+</style>
+</helmet>
+<div style="min-height:900px;background:#0A0A0B;color:#F4F4F1;font-family:'Geist',system-ui,sans-serif;font-size:15px;line-height:1.5">
+<header style="display:flex;align-items:center;padding:0 40px;height:68px;border-bottom:1px solid #232326"><a href="PuntoPanel.dc.html" style="flex:1;font-weight:600;font-size:20px;letter-spacing:-.02em;display:flex;align-items:center;gap:3px">oficio<i style="width:7px;height:7px;border-radius:50%;background:#FF4A1C;margin-top:9px"></i></a><nav aria-label="Principal" style="display:flex;gap:32px;padding-left:14px"><a class="tab" href="PuntoPanel.dc.html" >Hoy</a><a class="tab" href="PuntoTimer.dc.html" >Práctica</a><a class="tab" href="PuntoStats.dc.html" >Datos</a><a class="tab" href="PuntoRetos.dc.html" >Retos</a><a class="tab" href="PuntoLogros.dc.html" aria-current="page">Logros</a><a class="tab" href="PuntoTienda.dc.html" >Tienda</a></nav><div style="flex:1;display:flex;justify-content:flex-end;align-items:center;gap:16px"><span class="lab">Mié 14.10.2026</span><a href="PuntoAvisos.dc.html" aria-label="Avisos" style="color:#8A8A90;position:relative;display:flex"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0112 0v5l2 2H4zM10 21h4"/></svg><i style="position:absolute;right:-1px;top:-1px;width:6px;height:6px;border-radius:50%;background:#FF4A1C"></i></a><a href="PuntoAjustes.dc.html" aria-label="Ajustes" style="width:34px;height:34px;border-radius:50%;border:1px solid #3A3A3F;display:flex;align-items:center;justify-content:center;font-family:'Geist Mono',monospace;font-size:12px">K</a></div></header><main style="padding:0 40px 64px"><div style="padding:44px 0 34px;display:flex;align-items:flex-end;gap:32px;flex-wrap:wrap"><div style="flex:1;min-width:320px"><div class="lab" style="margin-bottom:14px">Logros</div><h1 style="margin:0;font-size:76px;font-weight:300;letter-spacing:-.05em;line-height:.95">8 de 16</h1></div><div style="display:flex;gap:12px;align-items:center"><div role="group" aria-label="Habilidad" style="display:flex;gap:8px"><sc-for list="{{filters}}" as="f" hint-placeholder-count="4"><button type="button" class="chip" aria-pressed="{{f.on}}" onClick="{{f.pick}}">{{f.l}}</button></sc-for></div></div></div>
+<section style="border-top:1px solid #232326;padding:36px 0;display:grid;grid-template-columns:auto 1fr auto;gap:44px;align-items:center;border-bottom:1px solid #232326"><div><span style="display:inline-grid;grid-template-columns:repeat(7,14px);gap:5px"><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#FF4A1C"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i><i style="width:14px;height:14px;border-radius:50%;background:#1B1B1E"></i></span></div><div><div class="lab">Siguiente logro</div><div style="font-size:44px;font-weight:300;letter-spacing:-.04em;line-height:1.1;margin:8px 0 18px">Racha de 14 días</div><div style="display:flex;gap:6px;max-width:560px"><sc-for list="{{heroTicks}}" as="t" hint-placeholder-count="14"><i style="flex:1;height:26px;border-radius:2px;background:{{t.bg}}"></i></sc-for></div></div><div style="text-align:right"><div class="mono" style="font-size:56px;letter-spacing:-.05em">12/14</div><div class="lab">Faltan 2 días</div></div></section>
+<section style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:0"><sc-for list="{{tiles}}" as="a" hint-placeholder-count="12"><div style="padding:28px 26px 30px;border-bottom:1px solid #232326;border-right:1px solid #232326;opacity:{{a.op}}"><div style="display:grid;grid-template-columns:repeat(7,9px);gap:4px;margin-bottom:22px"><sc-for list="{{a.dots}}" as="d" hint-placeholder-count="49"><i style="width:9px;height:9px;border-radius:50%;background:{{d.bg}}"></i></sc-for></div><div style="font-size:19px;font-weight:500;letter-spacing:-.01em">{{a.n}}</div><div style="color:#8A8A90;font-size:14px;margin:2px 0 14px;min-height:42px">{{a.d}}</div><div style="display:flex;align-items:center;gap:10px"><div style="flex:1;height:3px;background:#232326;border-radius:3px"><div style="width:{{a.p}}%;height:100%;background:{{a.c}};border-radius:3px"></div></div><span class="mono" style="font-size:11px;color:{{a.c}}">{{a.t}}</span></div></div></sc-for></section></main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":900}}'>
+class Component extends DCLogic {
+  ic7(name, on, off) {
+    const P = { flame: ['0001000', '0011000', '0011100', '0111110', '0111110', '0111110', '0011100'], clock: ['0011100', '0100010', '1001001', '1001101', '1000001', '0100010', '0011100'], flag: ['1111100', '1111110', '1111100', '1000000', '1000000', '1000000', '1000000'], star: ['0001000', '0001000', '1111111', '0111110', '0011100', '0110110', '0100010'], bolt: ['0001100', '0011000', '0110000', '1111110', '0001100', '0011000', '0010000'], moon: ['0011100', '0111000', '1110000', '1110000', '1110000', '0111001', '0011110'], sun: ['1001001', '0101010', '0011100', '1111111', '0011100', '0101010', '1001001'], book: ['1111011', '1000101', '1011101', '1000101', '1011101', '1000101', '1111011'], trophy: ['1111111', '1111111', '0111110', '0011100', '0001000', '0001000', '0111110'], gift: ['0011100', '0100010', '1111111', '1001001', '1111111', '1001001', '1111111'], coffee: ['0100100', '0010010', '1111100', '1111101', '1111101', '0111110', '1111111'], game: ['0000000', '0111110', '1101011', '1011101', '1101011', '0111110', '0000000'], cake: ['0001000', '0001000', '0111110', '1111111', '1011101', '1111111', '1111111'], film: ['0000100', '1111111', '1010101', '1111111', '1000001', '1000001', '1111111'], camera: ['0111000', '1111111', '1000001', '1011101', '1010101', '1011101', '1111111'], heart: ['0110110', '1111111', '1111111', '1111111', '0111110', '0011100', '0001000'] };
+    return P[name].join('').split('').map(c => ({ bg: c === '1' ? on : off }));
+  }
+  renderVals() {
+    const f = (this.state || {}).f ?? 0;
+    const A = [['flame', 'Racha de 7 días', 'Practica una semana sin faltar', 0, 1], ['flame', 'Racha de 14 días', 'Dos semanas seguidas', 0, 12 / 14], ['flame', 'Racha de 30 días', 'Un mes completo', 0, 12 / 30], ['clock', '100 horas', 'Programación', 1, 1], ['clock', '1.000 horas', 'Programación', 1, 1], ['clock', '500 horas', 'Inglés', 2, 1], ['clock', '250 horas', 'Guitarra', 3, 244 / 250], ['flag', 'Primer reto', 'Completa un reto de principio a fin', 0, 1], ['sun', 'Madrugador', '10 sesiones antes de las 8:00', 0, 1], ['moon', 'Nocturno', '10 sesiones después de las 21:00', 0, 0.7], ['bolt', 'Sesión larga', 'Una sesión de 90 minutos', 1, 1], ['star', 'Nivel 15', 'Faltan 340 XP', 0, 0.66]];
+    const list = A.filter(a => f === 0 || a[3] === 0 || a[3] === f);
+    return {
+      filters: ['Todas', 'Programación', 'Inglés', 'Guitarra'].map((l, i) => ({ l, on: f === i, pick: () => this.setState({ f: i }) })),
+      heroTicks: Array.from({ length: 14 }, (_, i) => ({ bg: i < 11 ? '#F4F4F1' : i === 11 ? '#FF4A1C' : '#1B1B1E' })),
+      tiles: list.map(([ic, n, d, s, p]) => { const done = p >= 1; return { n, d, p: Math.round(p * 100), op: done ? 1 : 0.62, c: done ? '#F4F4F1' : '#FF4A1C', t: done ? 'LOGRADO' : Math.round(p * 100) + '%', dots: this.ic7(ic, done ? '#F4F4F1' : '#55555B', done ? '#1B1B1E' : '#161618') }; })
+    };
+  }
+}
+</script>
+</body>
+</html>

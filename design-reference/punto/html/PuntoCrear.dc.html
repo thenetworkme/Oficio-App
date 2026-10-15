@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Punto — Crear habilidad</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit;color:inherit}
+button{cursor:pointer}
+*{box-sizing:border-box}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.mono{font-family:'Geist Mono',ui-monospace,monospace;letter-spacing:.04em}
+.lab{font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8A8A90}
+.dot{aspect-ratio:1/1;border-radius:50%;transition:background .2s}
+.tab{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#8A8A90;padding:24px 0;position:relative;transition:color .15s}
+.tab:hover{color:#F4F4F1}
+.tab[aria-current="page"]{color:#F4F4F1}
+.tab[aria-current="page"]::before{content:'';position:absolute;left:-14px;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:#FF4A1C}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;height:52px;padding:0 26px;border-radius:999px;border:1px solid #3A3A3F;background:transparent;color:#F4F4F1;font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;transition:background .15s,border-color .15s,transform .15s;white-space:nowrap}
+.btn:hover{background:#17171A;border-color:#55555B}
+.btn.sig{background:#FF4A1C;border-color:#FF4A1C;color:#0A0A0B;font-weight:500}
+.btn.sig:hover{background:#FF6038;transform:translateY(-1px)}
+.btn.sm{height:40px;padding:0 18px;font-size:11px}
+.btn.danger{border-color:#7A2A18;color:#FF6A47}
+.btn.danger:hover{background:#1A0E0B;border-color:#FF4A1C}
+.opt{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#6E6E74;background:none;border:0;padding:0;transition:color .15s;display:inline-flex;gap:8px;align-items:center}
+.opt:hover{color:#F4F4F1}
+.opt[aria-pressed="true"]{color:#F4F4F1}
+.opt[aria-pressed="true"]::before{content:'';width:6px;height:6px;border-radius:50%;background:#FF4A1C}
+.chip{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;border:1px solid #3A3A3F;border-radius:999px;padding:9px 18px;background:transparent;color:#8A8A90;transition:all .15s}
+.chip:hover{border-color:#6E6E74;color:#F4F4F1}
+.chip[aria-pressed="true"]{background:#F4F4F1;border-color:#F4F4F1;color:#0A0A0B}
+.inp{width:100%;background:transparent;border:0;border-bottom:1px solid #3A3A3F;color:#F4F4F1;font-size:18px;padding:8px 0 12px;font-family:inherit;transition:border-color .15s;border-radius:0}
+.inp::placeholder{color:#55555B}
+.inp:focus{outline:none;border-bottom-color:#FF4A1C}
+textarea.inp{border:1px solid #2E2E33;border-radius:14px;padding:14px 16px;min-height:130px;resize:vertical;line-height:1.55;font-size:16px}
+textarea.inp:focus{border-color:#FF4A1C}
+.tg{width:48px;height:28px;border-radius:999px;border:1px solid #3A3A3F;background:transparent;position:relative;transition:border-color .2s;flex:none}
+.tg::after{content:'';position:absolute;top:5px;left:5px;width:16px;height:16px;border-radius:50%;background:#6E6E74;transition:transform .2s,background .2s}
+.tg[aria-pressed="true"]{border-color:#FF4A1C}
+.tg[aria-pressed="true"]::after{transform:translateX(20px);background:#FF4A1C}
+.sq{width:44px;height:44px;border-radius:50%;border:1px solid #3A3A3F;background:transparent;color:#F4F4F1;font-size:20px;line-height:1;transition:background .15s,border-color .15s;flex:none}
+.sq:hover{background:#17171A;border-color:#55555B}
+.row{display:grid;align-items:center;gap:24px;padding:20px 0;border-top:1px solid #232326}
+.box{border:1px solid #232326;border-radius:22px;padding:28px}
+.link{color:#8A8A90;border-bottom:1px solid #3A3A3F;transition:color .15s}
+.link:hover{color:#F4F4F1}
+.dd{display:flex;gap:6px}
+.dd button{width:34px;height:34px;border-radius:50%;border:1px solid #3A3A3F;background:transparent;color:#6E6E74;font-family:'Geist Mono',monospace;font-size:11px;transition:all .15s}
+.dd button[aria-pressed="true"]{background:#F4F4F1;border-color:#F4F4F1;color:#0A0A0B}
+.kp>div:first-child{border-left:0!important;padding-left:0!important}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #FF4A1C;outline-offset:3px}
+@keyframes blink{50%{opacity:.15}}
+@keyframes breathe{0%,100%{transform:scale(.62);opacity:.7}50%{transform:scale(1);opacity:1}}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}}
+.pop{animation:pop .4s ease both}
+
+</style>
+</helmet>
+<div style="min-height:900px;background:#0A0A0B;color:#F4F4F1;font-family:'Geist',system-ui,sans-serif;font-size:15px;line-height:1.5">
+<header style="display:flex;align-items:center;padding:0 40px;height:68px;border-bottom:1px solid #232326"><a href="PuntoPanel.dc.html" style="flex:1;font-weight:600;font-size:20px;letter-spacing:-.02em;display:flex;align-items:center;gap:3px">oficio<i style="width:7px;height:7px;border-radius:50%;background:#FF4A1C;margin-top:9px"></i></a><nav aria-label="Principal" style="display:flex;gap:32px;padding-left:14px"><a class="tab" href="PuntoPanel.dc.html" aria-current="page">Hoy</a><a class="tab" href="PuntoTimer.dc.html" >Práctica</a><a class="tab" href="PuntoStats.dc.html" >Datos</a><a class="tab" href="PuntoRetos.dc.html" >Retos</a><a class="tab" href="PuntoLogros.dc.html" >Logros</a><a class="tab" href="PuntoTienda.dc.html" >Tienda</a></nav><div style="flex:1;display:flex;justify-content:flex-end;align-items:center;gap:16px"><span class="lab">Mié 14.10.2026</span><a href="PuntoAvisos.dc.html" aria-label="Avisos" style="color:#8A8A90;position:relative;display:flex"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0112 0v5l2 2H4zM10 21h4"/></svg><i style="position:absolute;right:-1px;top:-1px;width:6px;height:6px;border-radius:50%;background:#FF4A1C"></i></a><a href="PuntoAjustes.dc.html" aria-label="Ajustes" style="width:34px;height:34px;border-radius:50%;border:1px solid #3A3A3F;display:flex;align-items:center;justify-content:center;font-family:'Geist Mono',monospace;font-size:12px">K</a></div></header><main style="padding:0 40px 64px"><div style="padding:44px 0 34px;display:flex;align-items:flex-end;gap:32px;flex-wrap:wrap"><div style="flex:1;min-width:320px"><a href="PuntoPanel.dc.html" class="lab link" style="display:inline-block;margin-bottom:18px;border:0">← Hoy</a><br><div class="lab" style="margin-bottom:14px">Nueva habilidad</div><h1 style="margin:0;font-size:76px;font-weight:300;letter-spacing:-.05em;line-height:.95">Empieza algo</h1></div><div style="display:flex;gap:12px;align-items:center"></div></div>
+<section style="display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);border-top:1px solid #232326"><div style="padding:40px 56px 0 0;border-right:1px solid #232326;display:flex;flex-direction:column;gap:44px">
+<div><div class="lab" style="margin-bottom:6px"><span style="color:#FF4A1C">01</span> · Nombre</div><input class="inp" placeholder="Ej. Piano, Dibujo, Programación…" value="{{name}}" onChange="{{typeName}}" style="font-size:44px;font-weight:300;letter-spacing:-.03em;padding-bottom:16px"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:22px"><sc-for list="{{cats}}" as="c" hint-placeholder-count="6"><button type="button" class="chip" aria-pressed="{{c.on}}" onClick="{{c.pick}}">{{c.l}}</button></sc-for></div></div>
+<div><div class="lab" style="margin-bottom:16px"><span style="color:#FF4A1C">02</span> · Meta en horas</div><div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{goals}}" as="g" hint-placeholder-count="4"><button type="button" class="chip" aria-pressed="{{g.on}}" onClick="{{g.pick}}">{{g.l}}</button></sc-for></div><div style="color:#8A8A90;font-size:14px;margin-top:14px">{{goalHint}}</div></div>
+<div><div class="lab" style="margin-bottom:16px"><span style="color:#FF4A1C">03</span> · Ritmo</div><div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap"><button type="button" class="sq" aria-label="Menos 15 minutos" onClick="{{dec}}">−</button><span class="mono" style="font-size:48px;letter-spacing:-.04em;min-width:170px;text-align:center">{{minsText}}</span><button type="button" class="sq" aria-label="Más 15 minutos" onClick="{{inc}}">+</button><span style="color:#8A8A90">por día,</span><div style="display:flex;gap:8px"><sc-for list="{{dpw}}" as="d" hint-placeholder-count="4"><button type="button" class="chip" aria-pressed="{{d.on}}" onClick="{{d.pick}}">{{d.l}}</button></sc-for></div></div></div>
+</div>
+<div style="padding:40px 0 0 56px"><div class="lab">Proyección</div><div style="display:flex;align-items:baseline;gap:14px;margin:14px 0 6px"><span style="font-size:130px;font-weight:300;letter-spacing:-.06em;line-height:.9">{{years}}</span><span class="mono" style="color:#8A8A90">AÑOS</span></div><div style="color:#8A8A90;margin-bottom:28px">Llegarías a las {{goalText}} horas en <span style="color:#F4F4F1">{{when}}</span>.</div>
+<div style="display:grid;grid-template-columns:repeat(15,1fr);gap:7px;margin-bottom:32px" role="img" aria-label="Años hasta la meta"><sc-for list="{{yd}}" as="y" hint-placeholder-count="30"><i class="dot" style="background:{{y.bg}}"></i></sc-for></div>
+<sc-for list="{{facts}}" as="f" hint-placeholder-count="3"><div class="row" style="grid-template-columns:1fr auto;padding:14px 0"><span class="lab">{{f.l}}</span><span class="mono" style="font-size:15px">{{f.v}}</span></div></sc-for>
+<div style="display:flex;gap:12px;margin-top:32px"><a href="PuntoPanel.dc.html" class="btn sig">Crear habilidad</a><a href="PuntoPanel.dc.html" class="btn">Cancelar</a></div></div></section></main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const st = this.state || {}; const set = (o) => this.setState(o);
+    const cat = st.cat ?? 0; const goal = st.goal ?? 2; const mins = st.mins ?? 210; const dpw = st.dpw ?? 6;
+    const G = [1000, 5000, 10000, 20000]; const goalH = G[goal]; const perWeek = mins / 60 * dpw; const yearsN = goalH / (perWeek * 52);
+    const d = new Date(2026, 9, 14); d.setMonth(d.getMonth() + Math.round(yearsN * 12)); const M = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    const fm = (n) => n >= 1000 ? Math.floor(n / 1000) + '.' + String(n % 1000).padStart(3, '0') : String(n);
+    const yd = Array.from({ length: 30 }, (_, i) => ({ bg: i + 1 <= Math.floor(yearsN) ? '#F4F4F1' : (i < yearsN ? 'rgba(244,244,241,.5)' : '#1B1B1E') }));
+    return {
+      name: st.name ?? '', typeName: (e) => set({ name: e.target.value }),
+      cats: ['Código', 'Idiomas', 'Música', 'Arte', 'Deporte', 'Otro'].map((l, i) => ({ l, on: cat === i, pick: () => set({ cat: i }) })),
+      goals: G.map((v, i) => ({ l: fm(v) + ' h', on: goal === i, pick: () => set({ goal: i }) })), goalHint: ['Para tener una base sólida y practicar con confianza.', 'Nivel avanzado: dominas lo esencial y mucho más.', 'La regla clásica de la maestría. Es la meta por defecto.', 'Para quienes buscan excelencia de élite.'][goal], goalText: fm(goalH),
+      minsText: Math.floor(mins / 60) + 'h ' + String(mins % 60).padStart(2, '0') + 'm', dec: () => set({ mins: Math.max(15, mins - 15) }), inc: () => set({ mins: Math.min(480, mins + 15) }),
+      dpw: [3, 5, 6, 7].map(v => ({ l: v + ' días', on: dpw === v, pick: () => set({ dpw: v }) })),
+      years: yearsN.toFixed(1).replace('.', ','), when: M[d.getMonth()] + ' de ' + d.getFullYear(), yd,
+      facts: [['Horas por semana', perWeek.toFixed(1).replace('.', ',') + ' h'], ['Horas por año', fm(Math.round(perWeek * 52)) + ' h'], ['Total de sesiones', fm(Math.round(goalH / (mins / 60))) + ' sesiones']].map(([l, v]) => ({ l, v }))
+    };
+  }
+}
+</script>
+</body>
+</html>
