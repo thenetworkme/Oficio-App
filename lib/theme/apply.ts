@@ -1,22 +1,24 @@
-import { getTheme, resolveAccents } from "./tokens";
+import { getTheme, resolveMode, resolveSignal } from "./tokens";
 
 export const THEME_STORAGE_KEY = "oficio-theme-cache";
 
 export interface ThemeCache {
+  /** "dark" | "light" | "system" */
   themeId: string;
   accentIdx: number | null;
-  followSystem: boolean;
 }
 
+/** Applies the resolved palette (`data-theme`, `color-scheme`) and the
+ * user's signal color (`--signal`) to <html>. `themeId` may be "system" —
+ * it's resolved to "dark"/"light" here via prefers-color-scheme. */
 export function applyTheme(themeId: string, accentIdx: number | null) {
   if (typeof document === "undefined") return;
-  const theme = getTheme(themeId);
-  const { a1, a2, a3 } = resolveAccents(theme, accentIdx);
+  const mode = resolveMode(themeId);
+  const theme = getTheme(mode);
+  const signal = resolveSignal(accentIdx);
   const root = document.documentElement;
   root.setAttribute("data-theme", theme.id);
-  root.style.setProperty("--a1", a1);
-  root.style.setProperty("--a2", a2);
-  root.style.setProperty("--a3", a3);
+  root.style.setProperty("--signal", signal);
   root.style.colorScheme = theme.mode;
 }
 

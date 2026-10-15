@@ -4,9 +4,21 @@ export interface Profile {
   uid: string;
   displayName: string | null;
   timezone: string;
+  /** "dark" | "light" | "system" (lib/theme/tokens.ts ThemeId). "Punto" redesign:
+   * used to store one of 8 named Pegatina theme ids (default "pegatina"); now
+   * a tri-state mode selector. Kept as a plain `string` (not the narrower
+   * ThemeId type) so legacy Firestore docs with an old id don't fail to
+   * typecheck/parse — lib/theme/ThemeProvider.tsx narrows it defensively. */
   themeId: string;
-  /** Index into ACCENT_SWATCHES (lib/theme/tokens.ts), or null for the theme's own a1. */
+  /** Index into ACCENT_SWATCHES (lib/theme/tokens.ts) — the one "señal" accent
+   * color, used in both light and dark mode. Null is treated as the default
+   * swatch (index 0, Rojo) wherever it's resolved, for backward compatibility
+   * with profiles written under the old "null = theme's own a1" semantics. */
   accentIdx: number | null;
+  /** @deprecated superseded by `themeId === "system"`. Kept (not removed) to
+   * avoid a Firestore field rename; lib/theme/ThemeProvider.tsx writes it as
+   * an alias (true iff themeId is "system") whenever it writes themeId, so
+   * it stays consistent, but nothing reads it anymore. */
   followSystemTheme: boolean;
   /** Epoch ms when the user finished the first-run onboarding flow (/onboarding).
    * Null/undefined means it hasn't run yet — used to route new sign-ups there
@@ -44,8 +56,8 @@ export type AmbientSoundId = "none" | "rain" | "waves" | "lofi" | "thunder" | "f
 export const DEFAULT_PROFILE: Omit<Profile, "uid" | "createdAt"> = {
   displayName: null,
   timezone: "America/Santo_Domingo",
-  themeId: "pegatina",
-  accentIdx: null,
+  themeId: "dark",
+  accentIdx: 0,
   followSystemTheme: false,
   onboardingCompletedAt: null,
   pomodoroFocusMin: 25,

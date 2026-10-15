@@ -1,202 +1,163 @@
-// Oficio design tokens — "Pegatina" system (ported from
-// design-reference/pegatina/docs/pegatina-tokens.json + the exact per-theme
-// hex values found in design-reference/pegatina/html/PegatinaAjustes.dc.html's
-// script, which is the authoritative source — the tokens.json only lists the
-// theme *names*).
+// Oficio design tokens — "Punto" system (dark, minimal, dot-matrix).
 //
-// Structural look (3px ink borders, 14px radius, hard offset shadow, -2..2deg
-// sticker rotation) stays constant across every theme; only colors change.
-// See PEGATINA constants below for the structural values, and THEMES for the
-// per-theme color values.
+// Replaces the old 8-palette "Pegatina" system with exactly 2 palettes (dark
+// default, light) + 1 user-chosen "señal" (signal) accent color, independent
+// of light/dark mode. See design-reference/punto/README.md and
+// design-reference/punto/html/PuntoPanel.dc.html for the source values.
+//
+// "Sistema" (follow OS) is not a 3rd palette — it resolves to "dark" or
+// "light" at render time via `prefers-color-scheme` (see resolveMode below)
+// and ThemeProvider/ThemeScript, the same way `next-themes`-style libraries
+// do it. There is no light-mode screenshot in the design reference (only
+// dark screens exist in png/); the light palette's exact hex values below
+// are my own invention, chosen to mirror the dark palette's structure and
+// relative-contrast relationships (same radii, same flat/hairline-border/
+// no-shadow approach, inverted luminance). See the comment on LIGHT below.
 
 export type AccentOption = readonly [name: string, hex: string];
 
+export type ThemeMode = "dark" | "light";
+/** What's actually stored (Profile.themeId / ThemeProvider state): a mode, or "system" (follow OS). */
+export type ThemeId = ThemeMode | "system";
+
 export interface ThemeDef {
-  id: string;
+  id: ThemeMode;
   name: string;
-  mode: "dark" | "light";
-  group: "catppuccin" | "otros";
+  mode: ThemeMode;
   /** Page background ("paper"). */
   paper: string;
   /** Card/surface background. */
   card: string;
-  /** Ink: text + border color. */
+  /** Primary text + icon color (on paper/card). */
   ink: string;
-  /** Secondary/muted text, derived close to ink but dimmer. */
+  /** Secondary/muted text. */
   muted: string;
-  /** Hard drop-shadow color. */
+  /** Hairline border — card edges, row dividers. Very low contrast on purpose. */
+  line: string;
+  /** Interactive element border at rest — buttons, chips, switch track, box outlines. */
+  border: string;
+  /** Interactive element border on hover. */
+  borderHover: string;
+  /** Hard drop-shadow color. The Punto look is flat (no shadows anywhere), so
+   * this is unused by any new primitive — kept only so nothing referencing
+   * the legacy `var(--shadow)` (e.g. untouched `.bx`-adjacent inline styles)
+   * hard-crashes before its callsite is updated in a later phase. */
   shadow: string;
-  /** Default accent chip colors (a1/a2/a3). a1 can be overridden per-user. */
-  a1: string;
-  a2: string;
-  a3: string;
   danger: string;
 }
 
 export const THEMES: ThemeDef[] = [
   {
-    id: "pegatina",
-    name: "Pegatina",
+    id: "dark",
+    name: "Oscuro",
+    mode: "dark",
+    paper: "#0A0A0B",
+    card: "#17171A",
+    ink: "#F4F4F1",
+    muted: "#8A8A90",
+    line: "#232326",
+    border: "#3A3A3F",
+    borderHover: "#55555B",
+    shadow: "transparent",
+    danger: "#FF6A47",
+  },
+  {
+    // LIGHT — invented (no reference screenshot exists for it). Chosen to
+    // mirror the dark palette's structure 1:1, inverted:
+    //   paper: near-white (not pure #FFF, so `card` can sit one step above it)
+    //   card: pure white — the brightest surface, same role `card` plays as
+    //     the brightest surface in dark mode (#17171A is brighter than
+    //     #0A0A0B's paper)
+    //   ink: near-black (mirrors dark's near-white ink)
+    //   muted: a mid-gray tuned for ~4.6:1 contrast on white (AA for normal
+    //     text), mirroring how dark's muted (#8A8A90) reads as secondary but
+    //     still legible against #0A0A0B/#17171A
+    //   line/border/borderHover: light grays, each one step darker than the
+    //     last, mirroring the dark palette's line < border < borderHover
+    //     progression in *reverse* lightness direction
+    //   danger: a deeper, more saturated red-orange than the dark palette's
+    //     pastel #FF6A47 — that hex is far too light to meet contrast on a
+    //     white background, so the light palette uses a punchier value with
+    //     the same hue
+    id: "light",
+    name: "Claro",
     mode: "light",
-    group: "otros",
-    paper: "#FFF4D6",
+    paper: "#FAFAF9",
     card: "#FFFFFF",
-    ink: "#111111",
-    muted: "#5b5b5b",
-    shadow: "#111111",
-    a1: "#FFD84D",
-    a2: "#FF8FB8",
-    a3: "#7BE0A4",
-    danger: "#D6361F",
-  },
-  {
-    id: "mocha",
-    name: "Catppuccin Mocha",
-    mode: "dark",
-    group: "catppuccin",
-    paper: "#1E1E2E",
-    card: "#313244",
-    ink: "#CDD6F4",
-    muted: "#A6ADC8",
-    shadow: "#11111B",
-    a1: "#F9E2AF",
-    a2: "#F5C2E7",
-    a3: "#A6E3A1",
-    danger: "#F38BA8",
-  },
-  {
-    id: "macchiato",
-    name: "Catppuccin Macchiato",
-    mode: "dark",
-    group: "catppuccin",
-    paper: "#24273A",
-    card: "#363A4F",
-    ink: "#CAD3F5",
-    muted: "#A5ADCB",
-    shadow: "#181926",
-    a1: "#EED49F",
-    a2: "#F5BDE6",
-    a3: "#A6DA95",
-    danger: "#ED8796",
-  },
-  {
-    id: "frappe",
-    name: "Catppuccin Frappé",
-    mode: "dark",
-    group: "catppuccin",
-    paper: "#303446",
-    card: "#414559",
-    ink: "#C6D0F5",
-    muted: "#A5ADCE",
-    shadow: "#232634",
-    a1: "#E5C890",
-    a2: "#F4B8E4",
-    a3: "#A6D189",
-    danger: "#E78284",
-  },
-  {
-    id: "latte",
-    name: "Catppuccin Latte",
-    mode: "light",
-    group: "catppuccin",
-    paper: "#EFF1F5",
-    card: "#FFFFFF",
-    ink: "#4C4F69",
-    muted: "#5C5F77",
-    shadow: "#4C4F69",
-    a1: "#F2C46D",
-    a2: "#EA76CB",
-    a3: "#8BD17C",
-    danger: "#D20F39",
-  },
-  {
-    id: "nord",
-    name: "Nord",
-    mode: "dark",
-    group: "otros",
-    paper: "#2E3440",
-    card: "#3B4252",
-    ink: "#ECEFF4",
-    muted: "#B4BDCD",
-    shadow: "#1B1F27",
-    a1: "#EBCB8B",
-    a2: "#B48EAD",
-    a3: "#A3BE8C",
-    danger: "#BF616A",
-  },
-  {
-    id: "gruvbox",
-    name: "Gruvbox",
-    mode: "dark",
-    group: "otros",
-    paper: "#282828",
-    card: "#3C3836",
-    ink: "#EBDBB2",
-    muted: "#A89984",
-    shadow: "#1D2021",
-    a1: "#FABD2F",
-    a2: "#D3869B",
-    a3: "#B8BB26",
-    danger: "#FB4934",
-  },
-  {
-    id: "rosepine",
-    name: "Rosé Pine",
-    mode: "dark",
-    group: "otros",
-    paper: "#191724",
-    card: "#26233A",
-    ink: "#E0DEF4",
-    muted: "#908CAA",
-    shadow: "#0F0D1A",
-    a1: "#F6C177",
-    a2: "#EB6F92",
-    a3: "#9CCFD8",
-    danger: "#EB6F92",
+    ink: "#0A0A0B",
+    muted: "#6B6B70",
+    line: "#E4E4E7",
+    border: "#D4D4D8",
+    borderHover: "#B0B0B6",
+    shadow: "transparent",
+    danger: "#D6431E",
   },
 ];
 
-export const DEFAULT_THEME_ID = "pegatina";
+export const DEFAULT_THEME_ID: ThemeId = "dark";
 
-/** Structural constants that stay the same across every theme (neo-brutalist "sticker" look). */
-export const PEGATINA = {
-  borderWidth: "3px",
-  radius: "14px",
-  radiusPill: "999px",
-  shadowRest: "6px",
-  shadowHover: "9px",
-  shadowActive: "2px",
+/** Structural constants that stay the same across both palettes (flat "dot matrix" look). */
+export const PUNTO = {
+  radiusCard: "22px",
+  radiusButton: "999px",
+  radiusChip: "999px",
+  buttonHeight: "52px",
 } as const;
 
-/** The 5 accent swatches offered on the Ajustes "Color principal" picker — a
- * fixed, cross-theme palette (unlike the old per-theme accent lists), exactly
- * as PegatinaAjustes.dc.html's `sw` array. Overrides only --a1. */
+/** The 5 "señal" (signal) swatches offered on the Ajustes "Color de señal"
+ * picker, exactly as PuntoAjustes.dc.html's `sw` array / the design brief.
+ * Unlike the old per-theme accent trio, this is the ONE accent color, shared
+ * across both light and dark, applied as `--signal`. */
 export const ACCENT_SWATCHES: AccentOption[] = [
-  ["Ámbar", "#FFD84D"],
-  ["Rosa", "#FF8FB8"],
-  ["Verde", "#7BE0A4"],
-  ["Cielo", "#7CC4FF"],
-  ["Naranja", "#FF9F5A"],
+  ["Rojo", "#FF4A1C"],
+  ["Ámbar", "#FFB020"],
+  ["Verde", "#3DDC84"],
+  ["Azul", "#4C8DFF"],
+  ["Rosa", "#FF5FA2"],
 ];
+
+export const DEFAULT_ACCENT_IDX = 0;
 
 export function getTheme(id: string): ThemeDef {
   return THEMES.find((t) => t.id === id) ?? THEMES[0];
 }
 
-/** Resolves the accent (--a1), honoring a user override (index into
- * ACCENT_SWATCHES, or null for the theme's own a1); a2/a3 always come from
- * the theme. */
-export function resolveAccents(theme: ThemeDef, accentIdx: number | null) {
-  const override =
-    accentIdx != null && accentIdx >= 0 && accentIdx < ACCENT_SWATCHES.length ? ACCENT_SWATCHES[accentIdx][1] : null;
-  return {
-    a1: override ?? theme.a1,
-    a2: theme.a2,
-    a3: theme.a3,
-  };
+/** Resolves a user's accentIdx (nullable, legacy-tolerant) to a valid index. */
+export function normalizeAccentIdx(accentIdx: number | null | undefined): number {
+  return accentIdx != null && accentIdx >= 0 && accentIdx < ACCENT_SWATCHES.length ? accentIdx : DEFAULT_ACCENT_IDX;
 }
 
-/** "Follow system theme" = Latte by day, Mocha by night (per the brief). */
-export function systemThemeId(hour: number): string {
-  return hour >= 7 && hour < 19 ? "latte" : "mocha";
+/** Resolves the single signal/accent hex color from a (possibly null) accentIdx. */
+export function resolveSignal(accentIdx: number | null | undefined): string {
+  return ACCENT_SWATCHES[normalizeAccentIdx(accentIdx)][1];
+}
+
+/**
+ * Backward-compat shim for not-yet-updated call sites that still expect the
+ * old `{ a1, a2, a3 }` shape (three accent colors). In the new system there
+ * is only one signal color, so all three collapse onto it — see the
+ * `--a1/--a2/--a3` CSS remap comment in app/globals.css for the full
+ * rationale (same idea, just the TS-side equivalent).
+ */
+export function resolveAccents(accentIdx: number | null | undefined): { a1: string; a2: string; a3: string } {
+  const signal = resolveSignal(accentIdx);
+  return { a1: signal, a2: signal, a3: signal };
+}
+
+/** Is "id" a real palette (not "system")? */
+export function isThemeMode(id: string): id is ThemeMode {
+  return id === "dark" || id === "light";
+}
+
+/** Reads the OS color-scheme preference. Defaults to dark (this app's
+ * default palette) when matchMedia isn't available (SSR, old browsers). */
+export function systemPrefersDark(): boolean {
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function") return true;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
+
+/** Resolves a stored ThemeId ("dark" | "light" | "system") to a real, renderable ThemeMode. */
+export function resolveMode(themeId: string): ThemeMode {
+  if (isThemeMode(themeId)) return themeId;
+  return systemPrefersDark() ? "dark" : "light";
 }

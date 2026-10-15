@@ -1,123 +1,132 @@
 @import "tailwindcss";
 
 /*
- * Oficio "Pegatina" design tokens — neo-brutalist stickers.
- * --paper/--card/--ink/--muted/--shadow/--a1/--a2/--a3/--danger come from the
- * active theme block below (data-theme="..."). --a1 can be overridden by the
- * user's chosen accent swatch, set inline on <html> by lib/theme/apply.ts
- * (see components/theme/ThemeScript.tsx for the pre-paint, no-flash boot).
+ * Oficio "Punto" design tokens — dark, minimal, dot-matrix.
  *
- * Structural look (3px ink borders, 14px radius, hard offset shadow, sticker
- * rotation) is constant across every theme — see the .bx/.sticker/.press/.hov
- * utilities below — only the color values above change per theme.
+ * This replaces the old "Pegatina" neo-brutalist system (3px ink borders,
+ * hard offset shadows, 8 switchable Catppuccin-style palettes, three liberal
+ * "a1/a2/a3" accent chips). The new model is much simpler:
+ *
+ *   - Exactly 2 palettes: "dark" (default) and "light", selected via
+ *     [data-theme="dark"|"light"] on <html> (see lib/theme/tokens.ts THEMES,
+ *     lib/theme/apply.ts, components/theme/ThemeScript.tsx for the no-flash
+ *     pre-paint boot). "Sistema" in the Ajustes UI isn't a 3rd palette — it
+ *     resolves to one of these two at render time from `prefers-color-scheme`.
+ *   - ONE user-chosen "señal" (signal) accent color — `--signal` — used
+ *     sparingly (primary CTA, a single highlighted data point, the wordmark
+ *     dot), independent of light/dark mode. 5 swatches, see
+ *     lib/theme/tokens.ts ACCENT_SWATCHES.
+ *
+ * --paper/--card/--ink/--muted/--line/--border/--border-hover/--shadow/
+ * --danger come from the active palette block below ([data-theme="..."]).
+ * --signal is set inline on <html> by lib/theme/apply.ts, independent of
+ * the palette blocks.
+ *
+ * ## --a1/--a2/--a3/--ink-solid: deprecated-but-functional aliases
+ *
+ * This redesign ships in PHASES across multiple agents — dozens of
+ * not-yet-redesigned screens still read the OLD variable names (`--a1`,
+ * `--a2`, `--a3`, `--ink-solid`) via Tailwind's `bg-a1`/`text-ink-solid`
+ * utilities or raw `var(--a1)` inline styles. Those names are NOT deleted,
+ * so every untouched screen keeps compiling/rendering (imperfectly, but
+ * never crashing or invisible) until its own redesign phase lands:
+ *
+ *   - `--a1`, `--a2`, `--a3` all now resolve to `var(--signal)`. The new
+ *     design barely uses multiple accent colors (there is exactly one, used
+ *     sparingly), so collapsing the old three-accent concept into "all equal
+ *     the one signal color" is the closest honest mapping available. An
+ *     untouched old component that used a1/a2/a3 for three different accent
+ *     chips will now show all three in the same signal color — a visual
+ *     regression for that specific screen, but NOT a crash, NOT invisible
+ *     text, and it does NOT violate the --ink-solid contrast rule below.
+ *   - `--ink-solid` is `#0A0A0B` in BOTH palettes (not just dark). Text
+ *     sitting on a solid signal-colored background (e.g. the primary button)
+ *     needs to read against all 5 signal swatches, the lightest of which is
+ *     Ámbar `#FFB020` — near-black reads fine on all of them, in both light
+ *     and dark mode, since the signal colors are mid-brightness saturated
+ *     hues regardless of page theme. Don't let `--ink-solid` accidentally
+ *     become white for light mode — it must stay `#0A0A0B`.
+ *
+ *   These are DEPRECATED aliases, expected to be phased out as each screen
+ *   gets properly rebuilt with the new primitives (components/ui/*.tsx)
+ *   directly instead of raw `--a1`/`--a2`/`--a3`/`.bx` usage.
+ *
+ * ## --ink-solid convention (also applies beyond the alias above)
+ *
+ * `--ink-solid` is for text sitting on an accent-colored background (e.g.
+ * text on the solid-signal primary button), as opposed to `--ink`, which is
+ * for text on `--paper`/`--card`. This has caused two rounds of real
+ * user-reported bugs in this project already when it wasn't respected —
+ * keep it working correctly.
+ *
+ * ## CSS Cascade Layers bug — read before touching any reset-style CSS
+ *
+ * This codebase has shipped a Cascade Layers bug TWICE and had to fix it
+ * both times. Tailwind v4 wraps all of its own output in
+ * `@layer theme, base, components, utilities`, and CSS Cascade Layers give
+ * UNLAYERED styles priority over ANY layered style regardless of selector
+ * specificity. Plain, unlayered `a { color: inherit }` was silently beating
+ * every `text-*` utility (even `text-paper`/`text-ink-solid` classes added
+ * specifically to fix contrast) on every <a>/<Link> in the app — e.g. the
+ * active sidebar nav item's text was invisible because `a { color: inherit }`
+ * pulled `body`'s --ink color regardless of the `text-paper` class also on
+ * that link. Putting these in `@layer base` restores normal cascade/
+ * specificity behavior so a utility class on the element correctly overrides
+ * the base default, matching Tailwind's own documented convention for custom
+ * base styles.
+ *
+ * Any reset-style CSS you touch or add MUST stay inside the existing
+ * `@layer base { ... }` block below. Do not introduce any new unlayered CSS
+ * rule.
  */
 
 :root {
-  /* Text/icon color for anything sitting on an --a1/--a2/--a3 accent chip.
-   * Every theme's accent trio is a light/pastel tone (confirmed against
-   * PegatinaAjustes.dc.html), so a single constant near-black reads fine on
-   * all of them in every theme, unlike --ink (which flips light/dark per
-   * theme for contrast against --paper/--card, and is wrong on an accent
-   * chip in every dark theme). Not redeclared per [data-theme] block on
-   * purpose — it never changes. */
-  --ink-solid: #111111;
+  /* Default/fallback palette — "dark". Also the palette rendered before
+   * hydration if ThemeScript somehow doesn't run (e.g. JS disabled), since
+   * "dark" is this app's default themeId. [data-theme="light"] overrides
+   * every value below when the light palette is active. */
+  --paper: #0a0a0b;
+  --card: #17171a;
+  --ink: #f4f4f1;
+  --muted: #8a8a90;
+  --line: #232326;
+  --border: #3a3a3f;
+  --border-hover: #55555b;
+  --shadow: transparent;
+  --danger: #ff6a47;
+
+  /* Text/icon color for anything sitting on a --signal (or legacy
+   * --a1/--a2/--a3) colored background — see the big comment above. Always
+   * near-black in both palettes; not redeclared per [data-theme] block on
+   * purpose, it never changes. */
+  --ink-solid: #0a0a0b;
+
+  /* The user's chosen signal/accent color (lib/theme/tokens.ts
+   * ACCENT_SWATCHES). This fallback is the default swatch, "Rojo"; the real
+   * value is set inline on <html> by lib/theme/apply.ts / ThemeScript before
+   * paint, independent of dark/light mode. */
+  --signal: #ff4a1c;
+
+  /* Deprecated-but-functional aliases — see the big comment above. */
+  --a1: var(--signal);
+  --a2: var(--signal);
+  --a3: var(--signal);
 }
 
-:root,
-[data-theme="pegatina"] {
-  --paper: #fff4d6;
+[data-theme="light"] {
+  /* Invented — no light-mode screenshot exists in design-reference/punto/png/
+   * (only dark screens). Mirrors the dark palette's structure 1:1, inverted
+   * luminance, same relative-contrast relationships; see the long comment in
+   * lib/theme/tokens.ts (THEMES[1]) for the exact per-value rationale. */
+  --paper: #fafaf9;
   --card: #ffffff;
-  --ink: #111111;
-  --muted: #5b5b5b;
-  --shadow: #111111;
-  --a1: #ffd84d;
-  --a2: #ff8fb8;
-  --a3: #7be0a4;
-  --danger: #d6361f;
-}
-
-[data-theme="mocha"] {
-  --paper: #1e1e2e;
-  --card: #313244;
-  --ink: #cdd6f4;
-  --muted: #a6adc8;
-  --shadow: #11111b;
-  --a1: #f9e2af;
-  --a2: #f5c2e7;
-  --a3: #a6e3a1;
-  --danger: #f38ba8;
-}
-
-[data-theme="macchiato"] {
-  --paper: #24273a;
-  --card: #363a4f;
-  --ink: #cad3f5;
-  --muted: #a5adcb;
-  --shadow: #181926;
-  --a1: #eed49f;
-  --a2: #f5bde6;
-  --a3: #a6da95;
-  --danger: #ed8796;
-}
-
-[data-theme="frappe"] {
-  --paper: #303446;
-  --card: #414559;
-  --ink: #c6d0f5;
-  --muted: #a5adce;
-  --shadow: #232634;
-  --a1: #e5c890;
-  --a2: #f4b8e4;
-  --a3: #a6d189;
-  --danger: #e78284;
-}
-
-[data-theme="latte"] {
-  --paper: #eff1f5;
-  --card: #ffffff;
-  --ink: #4c4f69;
-  --muted: #5c5f77;
-  --shadow: #4c4f69;
-  --a1: #f2c46d;
-  --a2: #ea76cb;
-  --a3: #8bd17c;
-  --danger: #d20f39;
-}
-
-[data-theme="nord"] {
-  --paper: #2e3440;
-  --card: #3b4252;
-  --ink: #eceff4;
-  --muted: #b4bdcd;
-  --shadow: #1b1f27;
-  --a1: #ebcb8b;
-  --a2: #b48ead;
-  --a3: #a3be8c;
-  --danger: #bf616a;
-}
-
-[data-theme="gruvbox"] {
-  --paper: #282828;
-  --card: #3c3836;
-  --ink: #ebdbb2;
-  --muted: #a89984;
-  --shadow: #1d2021;
-  --a1: #fabd2f;
-  --a2: #d3869b;
-  --a3: #b8bb26;
-  --danger: #fb4934;
-}
-
-[data-theme="rosepine"] {
-  --paper: #191724;
-  --card: #26233a;
-  --ink: #e0def4;
-  --muted: #908caa;
-  --shadow: #0f0d1a;
-  --a1: #f6c177;
-  --a2: #eb6f92;
-  --a3: #9ccfd8;
-  --danger: #eb6f92;
+  --ink: #0a0a0b;
+  --muted: #6b6b70;
+  --line: #e4e4e7;
+  --border: #d4d4d8;
+  --border-hover: #b0b0b6;
+  --shadow: transparent;
+  --danger: #d6431e;
 }
 
 @theme inline {
@@ -126,31 +135,21 @@
   --color-ink: var(--ink);
   --color-ink-solid: var(--ink-solid);
   --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-border: var(--border);
+  --color-border-hover: var(--border-hover);
+  --color-signal: var(--signal);
   --color-a1: var(--a1);
   --color-a2: var(--a2);
   --color-a3: var(--a3);
   --color-danger: var(--danger);
-  --font-sans: var(--font-space-grotesk);
-  --font-mono: var(--font-space-mono);
-  --radius-card: 14px;
-  --radius-button: 14px;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --radius-card: 22px;
+  --radius-button: 999px;
   --radius-chip: 999px;
 }
 
-/*
- * These "reset"-style rules must live in @layer base. Tailwind v4 wraps all
- * of its own output in cascade layers (@layer theme, base, components,
- * utilities), and CSS Cascade Layers give UNLAYERED styles priority over
- * ANY layered style regardless of selector specificity. Plain, unlayered
- * `a { color: inherit }` was silently beating every `text-*` utility (even
- * `text-paper`/`text-ink-solid` classes added specifically to fix contrast)
- * on every <a>/<Link> in the app — e.g. the active sidebar nav item's text
- * was invisible because `a { color: inherit }` pulled `body`'s --ink color
- * regardless of the `text-paper` class also on that link. Putting these in
- * @layer base restores normal cascade/specificity behavior so a utility
- * class on the element correctly overrides the base default, matching
- * Tailwind's own documented convention for custom base styles.
- */
 @layer base {
   html,
   body {
@@ -161,9 +160,9 @@
     background: var(--paper);
     color: var(--ink);
     font-family: var(--font-sans), system-ui, sans-serif;
-    font-weight: 500;
+    font-weight: 400;
     font-size: 16px;
-    line-height: 1.4;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -189,7 +188,7 @@
   select:focus-visible,
   textarea:focus-visible,
   [tabindex]:focus-visible {
-    outline: 4px solid var(--ink);
+    outline: 2px solid var(--signal);
     outline-offset: 3px;
   }
 
@@ -204,10 +203,8 @@
     color-scheme: dark;
   }
 
-  [data-theme="pegatina"] input[type="date"],
-  [data-theme="pegatina"] input[type="time"],
-  [data-theme="latte"] input[type="date"],
-  [data-theme="latte"] input[type="time"] {
+  [data-theme="light"] input[type="date"],
+  [data-theme="light"] input[type="time"] {
     color-scheme: light;
   }
 
@@ -215,36 +212,47 @@
     font-family: var(--font-mono), monospace;
   }
 
+  /* Geist Mono, uppercase, wide-tracked label — matches
+   * design-reference/punto's `.lab` convention (used for section labels,
+   * nav tabs, chip/button text, data captions). */
   .label-xs {
     font-family: var(--font-mono), monospace;
-    font-weight: 700;
-    font-size: 12px;
-    letter-spacing: 0.02em;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--muted);
   }
 }
 
-/* --- Pegatina "sticker" structural look: box + hard shadow + hover/press --- */
-
+/* --- Flat/hairline structural look (Punto) ---
+ *
+ * `.bx` used to be the Pegatina "sticker" box (3px ink border + hard offset
+ * shadow + rotation). Redefined here to the flat Punto look — 1px hairline
+ * border, 22px radius, no shadow, no rotation — so the ~28 not-yet-redesigned
+ * files still using `.bx` look passably "in the new family" instead of
+ * jarringly showing the old thick-border/shadow look. Later phase-agents
+ * replace `.bx` usage with the real primitive components (components/ui/*)
+ * as they redesign each screen properly; don't add new `.bx` usage. */
 .bx {
-  border: 3px solid var(--ink);
-  border-radius: 14px;
-  box-shadow: 6px 6px 0 var(--shadow);
+  border: 1px solid var(--line);
+  border-radius: 22px;
   background: var(--card);
 }
 
+/* Old hover/press "squish" effects relied on `--shadow` having a real color;
+ * it's now `transparent` (this design has no shadows), so these are
+ * neutralized to a plain border/background shift instead of a shadow-squish,
+ * rather than silently animating toward an invisible shadow. */
 .hov {
-  transition: transform 0.12s, box-shadow 0.12s;
+  transition: border-color 0.15s, background 0.15s;
 }
 .hov:hover {
-  transform: translate(-2px, -2px) rotate(var(--r, 0deg));
-  box-shadow: 9px 9px 0 var(--shadow);
+  border-color: var(--border-hover);
 }
 
 .press:active {
-  transform: translate(4px, 4px) !important;
-  box-shadow: 2px 2px 0 var(--shadow) !important;
+  opacity: 0.8;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -253,11 +261,11 @@
   }
 }
 
-/* Deterministic per-element sticker rotation: pass --sticker-rot inline
- * (derived from id/index — see lib/sticker-rotation.ts) rather than
- * re-randomizing on every render. */
+/* Sticker rotation retired — the Punto look is flat, nothing rotates. Kept
+ * as a no-op (rather than removed) so elements still passing
+ * `--sticker-rot`/the `.sticker` class don't need an immediate edit. */
 .sticker {
-  transform: rotate(var(--sticker-rot, 0deg));
+  transform: none;
 }
 
 @keyframes cf-fall {
@@ -342,6 +350,16 @@
   animation: mascot-pulse 0.5s ease-in-out 2;
 }
 
+/* --- Dot-matrix digits blink (components/ui/DotDigits.tsx) --- */
+@keyframes dot-blink {
+  50% {
+    opacity: 0.15;
+  }
+}
+.dot-blink {
+  animation: dot-blink 1s steps(1) infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cf-piece {
     display: none;
@@ -352,5 +370,8 @@
   .mascot-purchase,
   .mascot-levelup {
     animation: none;
+  }
+  .dot-blink {
+    animation: none !important;
   }
 }
