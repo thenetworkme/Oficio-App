@@ -3,24 +3,27 @@ import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import { cn } from "@/lib/cn";
 
-// Pegatina sticker button: 3px ink border, hard offset shadow, "squish" on
-// press (shadow shrinks + element shifts toward it).
+// Punto button: fully pill-shaped, Geist Mono uppercase label, wide tracking.
+// Primary = solid signal background + near-black text. Secondary (outline) =
+// transparent background, 1px hairline border, hover fills --card. Flat —
+// no shadows, no rotation, no squish — see app/globals.css's big comment on
+// the Pegatina -> Punto structural rewrite.
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 rounded-button border-[3px] border-ink font-bold transition-[transform,box-shadow] duration-150 disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap shadow-[6px_6px_0_var(--shadow)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[9px_9px_0_var(--shadow)] active:translate-x-1 active:translate-y-1 active:shadow-[2px_2px_0_var(--shadow)]",
+  "inline-flex items-center justify-center gap-2.5 rounded-button border font-mono text-[12px] font-medium uppercase tracking-[0.12em] transition-colors duration-150 disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap",
   {
     variants: {
       variant: {
-        primary: "bg-a1 text-ink-solid",
-        outline: "bg-card text-ink",
-        ghost: "border-transparent text-muted shadow-none hover:shadow-none hover:translate-x-0 hover:translate-y-0 hover:text-ink",
-        subtle: "bg-card text-ink",
-        danger: "bg-card text-danger border-danger shadow-[6px_6px_0_var(--danger)] hover:shadow-[9px_9px_0_var(--danger)] active:shadow-[2px_2px_0_var(--danger)]",
+        primary: "border-signal bg-signal text-ink-solid hover:brightness-110 active:brightness-95",
+        outline: "border-border bg-transparent text-ink hover:border-border-hover hover:bg-card",
+        ghost: "border-transparent bg-transparent text-muted hover:text-ink",
+        subtle: "border-line bg-card text-ink hover:border-border",
+        danger: "border-danger/45 bg-transparent text-danger hover:border-danger hover:bg-danger/10",
       },
       size: {
-        default: "min-h-14 px-6 text-[17px]",
-        sm: "min-h-11 px-4 text-sm",
-        icon: "size-14 p-0",
-        iconSm: "size-11 p-0",
+        default: "h-[52px] px-6",
+        sm: "h-10 px-4.5 text-[11px]",
+        icon: "size-[52px] p-0",
+        iconSm: "size-10 p-0",
       },
     },
     defaultVariants: { variant: "primary", size: "default" },

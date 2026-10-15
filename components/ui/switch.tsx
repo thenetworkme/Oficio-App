@@ -11,6 +11,8 @@ interface SwitchProps {
   className?: string;
 }
 
+// Punto toggle: pill track (transparent fill), 1px border that turns signal
+// colored when on, a dot thumb that slides — matches the reference's `.tg`.
 export function Switch({ checked, onCheckedChange, label, className }: SwitchProps) {
   return (
     <SwitchPrimitive.Root
@@ -18,19 +20,16 @@ export function Switch({ checked, onCheckedChange, label, className }: SwitchPro
       onCheckedChange={onCheckedChange}
       aria-label={label}
       className={cn(
-        "relative inline-flex h-10 w-[72px] shrink-0 items-center rounded-chip border-[3px] border-ink p-0 outline-offset-2",
+        "relative inline-flex h-7 w-12 shrink-0 items-center rounded-chip border bg-transparent p-0 outline-offset-2 transition-colors",
         className,
       )}
-      style={{ background: checked ? "var(--a3)" : "var(--card)" }}
+      style={{ borderColor: checked ? "var(--signal)" : "var(--border)" }}
     >
       <SwitchPrimitive.Thumb
-        className="block size-7 rounded-full transition-transform"
+        className="block size-4 rounded-full transition-transform"
         style={{
-          transform: checked ? "translateX(32px)" : "translateX(3px)",
-          // Checked: the track is --a3 (always a light pastel), so the knob
-          // needs the constant dark ink-solid to stay visible. Unchecked:
-          // the track is --card, which --ink is already calibrated against.
-          background: checked ? "var(--ink-solid)" : "var(--ink)",
+          transform: checked ? "translateX(20px)" : "translateX(3px)",
+          background: checked ? "var(--signal)" : "var(--muted)",
         }}
       />
     </SwitchPrimitive.Root>
