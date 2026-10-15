@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildSkillDailyMinutes } from "@/lib/heatmap";
+import { buildSkillDailyMinutes, heatmapDotColor, heatmapLevel } from "@/lib/heatmap";
 import type { PracticeSession } from "@/lib/types";
 
 function makeSession(skillId: string, startedAt: number, durationMin: number): PracticeSession {
@@ -54,5 +54,36 @@ describe("buildSkillDailyMinutes", () => {
 
   it("returns an empty map when there are no sessions for the skill", () => {
     expect(buildSkillDailyMinutes([], "sk1", "UTC")).toEqual({});
+  });
+});
+
+describe("heatmapLevel", () => {
+  it("is 0 for zero or negative minutes (no data)", () => {
+    expect(heatmapLevel(0, 120)).toBe(0);
+    expect(heatmapLevel(-5, 120)).toBe(0);
+  });
+
+  it("buckets ratio-of-scale into levels 1-4", () => {
+    expect(heatmapLevel(10, 120)).toBe(1); // ratio ~0.08 < 0.2
+    expect(heatmapLevel(30, 120)).toBe(2); // ratio 0.25 < 0.45
+    expect(heatmapLevel(60, 120)).toBe(3); // ratio 0.5 < 0.75
+    expect(heatmapLevel(120, 120)).toBe(4); // ratio 1 >= 0.75
+  });
+});
+
+describe("heatmapDotColor", () => {
+  it("returns the base color directly at level 0 (no data)", () => {
+    expect(heatmapDotColor(0, "red", "blue")).toBe("blue");
+  });
+
+  it("mixes color into base at the level's opacity percentage for levels 1-4", () => {
+    expect(heatmapDotColor(1, "red", "blue")).toBe("color-mix(in srgb, red 22%, blue)");
+    expect(heatmapDotColor(2, "red", "blue")).toBe("color-mix(in srgb, red 45%, blue)");
+    expect(heatmapDotColor(3, "red", "blue")).toBe("color-mix(in srgb, red 72%, blue)");
+    expect(heatmapDotColor(4, "red", "blue")).toBe("color-mix(in srgb, red 100%, blue)");
+  });
+
+  it("works with CSS var() references, unresolved (color-mix resolves them at paint time)", () => {
+    expect(heatmapDotColor(4, "var(--ink)", "var(--line)")).toBe("color-mix(in srgb, var(--ink) 100%, var(--line))");
   });
 });
