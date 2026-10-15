@@ -67,6 +67,20 @@ export function formatTimeEs(date: Date): string {
   return dfFormat(date, "h:mm a", { locale: es }).toLowerCase();
 }
 
+/** 2026-10-14 -> "MIÉ 14.10.2026" — the top nav's Geist Mono date display,
+ * matching design-reference/punto's header exactly (short weekday,
+ * dot-separated day.month.year, all caps). Formats the weekday and the
+ * day.month.year separately (rather than one "EEE dd.MM.yyyy" pattern +
+ * blind `.replace(".", "")`) because date-fns's es locale only gives some
+ * abbreviated weekdays a trailing period (e.g. historically "mié." but not
+ * "jue") — a single blind replace can strip the WRONG dot (the one between
+ * day and month) on a weekday that has none of its own. */
+export function formatNavDateEs(date: Date): string {
+  const weekday = dfFormat(date, "EEE", { locale: es }).replace(/\.$/, "");
+  const rest = dfFormat(date, "dd.MM.yyyy");
+  return `${weekday} ${rest}`.toUpperCase();
+}
+
 const MONTH_ABBR_ES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 
 /**

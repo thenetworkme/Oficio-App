@@ -5,13 +5,17 @@
 export const strings = {
   app: { name: "Oficio" },
   nav: {
-    panel: "Panel",
+    // Matches design-reference/punto's top nav exactly: Hoy · Práctica ·
+    // Datos · Retos · Logros · Tienda (center tabs), Avisos (bell icon) and
+    // Ajustes (avatar) live in the header's right-hand cluster instead of
+    // the tab row — see components/layout/TopNav.tsx.
+    panel: "Hoy",
+    temporizador: "Práctica",
+    estadisticas: "Datos",
     retos: "Retos",
-    temporizador: "Temporizador",
-    estadisticas: "Estadísticas",
     logros: "Logros",
     tienda: "Tienda",
-    recordatorios: "Recordatorios",
+    recordatorios: "Avisos",
     ajustes: "Ajustes",
   },
   streak: {
