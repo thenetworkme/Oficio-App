@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { Chip } from "@/components/ui/chip";
 import { AparienciaPanel } from "@/components/settings/AparienciaPanel";
+import { CuentaPanel } from "@/components/settings/CuentaPanel";
 import { PerfilPanel } from "@/components/settings/PerfilPanel";
 
 const TABS = [
   { id: "perfil", label: "Perfil", title: "Tu cuenta, a tu manera." },
   { id: "apariencia", label: "Apariencia", title: "Hazla tuya." },
+  { id: "cuenta", label: "Cuenta", title: "Seguridad y datos." },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -19,34 +22,18 @@ export default function AjustesPage() {
     <>
       <header className="flex flex-col gap-1">
         <span className="label-xs">Ajustes · {current.label}</span>
-        <h1 className="m-0 text-4xl font-bold leading-tight tracking-tight">{current.title}</h1>
+        <h1 className="m-0 text-[52px] font-light leading-[0.95] tracking-tight sm:text-[64px]">{current.title}</h1>
       </header>
 
-      <div role="group" aria-label="Secciones de ajustes" className="flex w-fit flex-wrap gap-2.5">
+      <div role="group" aria-label="Secciones de ajustes" className="flex w-fit flex-wrap gap-2">
         {TABS.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            aria-pressed={tab === t.id}
-            onClick={() => setTab(t.id)}
-            className="bx press min-h-13 px-6 text-[18px] font-bold"
-            style={
-              tab === t.id
-                ? {
-                    background: "var(--a1)",
-                    color: "var(--ink-solid)",
-                    boxShadow: "2px 2px 0 var(--shadow)",
-                    transform: "translate(4px,4px)",
-                  }
-                : { background: "var(--card)" }
-            }
-          >
+          <Chip key={t.id} pressed={tab === t.id} onClick={() => setTab(t.id)}>
             {t.label}
-          </button>
+          </Chip>
         ))}
       </div>
 
-      {tab === "perfil" ? <PerfilPanel /> : <AparienciaPanel />}
+      {tab === "perfil" ? <PerfilPanel /> : tab === "apariencia" ? <AparienciaPanel /> : <CuentaPanel />}
     </>
   );
 }

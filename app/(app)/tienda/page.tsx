@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { Mascot } from "@/components/mascot/Mascot";
-import { cn } from "@/lib/cn";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Chip } from "@/components/ui/chip";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { useAppData } from "@/lib/hooks/useAppData";
 import { usePet } from "@/lib/hooks/usePet";
@@ -12,11 +14,24 @@ import { formatInt } from "@/lib/format";
 import { isUnlocked, SHOP_CATALOG, SHOP_CATEGORY_LABELS, shopItem, type ShopItem } from "@/lib/shop";
 import type { ShopCategory } from "@/lib/types";
 
+// Rebuilt against design-reference/punto/html/PuntoTienda.dc.html's flat
+// product-grid/pill-button treatment. The reference's own Tienda is a
+// different concept (redeem XP for real-world rewards, no mascot at all —
+// "Punto" is a more minimal aesthetic than the old gamified mascot-forward
+// look) so its exact grid markup doesn't map 1:1; what's carried over
+// faithfully is the visual grammar (hairline-grid tiles, dot-icon swatch,
+// mono price caption, pill action button) applied to the REAL mascot
+// cosmetic economy (lib/shop.ts catalog, lib/firestore/economy.ts
+// purchase/equip, usePet balance) exactly as it worked before — only the
+// skin changed. A simple flat preview card stands in for the reference's
+// mascot-free screens, per the brief's guidance to adapt rather than drop
+// the equip/purchase feature.
+
 const CATEGORIES: ShopCategory[] = ["hat", "cape", "acc", "bg"];
 
 export default function TiendaPage() {
   const { user, totalHours } = useAppData();
-  const { pet, equipped, ownedIds, level, coins, loading } = usePet();
+  const { pet, equipped, ownedIds, level, xpIntoLevel, xpForNext, xpPct, coins, loading } = usePet();
   const sound = useSound();
   const [tab, setTab] = useState<ShopCategory>("hat");
   const [toast, setToast] = useState("Cada tomate completo te da monedas.");
@@ -27,6 +42,7 @@ export default function TiendaPage() {
   const petName = pet?.name ?? "Tomi";
   const items = SHOP_CATALOG.filter((i) => i.cat === tab);
   const ownedCount = ownedIds.size;
+  const wornNames = [equipped.hat, equipped.cape, equipped.acc].map((id) => id && shopItem(id)?.name).filter(Boolean);
 
   async function handleAction(item: ShopItem) {
     if (!user) return;
@@ -87,98 +103,70 @@ export default function TiendaPage() {
 
   return (
     <>
-      <section className="flex flex-wrap items-end justify-between gap-6">
-        <h1 className="m-0 text-[48px] font-bold leading-[0.95] tracking-tight sm:text-[64px]">
-          La tienda
-          <br />
-          de {petName}
-          <span className="text-a1" style={{ WebkitTextStroke: "3px var(--ink)" }}>
-            .
-          </span>
-        </h1>
-        <div
-          className="bx flex items-center gap-3 px-5 py-3 text-ink-solid"
-          style={{ background: "var(--a1)", transform: "rotate(1.5deg)" }}
-          role="status"
-          aria-label="Monedas disponibles"
-        >
-          <span aria-hidden="true" className="flex size-11 items-center justify-center rounded-full border-[3px] border-ink bg-paper text-ink text-[22px] font-bold">
-            $
-          </span>
-          <div>
-            <div className="font-num text-[36px] font-bold leading-none">{loading ? "…" : formatInt(coins)}</div>
-            <span className="label-xs !text-ink-solid opacity-70">monedas</span>
+      <header className="flex flex-wrap items-end justify-between gap-6">
+        <div className="flex flex-col gap-3">
+          <span className="label-xs">Recompensas</span>
+          <h1 className="m-0 text-[52px] font-light leading-[0.95] tracking-tight sm:text-[64px]">
+            La tienda de {petName}.
+          </h1>
+        </div>
+        <div className="text-right">
+          <span className="label-xs">Saldo</span>
+          <div className="font-num text-[40px] font-light leading-tight tracking-tight">
+            {loading ? "…" : formatInt(coins)} <span className="font-sans text-base text-muted">monedas</span>
           </div>
         </div>
-      </section>
+      </header>
 
       <section className="flex flex-wrap items-start gap-8">
-        <aside className="flex min-w-[300px] flex-[0_1_380px] flex-col gap-5">
-          <div className="bx flex flex-col gap-3.5 p-5">
-            <div className="relative self-center">
-              <Mascot size={320} mood={justPurchased ? "cheer" : "idle"} hat={equipped.hat} cape={equipped.cape} acc={equipped.acc} bg={equipped.bg} />
-              <div
-                className="bx absolute -right-1.5 -top-2.5 px-3.5 py-1.5 font-bold text-ink-solid"
-                style={{ background: "var(--a2)", transform: "rotate(6deg)" }}
-              >
-                {toastOk ? "¡Me queda genial!" : "¡Hola!"}
-              </div>
+        <aside className="flex min-w-[280px] flex-[0_1_340px] flex-col gap-4">
+          <Card className="flex flex-col items-center gap-4 p-6">
+            <Mascot size={200} mood={justPurchased ? "cheer" : "idle"} hat={equipped.hat} cape={equipped.cape} acc={equipped.acc} bg={equipped.bg} />
+            <div className="flex w-full items-baseline justify-between">
+              <span className="text-[22px] font-medium tracking-tight">{petName}</span>
+              <span className="font-num text-sm text-muted">Nv. {level}</span>
             </div>
-            <div className="flex items-baseline justify-between">
-              <span className="text-[26px] font-bold tracking-tight">{petName}</span>
-              <span className="font-num font-bold">Nv. {level}</span>
-            </div>
-            <span className="font-num text-[13px]">
-              Llevas puesto:{" "}
-              {[equipped.hat, equipped.cape, equipped.acc]
-                .map((id) => id && shopItem(id)?.name)
-                .filter(Boolean)
-                .join(", ") || "nada todavía"}
+            <ProgressBar pct={xpPct} ariaLabel={`${xpIntoLevel} de ${xpForNext} XP para el siguiente nivel`} height={6} className="w-full" />
+            <span className="font-num w-full text-left text-[11px] text-muted">
+              {formatInt(xpIntoLevel)} / {formatInt(xpForNext)} XP
             </span>
-          </div>
-          <div className="bx p-4.5 text-ink-solid" style={{ background: "var(--a3)", transform: "rotate(-1deg)" }}>
-            <span className="label-xs !text-ink-solid opacity-70">Tu armario</span>
-            <div className="text-[26px] font-bold tracking-tight">
-              {ownedCount} de {SHOP_CATALOG.length} cosas
+            <span className="label-xs w-full text-left">
+              {wornNames.length > 0 ? `Lleva: ${wornNames.join(", ")}` : "Nada puesto todavía"}
+            </span>
+          </Card>
+
+          <Card className="flex flex-col gap-3 p-5.5">
+            <span className="label-xs">Tu armario</span>
+            <div className="flex items-baseline gap-2">
+              <span className="font-num text-[34px] font-medium">{ownedCount}</span>
+              <span className="font-num text-sm text-muted">de {SHOP_CATALOG.length}</span>
             </div>
-            <ProgressBar pct={(ownedCount / SHOP_CATALOG.length) * 100} color="var(--ink)" ariaLabel="Armario" height={16} className="mt-1.5" />
-          </div>
+            <ProgressBar pct={(ownedCount / SHOP_CATALOG.length) * 100} ariaLabel="Artículos en tu armario" height={6} />
+          </Card>
         </aside>
 
         <div className="flex min-w-0 flex-[1_1_600px] flex-col gap-5">
-          <div role="tablist" className="flex flex-wrap gap-2.5">
+          <div role="group" aria-label="Categoría" className="flex flex-wrap gap-2">
             {CATEGORIES.map((c) => (
-              <button
-                key={c}
-                type="button"
-                role="tab"
-                aria-selected={tab === c}
-                onClick={() => setTab(c)}
-                className="bx press min-h-12 px-5 text-[16px] font-bold"
-                style={
-                  tab === c
-                    ? {
-                        background: "var(--a1)",
-                        color: "var(--ink-solid)",
-                        boxShadow: "2px 2px 0 var(--shadow)",
-                        transform: "translate(4px,4px)",
-                      }
-                    : { background: "var(--card)" }
-                }
-              >
+              <Chip key={c} pressed={tab === c} onClick={() => setTab(c)}>
                 {SHOP_CATEGORY_LABELS[c]}
-              </button>
+              </Chip>
             ))}
           </div>
-          <div role="status" className="min-h-11 flex items-center">
+
+          <div role="status" className="flex min-h-9 items-center">
             <span
-              className="rounded-chip border-[3px] border-ink px-4 py-1 font-bold text-ink-solid"
-              style={{ background: toastOk === false ? "#FF9C9C" : "var(--a3)" }}
+              className="label-xs rounded-chip border px-3.5 py-1.5"
+              style={{
+                borderColor: toastOk === false ? "var(--danger)" : "var(--line)",
+                color: toastOk === false ? "var(--danger)" : "var(--muted)",
+              }}
             >
               {toast}
             </span>
           </div>
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-5">
+
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4">
             {items.map((item) => {
               const owned = ownedIds.has(item.id);
               const on = equipped[item.cat] === item.id;
@@ -195,38 +183,35 @@ export default function TiendaPage() {
                   : afford
                     ? "Comprar"
                     : `Te faltan ${item.price - coins}`;
-              const btnBg = locked ? "var(--card)" : owned ? (on ? "var(--card)" : "var(--a3)") : afford ? "var(--a2)" : "var(--card)";
-              // Every branch of btnBg/article bg is either --card (safe with
-              // the normal theme-adaptive --ink text) or an a1/a2/a3 accent
-              // chip (needs the constant --ink-solid instead).
-              const btnIsAccent = !locked && ((owned && !on) || (!owned && afford));
+              const buyable = !locked && !owned && afford;
               return (
-                <article
+                <Card
                   key={item.id}
-                  className={cn("bx flex flex-col gap-2.5 p-4", on && "text-ink-solid")}
-                  style={{ background: on ? "var(--a1)" : "var(--card)", opacity: locked ? 0.65 : 1 }}
+                  className="flex flex-col gap-3 p-4.5 transition-colors"
+                  style={{ borderColor: on ? "var(--signal)" : "var(--line)", opacity: locked ? 0.6 : 1 }}
                 >
                   <div
                     aria-hidden="true"
-                    className="flex h-[92px] items-center justify-center rounded-button border-[3px] border-ink text-[44px]"
+                    className="flex h-20 items-center justify-center rounded-button border border-line text-[36px]"
                     style={{ background: item.thumb }}
                   >
                     {item.icon}
                   </div>
-                  <div className="text-[18px] font-bold leading-tight">{item.name}</div>
-                  <div className="font-num text-[13px] font-bold">
-                    {locked ? `🔒 ${item.lockText}` : owned ? (on ? "Puesto" : "En tu armario") : `${item.price} monedas`}
+                  <div className="text-[16px] font-medium leading-tight">{item.name}</div>
+                  <div className="font-mono text-[12px] uppercase tracking-[0.06em] text-muted">
+                    {locked ? item.lockText : owned ? (on ? "Puesto" : "En tu armario") : `${item.price} monedas`}
                   </div>
-                  <button
+                  <Button
                     type="button"
+                    variant={buyable ? "primary" : "outline"}
+                    size="sm"
                     disabled={locked || busyId === item.id || (!owned && !afford)}
                     onClick={() => handleAction(item)}
-                    className={cn("bx press mt-auto min-h-12 font-bold disabled:opacity-60", btnIsAccent && "text-ink-solid")}
-                    style={{ background: btnBg }}
+                    className="mt-auto"
                   >
                     {busyId === item.id ? "Comprando…" : label}
-                  </button>
-                </article>
+                  </Button>
+                </Card>
               );
             })}
           </div>
