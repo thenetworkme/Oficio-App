@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Card, CardHeading } from "@/components/ui/card";
 import { Chip } from "@/components/ui/chip";
 import { Input, Label } from "@/components/ui/input";
@@ -14,13 +15,24 @@ import { resolveSkillColor } from "@/lib/skill-color";
 import { formatDecimal, formatMinutesLong } from "@/lib/format";
 import { QUICK_DURATIONS, clampMinutes, decrementMinutes, incrementMinutes } from "@/lib/manual-log";
 
+function dateKey(d: Date): string {
+  return d.toISOString().slice(0, 10);
+}
+
 export default function RegistrarPage() {
   const router = useRouter();
   const { user, skills, todayMinutes } = useAppData();
   const { celebration, enqueueCelebration, closeCelebration } = useCelebration();
 
+  const todayStr = useMemo(() => dateKey(new Date()), []);
+  const yesterdayStr = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 1);
+    return dateKey(d);
+  }, []);
+
   const [skillId, setSkillId] = useState<string | null>(skills[0]?.id ?? null);
-  const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [date, setDate] = useState(todayStr);
   const [time, setTime] = useState("19:00");
   const [minutes, setMinutes] = useState(90);
   const [quality, setQuality] = useState(4);
@@ -33,9 +45,11 @@ export default function RegistrarPage() {
 
   const newTotalHours = skill ? (skill.totalMinutes + minutes) / 60 : 0;
   const oldTotalHours = skill ? skill.totalMinutes / 60 : 0;
-  const projectedToday = todayMinutes + minutes;
+  const isToday = date === todayStr;
+  const projectedToday = isToday ? todayMinutes + minutes : todayMinutes;
   const todayPct = Math.min(100, (projectedToday / todayGoalMin) * 100);
   const todayLeft = todayGoalMin - projectedToday;
+  const dayPick = date === todayStr ? "hoy" : date === yesterdayStr ? "ayer" : "otro";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -78,117 +92,131 @@ export default function RegistrarPage() {
 
   return (
     <>
-      <header className="flex flex-col gap-1">
+      <header className="flex flex-col gap-3">
         <span className="label-xs">Registro manual</span>
-        <h1 className="m-0 text-[40px] font-bold leading-[0.95] tracking-tight sm:text-5xl">Que ninguna hora se pierda.</h1>
+        <h1 className="m-0 text-[44px] font-light leading-[0.95] tracking-tight sm:text-[60px]">Añadir horas</h1>
       </header>
 
       <div className="flex flex-wrap items-start gap-6">
-        <form onSubmit={handleSubmit} className="bx flex min-w-0 flex-[3_1_480px] flex-col gap-6.5 p-7">
-          <div role="group" aria-label="Habilidad" className="flex flex-col gap-2.5">
-            <span className="label-xs">Habilidad</span>
-            <div className="flex flex-wrap gap-2">
-              {skills.map((s) => (
-                <Chip key={s.id} pressed={skill?.id === s.id} dotColor={resolveSkillColor(s.color)} onClick={() => setSkillId(s.id)}>
-                  {s.name}
+        <form onSubmit={handleSubmit} className="flex min-w-0 flex-[3_1_480px] flex-col gap-7 rounded-card border border-line bg-card p-7">
+            <div role="group" aria-label="Habilidad" className="flex flex-col gap-2.5">
+              <span className="label-xs">Habilidad</span>
+              <div className="flex flex-wrap gap-2">
+                {skills.map((s) => (
+                  <Chip key={s.id} pressed={skill?.id === s.id} dotColor={resolveSkillColor(s.color)} onClick={() => setSkillId(s.id)}>
+                    {s.name}
+                  </Chip>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2.5">
+              <span className="label-xs">Día</span>
+              <div className="flex flex-wrap gap-2">
+                <Chip pressed={dayPick === "hoy"} onClick={() => setDate(todayStr)}>
+                  Hoy
                 </Chip>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(min(180px,100%),1fr))] gap-4">
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="l-date">Fecha</Label>
-              <Input id="l-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} className="font-num" />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="l-time">Hora de inicio</Label>
-              <Input id="l-time" type="time" value={time} onChange={(e) => setTime(e.target.value)} className="font-num" />
-            </div>
-          </div>
-
-          <div role="group" aria-label="Duración" className="flex flex-col gap-3">
-            <span className="label-xs">Duración</span>
-            <div className="flex flex-wrap items-center gap-4">
-              <button
-                type="button"
-                aria-label="Restar 15 minutos"
-                onClick={() => setMinutes((m) => decrementMinutes(m))}
-                className="bx press flex size-12 items-center justify-center bg-card text-2xl font-bold leading-none"
-              >
-                −
-              </button>
-              <span role="status" className="font-num min-w-[190px] text-center text-[40px] font-bold tracking-tight sm:text-[48px]">
-                {formatMinutesLong(minutes)}
-              </span>
-              <button
-                type="button"
-                aria-label="Sumar 15 minutos"
-                onClick={() => setMinutes((m) => incrementMinutes(m))}
-                className="bx press flex size-12 items-center justify-center bg-card text-2xl font-bold leading-none"
-              >
-                +
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {quickOptions.map((v) => (
-                <Chip key={v} pressed={minutes === v} onClick={() => setMinutes(clampMinutes(v))} className="font-num">
-                  {formatMinutesLong(v)}
+                <Chip pressed={dayPick === "ayer"} onClick={() => setDate(yesterdayStr)}>
+                  Ayer
                 </Chip>
-              ))}
+                <Chip pressed={dayPick === "otro"} onClick={() => {}}>
+                  Otro
+                </Chip>
+              </div>
             </div>
-          </div>
 
-          <div role="group" aria-label="Calidad de la práctica" className="flex flex-col gap-2.5">
-            <span className="label-xs">¿Qué tan enfocado estuviste?</span>
-            <div className="flex flex-wrap items-center gap-2.5">
-              {[1, 2, 3, 4, 5].map((n) => (
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(min(180px,100%),1fr))] gap-4">
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="l-date">Fecha</Label>
+                <Input id="l-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} className="font-num" />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="l-time">Hora de inicio</Label>
+                <Input id="l-time" type="time" value={time} onChange={(e) => setTime(e.target.value)} className="font-num" />
+              </div>
+            </div>
+
+            <div role="group" aria-label="Duración" className="flex flex-col gap-3">
+              <span className="label-xs">Duración</span>
+              <div className="flex flex-wrap items-center gap-4">
                 <button
-                  key={n}
                   type="button"
-                  aria-pressed={quality === n}
-                  aria-label={`Calidad ${n} de 5`}
-                  onClick={() => setQuality(n)}
-                  className="bx press font-num flex size-11 items-center justify-center text-[15px] font-bold"
-                  style={quality === n ? { background: "var(--a1)", color: "var(--ink-solid)" } : { background: "var(--card)" }}
+                  aria-label="Restar 15 minutos"
+                  onClick={() => setMinutes((m) => decrementMinutes(m))}
+                  className="flex size-11 items-center justify-center rounded-full border border-border text-xl font-medium leading-none transition-colors hover:border-border-hover hover:bg-card"
                 >
-                  {n}
+                  −
                 </button>
-              ))}
+                <span role="status" className="font-mono min-w-[200px] text-center text-[40px] font-medium tracking-tight sm:text-[48px]">
+                  {formatMinutesLong(minutes)}
+                </span>
+                <button
+                  type="button"
+                  aria-label="Sumar 15 minutos"
+                  onClick={() => setMinutes((m) => incrementMinutes(m))}
+                  className="flex size-11 items-center justify-center rounded-full border border-border text-xl font-medium leading-none transition-colors hover:border-border-hover hover:bg-card"
+                >
+                  +
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {quickOptions.map((v) => (
+                  <Chip key={v} pressed={minutes === v} onClick={() => setMinutes(clampMinutes(v))} className="font-num">
+                    {formatMinutesLong(v)}
+                  </Chip>
+                ))}
+              </div>
             </div>
-          </div>
 
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="l-note">Nota (opcional)</Label>
-            <Input id="l-note" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Qué practicaste y qué te costó" />
-          </div>
+            <div role="group" aria-label="Calidad de la práctica" className="flex flex-col gap-2.5">
+              <span className="label-xs">¿Qué tan enfocado estuviste?</span>
+              <div className="flex flex-wrap items-center gap-2.5">
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    aria-pressed={quality === n}
+                    aria-label={`Calidad ${n} de 5`}
+                    onClick={() => setQuality(n)}
+                    className="font-num flex size-11 items-center justify-center rounded-full border text-[15px] font-medium transition-colors"
+                    style={
+                      quality === n
+                        ? { borderColor: "var(--signal)", background: "var(--signal)", color: "var(--ink-solid)" }
+                        : { borderColor: "var(--border)", color: "var(--ink)" }
+                    }
+                  >
+                    {n}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-          <div className="flex flex-wrap justify-end gap-3">
-            <button type="button" onClick={() => router.push("/")} className="bx press min-h-13 bg-card px-5 font-bold">
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={saving || !skill}
-              className="bx press min-h-13 px-6 font-bold text-ink-solid disabled:opacity-60"
-              style={{ background: "var(--a2)" }}
-            >
-              {saved ? "¡Sesión guardada!" : "Guardar sesión"}
-            </button>
-          </div>
-        </form>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="l-note">Nota (opcional)</Label>
+              <Input id="l-note" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Qué practicaste y qué te costó" />
+            </div>
+
+            <div className="flex flex-wrap justify-end gap-3">
+              <Button type="button" variant="outline" onClick={() => router.push("/")}>
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={saving || !skill}>
+                {saved ? "¡Sesión guardada!" : "Guardar sesión"}
+              </Button>
+            </div>
+          </form>
 
         <aside aria-label="Resumen" className="flex min-w-0 flex-[2_1_320px] flex-col gap-4">
-          <Card className="flex flex-col gap-4.5 p-5.5 text-ink-solid" style={{ background: "var(--a1)" }}>
+          <Card className="flex flex-col gap-4.5 p-5.5 text-ink-solid" style={{ background: "var(--signal)", borderColor: "var(--signal)" }}>
             <CardHeading>Esta sesión sumará</CardHeading>
             <div className="flex flex-wrap items-baseline gap-2.5">
-              <span className="font-num text-[40px] font-bold">+{formatMinutesLong(minutes)}</span>
+              <span className="font-num text-[40px] font-medium">+{formatMinutesLong(minutes)}</span>
               <span>a {skill?.name}</span>
             </div>
-            <div className="flex flex-col gap-1 border-t-2 border-dashed border-ink pt-4">
+            <div className="flex flex-col gap-1 border-t border-ink-solid/25 pt-4">
               <span className="label-xs !text-ink-solid opacity-70">Total acumulado</span>
               <div className="flex flex-wrap items-baseline gap-2">
-                <span className="font-num text-2xl font-bold">{formatDecimal(newTotalHours)} h</span>
+                <span className="font-num text-2xl font-medium">{formatDecimal(newTotalHours)} h</span>
                 <span className="font-num text-sm">antes {formatDecimal(oldTotalHours)} h</span>
               </div>
             </div>
@@ -201,7 +229,7 @@ export default function RegistrarPage() {
                 {formatMinutesLong(projectedToday)} / {formatMinutesLong(todayGoalMin)}
               </span>
             </div>
-            <ProgressBar pct={todayPct} color="var(--a1)" ariaLabel="Progreso de hoy" />
+            <ProgressBar pct={todayPct} color="var(--signal)" ariaLabel="Progreso de hoy" />
             <span className="text-sm text-muted">
               {todayLeft > 0 ? `Te faltan ${formatMinutesLong(todayLeft)} para tu meta diaria.` : "Meta diaria cumplida. La racha sigue en pie."}
             </span>

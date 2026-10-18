@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card } from "@/components/ui/card";
+import { Chip } from "@/components/ui/chip";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
@@ -13,8 +13,13 @@ import type { Reminder } from "@/lib/types";
 const DAY_SHORT = ["L", "M", "X", "J", "V", "S", "D"];
 const DAY_FULL = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
 
+const SYSTEM_REMINDER_COPY: Record<string, { title: string; desc: string }> = {
+  streak_guard: { title: "Racha en riesgo", desc: "Aviso si aún no practicas hoy, a tiempo para salvar tu racha." },
+  weekly_review: { title: "Resumen semanal", desc: "Tus horas y logros de la semana, un día fijo." },
+};
+
 function describeReminder(r: Reminder, skillName: string | undefined): { title: string; meta: string } {
-  const title = r.message || (r.kind === "streak_guard" ? "Protección de racha" : r.kind === "weekly_review" ? "Revisión semanal de horas" : `Práctica de ${skillName ?? "habilidad"}`);
+  const title = r.message || `Práctica de ${skillName ?? "habilidad"}`;
   if (r.days.length === 7) return { title, meta: "Todos los días" };
   if (r.days.length === 5 && r.days.every((d) => d <= 5)) return { title, meta: "Lunes a viernes" };
   return { title, meta: r.days.map((d) => DAY_FULL[d - 1]).join(", ") };
@@ -90,80 +95,105 @@ export default function RecordatoriosPage() {
     });
   }
 
+  const practiceReminders = reminders.filter((r) => r.kind === "practice");
+  const systemReminders = reminders.filter((r) => r.kind !== "practice");
+  const activeCount = reminders.filter((r) => r.enabled).length + (notifStatus === "granted" ? 1 : 0);
+
   return (
     <>
-      <header className="flex flex-col gap-1">
-        <span className="label-xs">Recordatorios</span>
-        <h1 className="m-0 text-4xl font-bold leading-tight tracking-tight">La disciplina se agenda.</h1>
+      <header className="flex flex-wrap items-end justify-between gap-6">
+        <div className="flex flex-col gap-3">
+          <span className="label-xs">Recordatorios</span>
+          <h1 className="m-0 text-[52px] font-light leading-[0.95] tracking-tight sm:text-[68px]">Avisos</h1>
+        </div>
+        <span className="label-xs">{activeCount} activos</span>
       </header>
 
-      {notifStatus !== "granted" && notifStatus !== "unsupported" && (
-        <div className="flex flex-wrap items-center justify-between gap-4 bx rounded-[14px] px-5 py-4">
-          <span className="flex-1 min-w-[280px]">
-            Permite las notificaciones para que los avisos lleguen aunque cierres la pestaña.
-          </span>
-          <Button onClick={handleEnableNotifications}>Activar notificaciones</Button>
-        </div>
-      )}
-
       <div className="flex flex-wrap items-start gap-6">
-        <section aria-labelledby="h-list" className="min-w-0 flex-[3_1_460px] bx p-5.5">
-          <h2 id="h-list" className="m-0 mb-2.5 text-lg font-bold">
-            Mis recordatorios
-          </h2>
-          {reminders.length === 0 ? (
-            <p className="py-4 text-sm text-muted">Aún no tienes recordatorios. Crea el primero a la derecha.</p>
-          ) : (
-            reminders.map((r) => {
-              const skill = skills.find((s) => s.id === r.skillId);
-              const { title, meta } = describeReminder(r, skill?.name);
-              return (
-                <div key={r.id} className="flex flex-wrap items-center gap-4 border-t border-ink py-4">
-                  <span className="font-num min-w-[76px] text-base font-medium" style={{ color: r.enabled ? "var(--a1)" : "var(--muted)" }}>
-                    {r.timeOfDay}
-                  </span>
-                  <div className="min-w-[200px] flex-1 flex flex-col gap-0.5">
-                    <span className="font-semibold" style={{ color: r.enabled ? "var(--ink)" : "var(--muted)" }}>
-                      {title}
+        <section aria-labelledby="h-list" className="flex min-w-0 flex-[3_1_460px] flex-col gap-8">
+          <div>
+            <h2 id="h-list" className="label-xs m-0 mb-1">
+              Tus avisos
+            </h2>
+            {practiceReminders.length === 0 ? (
+              <p className="py-4 text-sm text-muted">Aún no tienes recordatorios de práctica. Crea el primero a la derecha.</p>
+            ) : (
+              practiceReminders.map((r) => {
+                const skill = skills.find((s) => s.id === r.skillId);
+                const { title, meta } = describeReminder(r, skill?.name);
+                return (
+                  <div key={r.id} className="flex flex-wrap items-center gap-4 border-t border-line py-4">
+                    <span className="font-num min-w-[76px] text-lg font-medium" style={{ color: r.enabled ? "var(--signal)" : "var(--muted)" }}>
+                      {r.timeOfDay}
                     </span>
-                    <span className="text-[13px] text-muted">{meta}</span>
+                    <div className="flex min-w-[200px] flex-1 flex-col gap-0.5">
+                      <span className="font-semibold" style={{ color: r.enabled ? "var(--ink)" : "var(--muted)" }}>
+                        {title}
+                      </span>
+                      <span className="text-[13px] text-muted">{meta}</span>
+                    </div>
+                    <Switch checked={r.enabled} onCheckedChange={(v) => setReminderEnabled(r.id, v)} label={title} />
                   </div>
-                  <Switch checked={r.enabled} onCheckedChange={(v) => setReminderEnabled(r.id, v)} label={title} />
+                );
+              })
+            )}
+          </div>
+
+          <div>
+            <h2 className="label-xs m-0 mb-1">Avisos del sistema</h2>
+            {systemReminders.map((r) => {
+              const copy = SYSTEM_REMINDER_COPY[r.kind] ?? { title: r.message || r.kind, desc: "" };
+              return (
+                <div key={r.id} className="flex flex-wrap items-center gap-4 border-t border-line py-4">
+                  <div className="flex min-w-[200px] flex-1 flex-col gap-0.5">
+                    <span className="font-semibold">{copy.title}</span>
+                    {copy.desc && <span className="text-[13px] text-muted">{copy.desc}</span>}
+                  </div>
+                  <Switch checked={r.enabled} onCheckedChange={(v) => setReminderEnabled(r.id, v)} label={copy.title} />
                 </div>
               );
-            })
-          )}
+            })}
+            {notifStatus !== "unsupported" && (
+              <div className="flex flex-wrap items-center gap-4 border-t border-line py-4">
+                <div className="flex min-w-[200px] flex-1 flex-col gap-0.5">
+                  <span className="font-semibold">Notificaciones del navegador</span>
+                  <span className="text-[13px] text-muted">Permite avisos aunque cierres la pestaña</span>
+                </div>
+                {notifStatus === "granted" ? (
+                  <Switch checked onCheckedChange={() => {}} label="Notificaciones del navegador" />
+                ) : (
+                  <Button size="sm" variant="outline" onClick={handleEnableNotifications}>
+                    Activar
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
         </section>
 
-        <aside className="flex min-w-0 flex-[2_1_340px] flex-col gap-4">
-          <form onSubmit={handleCreate} className="flex flex-col gap-4.5 bx p-5.5">
-            <h2 className="m-0 text-lg font-bold">Nuevo recordatorio</h2>
+        <aside className="flex min-w-0 flex-[2_1_340px] flex-col gap-4 border-t border-line pt-6 sm:border-l sm:border-t-0 sm:pl-8 sm:pt-0">
+          <form onSubmit={handleCreate} className="flex flex-col gap-6.5">
+            <h2 className="label-xs m-0">Nuevo aviso</h2>
 
-            <div className="grid grid-cols-[repeat(auto-fit,minmax(min(140px,100%),1fr))] gap-3">
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="f-skill">Habilidad</Label>
-                <select
-                  id="f-skill"
-                  value={selectedSkillId}
-                  onChange={(e) => setSkillId(e.target.value)}
-                  className="box-border min-h-[46px] w-full rounded-button border-[3px] border-ink bg-card px-3 text-[15px]"
-                >
-                  {skills.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="f-time">Hora</Label>
-                <Input id="f-time" type="time" value={time} onChange={(e) => setTime(e.target.value)} className="font-num" />
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="f-time">Hora</Label>
+              <Input id="f-time" type="time" value={time} onChange={(e) => setTime(e.target.value)} className="font-num text-[32px]" />
+            </div>
+
+            <div role="group" aria-label="Habilidad" className="flex flex-col gap-2.5">
+              <span className="label-xs">Habilidad</span>
+              <div className="flex flex-wrap gap-2">
+                {skills.map((s) => (
+                  <Chip key={s.id} pressed={selectedSkillId === s.id} onClick={() => setSkillId(s.id)}>
+                    {s.name}
+                  </Chip>
+                ))}
               </div>
             </div>
 
-            <div role="group" aria-label="Días" className="flex flex-col gap-2">
-              <span className="text-[13px] text-muted">Se repite</span>
-              <div className="flex flex-wrap gap-2">
+            <div role="group" aria-label="Días" className="flex flex-col gap-2.5">
+              <span className="label-xs">Días</span>
+              <div className="flex flex-wrap gap-1.5">
                 {DAY_SHORT.map((label, i) => {
                   const d = i + 1;
                   const on = days.has(d);
@@ -174,12 +204,12 @@ export default function RecordatoriosPage() {
                       aria-pressed={on}
                       aria-label={DAY_FULL[i]}
                       onClick={() => toggleDay(d)}
-                      className="font-num flex size-11 items-center justify-center rounded-full border font-bold"
-                      style={{
-                        borderColor: on ? "var(--a1)" : "var(--ink)",
-                        background: on ? "var(--a1)" : "transparent",
-                        color: on ? "var(--ink-solid)" : "var(--ink)",
-                      }}
+                      className="font-num flex size-9 items-center justify-center rounded-full border text-[11px] font-medium transition-colors"
+                      style={
+                        on
+                          ? { borderColor: "var(--signal)", background: "var(--signal)", color: "var(--ink-solid)" }
+                          : { borderColor: "var(--border)", color: "var(--ink)" }
+                      }
                     >
                       {label}
                     </button>
@@ -194,16 +224,9 @@ export default function RecordatoriosPage() {
             </div>
 
             <Button type="submit" disabled={saving || !selectedSkillId} className="w-full">
-              Guardar recordatorio
+              Crear aviso
             </Button>
           </form>
-
-          <Card className="flex flex-col gap-1.5 p-5">
-            <h2 className="m-0 text-base font-bold">Protección de racha</h2>
-            <p className="m-0 text-sm text-muted">
-              Si a las 8:00 pm todavía no llegas a tu mínimo diario, te avisamos con tiempo para salvar tu racha.
-            </p>
-          </Card>
         </aside>
       </div>
     </>

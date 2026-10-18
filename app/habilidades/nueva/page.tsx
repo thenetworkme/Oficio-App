@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Wordmark } from "@/components/layout/TopNav";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { createSkill } from "@/lib/firestore/skills";
 import { useSound } from "@/lib/sound/SoundProvider";
@@ -12,11 +14,18 @@ import { formatDecimal, formatInt, formatMinutesLong } from "@/lib/format";
 import { hoursPerWeek, projectTimeRemaining, formatProjection } from "@/lib/projection";
 import { createReminder } from "@/lib/firestore/reminders";
 
-const COLOR_OPTIONS = [
-  { id: "accent", name: "Acento", hex: "var(--a1)" },
-  { id: "a2", name: "Secundario", hex: "var(--a2)" },
-  { id: "a3", name: "Terciario", hex: "var(--a3)" },
-];
+// Punto redesign note: this picker's 3 options used to map to the old
+// Pegatina a1/a2/a3 triple-accent system (3 visually distinct colors). The
+// Phase-1 token remap collapses --a1/--a2/--a3 to all equal --signal (see
+// app/globals.css's big comment), so skill color can no longer be a 3-way
+// accent choice here without also touching lib/skill-color.ts's
+// resolveSkillColor (shared with dashboard/other not-yet-redesigned screens
+// outside this phase's scope). Keeping the 3 stored ids (unchanged Firestore
+// shape) but presenting them as one disabled-look swatch would be confusing,
+// so this picker is temporarily reduced to confirming the skill's single
+// signal-colored dot — a known, called-out regression until skill color
+// gets its own proper multi-hue treatment in a later phase.
+const COLOR_OPTIONS = [{ id: "accent", name: "Acento", hex: "var(--signal)" }];
 const GOAL_OPTIONS = [1000, 5000, 10000];
 const DAILY_OPTIONS = [30, 60, 90, 120, 180, 240];
 const DAY_OPTIONS = [3, 4, 5, 6, 7];
@@ -31,7 +40,7 @@ export default function NewSkillPage() {
 
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
-  const [colorId, setColorId] = useState("a3");
+  const [colorId] = useState("accent");
   const [goal, setGoal] = useState(10000);
   const [initial, setInitial] = useState("0");
   const [daily, setDaily] = useState(120);
@@ -41,7 +50,7 @@ export default function NewSkillPage() {
   const [creating, setCreating] = useState(false);
 
   const displayName = name.trim() === "" ? "Nueva habilidad" : name;
-  const colorHex = COLOR_OPTIONS.find((c) => c.id === colorId)?.hex ?? "var(--a1)";
+  const colorHex = COLOR_OPTIONS.find((c) => c.id === colorId)?.hex ?? "var(--signal)";
   const perWeek = hoursPerWeek(daily, days);
   const initNum = Math.max(0, parseFloat(initial) || 0);
 
@@ -84,15 +93,9 @@ export default function NewSkillPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-ink px-6 py-6 sm:px-10">
-        <div className="flex items-center gap-2.5">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-            <circle cx="14" cy="14" r="11" stroke="var(--ink)" strokeWidth="3" />
-            <path d="M14 3a11 11 0 0 1 9.5 5.5" stroke="var(--a1)" strokeWidth="3" strokeLinecap="round" />
-          </svg>
-          <span className="text-2xl font-bold tracking-tight">Oficio</span>
-        </div>
-        <Link href="/" className="min-h-11 inline-flex items-center text-sm text-muted">
+      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-6 py-6 sm:px-10">
+        <Wordmark />
+        <Link href="/" className="label-xs min-h-11 inline-flex items-center">
           Cancelar y volver al panel
         </Link>
       </header>
@@ -101,7 +104,7 @@ export default function NewSkillPage() {
         <ol aria-label="Pasos" className="m-0 grid list-none grid-cols-4 gap-3 p-0">
           {STEP_LABELS.map((label, i) => (
             <li key={label} className="flex flex-col gap-2">
-              <div className="h-1.5 rounded-chip" style={{ background: i + 1 <= step ? colorHex : "var(--card)" }} />
+              <div className="h-1.5 rounded-chip" style={{ background: i + 1 <= step ? colorHex : "var(--line)" }} />
               <span className="text-[13px]" style={{ color: i + 1 === step ? "var(--ink)" : "var(--muted)", fontWeight: i + 1 === step ? 600 : 400 }}>
                 {i + 1}. {label}
               </span>
@@ -110,8 +113,8 @@ export default function NewSkillPage() {
         </ol>
 
         <div className="flex flex-wrap items-start gap-6">
-          <section className="flex min-w-0 flex-[3_1_480px] flex-col gap-7 bx p-8">
-            <h1 className="m-0 text-[36px] font-bold leading-tight tracking-tight">{STEP_TITLES[step - 1]}</h1>
+          <section className="flex min-w-0 flex-[3_1_480px] flex-col gap-7 rounded-card border border-line bg-card p-8">
+            <h1 className="m-0 text-[36px] font-light leading-tight tracking-tight">{STEP_TITLES[step - 1]}</h1>
 
             {step === 1 && (
               <div className="flex flex-col gap-6.5">
@@ -125,26 +128,12 @@ export default function NewSkillPage() {
                     className="min-h-[52px] text-lg"
                   />
                 </div>
-                <div role="group" aria-label="Color" className="flex flex-col gap-2.5">
-                  <span className="text-[13px] text-muted">Color</span>
-                  <div className="flex flex-wrap gap-2.5">
-                    {COLOR_OPTIONS.map((c) => (
-                      <button
-                        key={c.id}
-                        type="button"
-                        aria-pressed={colorId === c.id}
-                        aria-label={c.name}
-                        onClick={() => setColorId(c.id)}
-                        className="box-border size-11 rounded-full border-[3px] bg-transparent p-1"
-                        style={{ borderColor: colorId === c.id ? "var(--ink)" : "transparent" }}
-                      >
-                        <span className="block size-full rounded-full" style={{ background: c.hex }} />
-                      </button>
-                    ))}
-                  </div>
+                <div className="flex items-center gap-2.5">
+                  <span className="size-3 shrink-0 rounded-full" style={{ background: colorHex }} aria-hidden="true" />
+                  <span className="text-[13px] text-muted">Color de acento de la habilidad</span>
                 </div>
                 <div role="group" aria-label="Meta de horas" className="flex flex-col gap-2.5">
-                  <span className="text-[13px] text-muted">Meta de horas</span>
+                  <span className="label-xs">Meta de horas</span>
                   <div className="flex flex-wrap gap-2">
                     {GOAL_OPTIONS.map((g) => (
                       <button
@@ -152,8 +141,8 @@ export default function NewSkillPage() {
                         type="button"
                         aria-pressed={goal === g}
                         onClick={() => setGoal(g)}
-                        className="font-num min-h-12 rounded-button border-[3px] px-5"
-                        style={{ borderColor: goal === g ? colorHex : "var(--ink)", background: goal === g ? "var(--card)" : "transparent" }}
+                        className="font-num min-h-12 rounded-button border px-5 transition-colors"
+                        style={{ borderColor: goal === g ? colorHex : "var(--border)", background: goal === g ? "var(--card)" : "transparent" }}
                       >
                         {formatInt(g)} h
                       </button>
@@ -173,7 +162,7 @@ export default function NewSkillPage() {
             {step === 2 && (
               <div className="flex flex-col gap-6.5">
                 <div role="group" aria-label="Meta diaria" className="flex flex-col gap-2.5">
-                  <span className="text-[13px] text-muted">Tiempo por día de práctica</span>
+                  <span className="label-xs">Tiempo por día de práctica</span>
                   <div className="flex flex-wrap gap-2">
                     {DAILY_OPTIONS.map((m) => (
                       <button
@@ -181,8 +170,8 @@ export default function NewSkillPage() {
                         type="button"
                         aria-pressed={daily === m}
                         onClick={() => setDaily(m)}
-                        className="font-num min-h-12 rounded-button border-[3px] px-4.5"
-                        style={{ borderColor: daily === m ? colorHex : "var(--ink)", background: daily === m ? "var(--card)" : "transparent" }}
+                        className="font-num min-h-12 rounded-button border px-4.5 transition-colors"
+                        style={{ borderColor: daily === m ? colorHex : "var(--border)", background: daily === m ? "var(--card)" : "transparent" }}
                       >
                         {formatMinutesLong(m)}
                       </button>
@@ -190,7 +179,7 @@ export default function NewSkillPage() {
                   </div>
                 </div>
                 <div role="group" aria-label="Días por semana" className="flex flex-col gap-2.5">
-                  <span className="text-[13px] text-muted">Días por semana</span>
+                  <span className="label-xs">Días por semana</span>
                   <div className="flex flex-wrap gap-2">
                     {DAY_OPTIONS.map((d) => (
                       <button
@@ -198,8 +187,8 @@ export default function NewSkillPage() {
                         type="button"
                         aria-pressed={days === d}
                         onClick={() => setDays(d)}
-                        className="font-num flex size-13 items-center justify-center rounded-button border-[3px]"
-                        style={{ borderColor: days === d ? colorHex : "var(--ink)", background: days === d ? "var(--card)" : "transparent" }}
+                        className="font-num flex size-13 items-center justify-center rounded-full border transition-colors"
+                        style={{ borderColor: days === d ? colorHex : "var(--border)", background: days === d ? "var(--card)" : "transparent" }}
                       >
                         {d}
                       </button>
@@ -214,7 +203,7 @@ export default function NewSkillPage() {
 
             {step === 3 && (
               <div className="flex flex-col gap-6.5">
-                <div className="flex flex-wrap items-center justify-between gap-4 bx rounded-[14px] px-4.5 py-4">
+                <div className="flex flex-wrap items-center justify-between gap-4 rounded-card border border-line px-4.5 py-4">
                   <div className="flex flex-col gap-0.5">
                     <span className="font-semibold">Recordarme todos los días</span>
                     <span className="text-[13px] text-muted">Aviso push a la hora que elijas</span>
@@ -227,30 +216,7 @@ export default function NewSkillPage() {
                       onChange={(e) => setRemindTime(e.target.value)}
                       className="font-num min-h-11 w-auto"
                     />
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={remind}
-                      aria-label="Activar recordatorio diario"
-                      onClick={() => setRemind((r) => !r)}
-                      className="relative h-11 w-13 border-0 bg-transparent p-0"
-                    >
-                      <span className="absolute left-0 top-2 h-7 w-13 rounded-chip border-[3px] border-ink" style={{ background: remind ? colorHex : "var(--card)" }} />
-                      <span
-                        className="absolute top-3 size-5 rounded-full transition-transform"
-                        style={{
-                          // Explicit base `left` (not just a bare `top-3` with
-                          // no left/right at all) — without it the browser's
-                          // "auto" static-position fallback doesn't align
-                          // with the track, so translateX(28px) (tuned for a
-                          // wider track in an earlier design iteration) sent
-                          // the thumb past the track's right edge entirely.
-                          left: 3,
-                          transform: remind ? "translateX(23px)" : "translateX(0px)",
-                          background: remind ? "var(--ink-solid)" : "var(--ink)",
-                        }}
-                      />
-                    </button>
+                    <Switch checked={remind} onCheckedChange={setRemind} label="Activar recordatorio diario" />
                   </div>
                 </div>
               </div>
@@ -288,14 +254,14 @@ export default function NewSkillPage() {
             </div>
           </section>
 
-          <aside aria-label="Tu camino" className="flex min-w-0 flex-[2_1_320px] flex-col gap-5.5 bx p-7">
+          <aside aria-label="Tu camino" className="flex min-w-0 flex-[2_1_320px] flex-col gap-5.5 rounded-card border border-line bg-card p-7">
             <div className="flex items-center gap-3">
               <span className="size-3.5 rounded-full" style={{ background: colorHex }} />
-              <h2 className="m-0 text-xl font-bold">{displayName}</h2>
+              <h2 className="m-0 text-xl font-medium">{displayName}</h2>
             </div>
             <div className="flex flex-col gap-1">
               <span className="label-xs">A este ritmo llegas a la meta en</span>
-              <span className="font-num text-[44px] font-medium leading-tight" style={{ color: colorHex }}>
+              <span className="font-num text-[44px] font-light leading-tight" style={{ color: colorHex }}>
                 {etaFor(goal)}
               </span>
               <span className="text-[13px] text-muted">
@@ -304,7 +270,7 @@ export default function NewSkillPage() {
             </div>
             <div className="flex flex-col">
               {marks.map((h) => (
-                <div key={h} className="flex items-baseline justify-between gap-3 border-t border-ink py-3">
+                <div key={h} className="flex items-baseline justify-between gap-3 border-t border-line py-3">
                   <span className="font-num text-[15px]">{formatInt(h)} h</span>
                   <span className="text-sm text-muted">{etaFor(h)}</span>
                 </div>
