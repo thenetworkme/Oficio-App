@@ -5,6 +5,7 @@ import { Coffee } from "lucide-react";
 import { useState } from "react";
 import { formatStopwatchClock, MIN_STOPWATCH_MS } from "@/lib/stopwatch";
 import { BreakNotifyInline } from "@/components/notifications/BreakNotifyInline";
+import { DotDigits } from "@/components/ui/DotDigits";
 import { ExitChip, SoundControl } from "@/components/timer/FullscreenTimer";
 
 /**
@@ -20,6 +21,12 @@ import { ExitChip, SoundControl } from "@/components/timer/FullscreenTimer";
  * purely from the `onBreak` prop, the same way FullscreenTimer picks
  * Focus/Break/Zen from `mode`/`zen` — so this follows the shared store
  * automatically, with no view-state duplicated here.
+ *
+ * There's no direct Punto reference screen for "Sesión libre" (every
+ * PuntoFoco/PuntoFocoZen/PuntoPausa mockup is Pomodoro-only) — this
+ * extrapolates the same visual language (centered DotDigits count-up clock,
+ * same pill button/chip treatment, same flat chrome) rather than inventing
+ * a new one.
  */
 
 const LIBRE_BREAK_TIPS = ["Estira las piernas y los hombros", "Hidrátate", "Aléjate de la pantalla un momento"];
@@ -55,12 +62,12 @@ export function BreakSettingsControl({
         aria-expanded={open}
         aria-label="Recordatorio de descanso"
         title="Recordatorio de descanso"
-        className="bx press flex size-11 items-center justify-center rounded-chip border-ink"
+        className="flex size-9 items-center justify-center rounded-chip border border-border text-ink transition-colors"
       >
-        <Coffee size={19} aria-hidden="true" />
+        <Coffee size={17} aria-hidden="true" />
       </button>
       {open && (
-        <div className="bx absolute right-0 top-[calc(100%+10px)] z-10 flex w-[280px] flex-col gap-3.5 p-4.5 text-ink">
+        <div className="absolute right-0 top-[calc(100%+10px)] z-10 flex w-[280px] flex-col gap-3.5 rounded-card border border-line bg-card p-4.5 text-ink">
           <span className="label-xs">Recordatorio de descanso</span>
           <BreakNotifyInline />
           <div className="flex flex-col gap-1.5">
@@ -78,7 +85,7 @@ export function BreakSettingsControl({
                 const v = Math.max(0, Math.round(Number(e.target.value) || 0));
                 onChange(v > 0 ? v : null, breakLengthMin);
               }}
-              className="box-border w-full min-h-11 rounded-button border-[3px] border-ink bg-card px-3 text-[15px]"
+              className="w-full min-h-10 border-0 border-b border-border bg-transparent px-0 pb-2 pt-1 text-[15px] text-ink focus:border-signal focus:outline-none"
             />
           </div>
           <div className="flex flex-col gap-1.5">
@@ -97,7 +104,7 @@ export function BreakSettingsControl({
                 const v = Math.max(1, Math.round(Number(e.target.value) || 1));
                 onChange(breakReminderMin, v);
               }}
-              className="box-border w-full min-h-11 rounded-button border-[3px] border-ink bg-card px-3 text-[15px] disabled:opacity-50"
+              className="w-full min-h-10 border-0 border-b border-border bg-transparent px-0 pb-2 pt-1 text-[15px] text-ink focus:border-signal focus:outline-none disabled:opacity-50"
             />
           </div>
         </div>
@@ -158,67 +165,52 @@ export function FullscreenStopwatch({
           }}
           aria-label={onBreak ? "Pantalla completa de descanso de sesión libre" : "Pantalla completa de sesión libre"}
           className="fixed inset-0 z-50 flex flex-col gap-8 overflow-y-auto px-6 py-7 text-ink outline-none sm:px-12"
-          style={{ background: onBreak ? "color-mix(in srgb, var(--a1) 20%, var(--paper))" : "var(--paper)" }}
+          style={{ background: "var(--paper)" }}
         >
           {onBreak ? (
             <LibreBreakView remainingMs={breakRemainingMs} onEndBreakNow={onEndBreakNow} onStop={onStop} onExit={onExit} />
           ) : (
             <>
-              <div className="flex flex-wrap items-center gap-3.5">
-                <span className="bx inline-flex min-h-11 items-center rounded-chip border-[3px] border-ink bg-card px-4.5 text-[15px] font-bold">
-                  Sesión libre
-                </span>
+              <div className="flex flex-wrap items-center gap-5">
+                <span className="label-xs">Sesión libre</span>
                 <span className="flex-1" />
-                <BreakSettingsControl
-                  breakReminderMin={breakReminderMin}
-                  breakLengthMin={breakLengthMin}
-                  onChange={onChangeBreakSettings}
-                />
+                <BreakSettingsControl breakReminderMin={breakReminderMin} breakLengthMin={breakLengthMin} onChange={onChangeBreakSettings} />
                 <SoundControl />
                 <ExitChip onClick={onExit}>Salir ✕</ExitChip>
               </div>
 
-              <main className="flex flex-1 flex-col items-center justify-center gap-6">
-                <span className="label-xs rounded-chip px-4.5 py-1.5 text-[16px]" style={{ background: "var(--ink)", color: "var(--paper)" }}>
+              <main className="flex flex-1 flex-col items-center justify-center gap-7">
+                <span className="label-xs rounded-chip px-4.5 py-1.5 text-[13px]" style={{ background: "var(--ink)", color: "var(--paper)" }}>
                   {running ? "En práctica" : hasTime ? "En pausa" : "Lista para empezar"}
                 </span>
-                <div
-                  role="timer"
-                  aria-label="Tiempo transcurrido"
-                  className="font-num text-[88px] font-bold leading-[.9] tracking-tight sm:text-[160px] md:text-[220px]"
-                  style={{ textShadow: `8px 8px 0 ${running ? "var(--a3)" : "var(--muted)"}`, fontVariantNumeric: "tabular-nums" }}
-                >
-                  {formatStopwatchClock(elapsedMs)}
+                <div className="overflow-x-auto">
+                  <DotDigits value={formatStopwatchClock(elapsedMs)} size={38} gap={9} running={running} ariaLabel="Tiempo transcurrido" />
                 </div>
                 {intention && (
-                  <div
-                    className="bx max-w-[900px] rounded-card border-[3px] border-ink px-6 py-3 text-center text-[20px] font-bold text-ink-solid sm:text-[26px]"
-                    style={{ background: "var(--a1)", transform: "rotate(-1.2deg)" }}
-                  >
+                  <div className="max-w-[900px] rounded-card border border-signal px-6 py-3 text-center text-[18px] font-medium text-ink sm:text-[22px]">
                     {intention}
                   </div>
                 )}
                 {tooShortNotice && (
-                  <div className="bx max-w-[560px] px-4 py-2.5 text-center text-[15px] font-bold text-ink-solid" style={{ background: "var(--a1)" }}>
+                  <div className="max-w-[560px] rounded-card border border-line bg-card px-5 py-3 text-center text-[14px] text-muted">
                     Practica al menos {MIN_STOPWATCH_MS / 60_000} minuto para poder guardar la sesión. Tu tiempo sigue contando.
                   </div>
                 )}
               </main>
 
-              <div className="flex flex-wrap items-center justify-center gap-4">
+              <div className="flex flex-wrap items-center justify-center gap-3">
                 <button
                   type="button"
                   onClick={onToggleRunning}
-                  className="bx press min-h-[72px] min-w-[220px] rounded-button border-[3px] border-ink text-[22px] font-bold text-ink-solid sm:text-[26px]"
-                  style={{ background: running ? "var(--a1)" : "var(--a3)" }}
+                  className="inline-flex min-h-[64px] min-w-[220px] items-center justify-center rounded-button border border-signal bg-signal text-[16px] font-medium uppercase tracking-[0.1em] text-ink-solid transition-colors hover:brightness-110"
                 >
-                  {running ? "Pausa" : hasTime ? "Reanudar" : "Dale"}
+                  {running ? "Pausa" : hasTime ? "Reanudar" : "Empezar"}
                 </button>
                 <button
                   type="button"
                   onClick={onStop}
                   disabled={!hasTime}
-                  className="bx press min-h-[72px] rounded-button border-[3px] border-ink bg-card px-6 text-[18px] font-bold disabled:opacity-60 sm:text-[20px]"
+                  className="inline-flex min-h-[64px] items-center rounded-button border border-border px-6 font-mono text-[13px] uppercase tracking-[0.1em] transition-colors hover:border-border-hover hover:bg-card disabled:pointer-events-none disabled:opacity-50"
                 >
                   Detener
                 </button>
@@ -231,22 +223,12 @@ export function FullscreenStopwatch({
   );
 }
 
-function fmt(totalSeconds: number): string {
-  const s = Math.max(0, Math.round(totalSeconds));
-  const mm = String(Math.floor(s / 60)).padStart(2, "0");
-  const ss = String(s % 60).padStart(2, "0");
-  return `${mm}:${ss}`;
-}
-
 /**
  * The "on break" view for Sesión libre, structurally mirroring
- * FullscreenTimer's Pomodoro BreakView (accent-tinted background, big
- * countdown, tips list) but with libre-appropriate copy and no Pomodoro
- * concepts (no "tomate N de 4", no "+2 min" extend — the break length is
- * just whatever the user configured, and there's no next-period preview to
- * show). Per `--ink-solid` convention: this sits on an --a1 accent
- * background, so any text on that chip/background uses text-ink-solid, not
- * --ink (which would be invisible in dark themes — see globals.css).
+ * FullscreenTimer's Pomodoro BreakView (big countdown, tips list) but with
+ * libre-appropriate copy and no Pomodoro concepts (no "tomate N de 4", no
+ * "+2 min" extend — the break length is just whatever the user configured,
+ * and there's no next-period preview to show).
  */
 function LibreBreakView({
   remainingMs,
@@ -263,11 +245,8 @@ function LibreBreakView({
 
   return (
     <>
-      <div className="flex flex-wrap items-center gap-3.5">
-        <span
-          className="bx inline-flex min-h-11 items-center rounded-chip border-[3px] border-ink px-4.5 text-[15px] font-bold text-ink-solid"
-          style={{ background: "var(--a1)" }}
-        >
+      <div className="flex flex-wrap items-center gap-5">
+        <span className="label-xs rounded-chip border px-3.5 py-1.5" style={{ borderColor: "var(--border)" }}>
           Descanso de sesión libre
         </span>
         <span className="flex-1" />
@@ -275,18 +254,13 @@ function LibreBreakView({
         <ExitChip onClick={onExit}>Salir ✕</ExitChip>
       </div>
 
-      <main className="flex flex-1 flex-wrap items-center justify-center gap-10">
-        <div className="flex max-w-[560px] flex-1 flex-col items-start gap-5">
-          <span className="label-xs text-[18px]">Tómate un momento</span>
-          <div
-            role="timer"
-            aria-label="Tiempo de descanso restante"
-            className="font-num text-[70px] font-bold leading-[.9] tracking-tight sm:text-[120px] md:text-[160px]"
-            style={{ textShadow: "7px 7px 0 var(--a1)", fontVariantNumeric: "tabular-nums" }}
-          >
-            {fmt(remainingMs / 1000)}
+      <main className="flex flex-1 flex-wrap items-center justify-center gap-12">
+        <div className="flex max-w-[600px] flex-1 flex-col items-start gap-6">
+          <span className="label-xs">Tómate un momento</span>
+          <div className="overflow-x-auto">
+            <DotDigits value={formatStopwatchClock(remainingMs)} size={26} gap={9} ariaLabel="Tiempo de descanso restante" />
           </div>
-          <div className="flex w-full max-w-[560px] flex-col gap-2.5">
+          <div className="flex w-full max-w-[560px] flex-col">
             {LIBRE_BREAK_TIPS.map((label, i) => {
               const on = checked.includes(i);
               return (
@@ -295,12 +269,10 @@ function LibreBreakView({
                   type="button"
                   aria-pressed={on}
                   onClick={() => setChecked((c) => (on ? c.filter((x) => x !== i) : c.concat(i)))}
-                  className="bx press flex min-h-[56px] items-center gap-3.5 rounded-card border-[3px] border-ink px-4.5 text-left text-[18px] font-bold text-ink-solid sm:text-[20px]"
-                  style={{ background: on ? "var(--a1)" : "var(--card)", color: on ? "var(--ink-solid)" : "var(--ink)" }}
+                  className="flex min-h-[52px] items-center gap-3.5 border-t border-line text-left text-[16px] transition-colors"
+                  style={{ color: on ? "var(--ink)" : "var(--muted)" }}
                 >
-                  <span aria-hidden="true" className="flex size-7 shrink-0 items-center justify-center rounded-md border-[3px] border-ink bg-card text-[14px] text-ink">
-                    {on ? "✓" : ""}
-                  </span>
+                  <i aria-hidden="true" className="block size-4 shrink-0 rounded-full border" style={{ background: on ? "var(--signal)" : "transparent", borderColor: on ? "var(--signal)" : "var(--border)" }} />
                   {label}
                 </button>
               );
@@ -309,15 +281,14 @@ function LibreBreakView({
         </div>
       </main>
 
-      <div className="flex flex-wrap items-center justify-end gap-3.5">
-        <button type="button" onClick={onStop} className="bx press min-h-16 rounded-button border-[3px] border-ink bg-card px-5 text-[18px] font-bold sm:text-[20px]">
+      <div className="flex flex-wrap items-center justify-end gap-3">
+        <button type="button" onClick={onStop} className="inline-flex min-h-[56px] items-center rounded-button border border-border px-5 font-mono text-[13px] uppercase tracking-[0.1em] transition-colors hover:border-border-hover hover:bg-card">
           Detener sesión
         </button>
         <button
           type="button"
           onClick={onEndBreakNow}
-          className="bx press min-h-16 min-w-[220px] rounded-button border-[3px] border-ink px-5 text-[20px] font-bold text-ink-solid sm:text-[22px]"
-          style={{ background: "var(--a1)" }}
+          className="inline-flex min-h-[56px] min-w-[220px] items-center justify-center rounded-button border border-signal bg-signal px-5 text-[14px] font-medium uppercase tracking-[0.1em] text-ink-solid transition-colors hover:brightness-110"
         >
           Terminar descanso ahora
         </button>

@@ -1,192 +1,362 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { Card, CardHeading } from "@/components/ui/card";
-import { Mascot } from "@/components/mascot/Mascot";
+import { Play } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Card } from "@/components/ui/card";
+import { DotDigits } from "@/components/ui/DotDigits";
+import { HourRuler } from "@/components/ui/HourRuler";
 import { ConsistencyHeatmap } from "@/components/dashboard/ConsistencyHeatmap";
-import { TenThousandProjectionCard } from "@/components/dashboard/TenThousandProjectionCard";
-import { WeekBars, type DayTotal } from "@/components/dashboard/WeekBars";
-import { StampAlbumCard } from "@/components/skills/StampAlbumCard";
 import { useAppData } from "@/lib/hooks/useAppData";
 import { usePet } from "@/lib/hooks/usePet";
-import { formatInt, formatMinutesLong } from "@/lib/format";
+import { useChallenges } from "@/lib/hooks/useChallenges";
+import { computeBestStreak } from "@/lib/streak";
+import { buildSkillDailyMinutes } from "@/lib/heatmap";
+import { resolveSkillColor } from "@/lib/skill-color";
+import { DAY_STATE_STYLE, sampleDayDots } from "@/lib/challenge-ui";
+import { formatInt } from "@/lib/format";
 import { dateKeyInTz } from "@/lib/tz";
 import { watchReminders } from "@/lib/firestore/reminders";
 import type { Reminder } from "@/lib/types";
 
-const DAY_LABELS = ["L", "M", "X", "J", "V", "S", "D"];
-const DAY_NAMES_LONG = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
+/** "H:MM" — the dot-matrix-friendly hour:minute format used across this
+ * screen's hero number and per-skill delta badges (DotDigits only accepts
+ * digits/':'/'.' — see lib/dotmatrix.ts). */
+function formatHM(totalMinutes: number): string {
+  const m = Math.max(0, Math.round(totalMinutes));
+  const h = Math.floor(m / 60);
+  const r = m % 60;
+  return `${h}:${String(r).padStart(2, "0")}`;
+}
+
+/** 24h "HH:MM" clock, matching the reference's session-log time column. */
+function formatClock24(date: Date): string {
+  return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+}
 
 export default function PanelPage() {
-  const { user, skills, sessions, dailyMinutes, timezone, todayKey, todayMinutes, weekMinutes, streak, loading } = useAppData();
-  const { pet, equipped, level, coins } = usePet();
+  const { user, skills, sessions, dailyMinutes, timezone, todayKey, todayMinutes, weekMinutes, totalHours, streak, profile, loading } =
+    useAppData();
+  const { level, xpIntoLevel } = usePet();
+  const { stats: challengeStats } = useChallenges();
   const [reminders, setReminders] = useState<Reminder[]>([]);
+  const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
+  const [heatmapFilter, setHeatmapFilter] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
     return watchReminders(user.uid, (r) => setReminders(r.filter((x) => x.enabled)));
   }, [user]);
 
-  const weekDays: DayTotal[] = (() => {
-    const out: DayTotal[] = [];
-    const today = new Date();
-    const dow = today.getDay();
-    const mondayOffset = (dow + 6) % 7;
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(today);
-      d.setDate(d.getDate() - mondayOffset + i);
-      const key = dateKeyInTz(d, timezone);
-      out.push({ label: DAY_LABELS[i], minutes: dailyMinutes[key] ?? 0, isToday: key === todayKey });
-    }
-    return out;
-  })();
+  const minDaily = profile?.dailyMinForStreak ?? 30;
+  const bestStreak = Math.max(streak, computeBestStreak(dailyMinutes, minDaily));
+  const todayCounts = (dailyMinutes[todayKey] ?? 0) >= minDaily;
+  const streakDots = useMemo(() => {
+    const whiteCount = Math.max(0, streak - (todayCounts ? 1 : 0));
+    return Array.from({ length: 21 }, (_, i) => {
+      const daysAgo = 20 - i;
+      if (daysAgo === 0) return todayCounts || streak > 0 ? "signal" : "dim";
+      if (daysAgo <= whiteCount) return "ink";
+      return "dim";
+    });
+  }, [streak, todayCounts]);
 
-  const todayGoalMin = skills.reduce((acc, s) => acc + s.dailyGoalMin, 0) || 180;
-  const weekGoalMin = todayGoalMin * 7;
-  const minutesLeftToday = Math.max(0, todayGoalMin - todayMinutes);
+  const selectedSkill = skills.find((s) => s.id === selectedSkillId) ?? skills[0] ?? null;
+  const todayGoalMin = skills.reduce((acc, s) => acc + s.dailyGoalMin, 0) || 120;
+  const pct = todayGoalMin > 0 ? Math.min(100, Math.round((todayMinutes / todayGoalMin) * 100)) : 0;
+
+  const heatmapSkill = heatmapFilter ? skills.find((s) => s.id === heatmapFilter) : null;
+  const heatmapDaily = heatmapSkill ? buildSkillDailyMinutes(sessions, heatmapSkill.id, timezone) : dailyMinutes;
+  const heatmapColor = heatmapSkill ? resolveSkillColor(heatmapSkill.color) : "var(--ink)";
+
+  const todaySessions = useMemo(
+    () =>
+      sessions
+        .filter((s) => dateKeyInTz(new Date(s.startedAt), timezone) === todayKey)
+        .sort((a, b) => a.startedAt - b.startedAt),
+    [sessions, timezone, todayKey],
+  );
+
+  const nextReminder = useMemo(() => {
+    if (reminders.length === 0) return null;
+    return [...reminders].sort((a, b) => a.timeOfDay.localeCompare(b.timeOfDay))[0];
+  }, [reminders]);
+
+  const activeChallenge = challengeStats.find((c) => c.challenge.status === "active");
 
   return (
     <>
-      <section className="flex flex-wrap items-stretch gap-8">
-        <div className="flex min-w-0 flex-[2_1_480px] flex-col justify-center gap-5 py-2">
-          <h1 className="m-0 text-[64px] font-bold leading-[0.95] tracking-tight sm:text-[88px]">
-            {streak} {streak === 1 ? "día" : "días"}
-            <br />
-            seguidos
-            <span className="text-a2" style={{ WebkitTextStroke: "3px var(--ink)" }}>
-              .
+      <section className="grid grid-cols-1 border-b border-line lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+        <div className="flex min-w-0 flex-col gap-7 py-9 pr-0 lg:border-r lg:border-line lg:pr-12">
+          <div className="label-xs flex justify-between">
+            <span>
+              Hoy · meta {formatHM(todayGoalMin)}
             </span>
-          </h1>
-          <p className="m-0 max-w-[520px] text-[18px] sm:text-[22px]">
-            Hoy llevas{" "}
-            <b className="bg-a1 px-1.5" style={{ color: "var(--ink-solid)" }}>
-              {formatMinutesLong(todayMinutes)}
-            </b>
-            . {minutesLeftToday > 0 ? `Faltan ${minutesLeftToday} para no romper la racha.` : "¡Meta de hoy cumplida!"}
-          </p>
-          <div className="flex flex-wrap gap-4">
+            <span className="text-ink">{pct}%</span>
+          </div>
+          <div className="overflow-x-auto">
+            <DotDigits
+              value={formatHM(todayMinutes)}
+              size={20}
+              gap={8}
+              ariaLabel={`${formatHM(todayMinutes)} de ${formatHM(todayGoalMin)} hoy`}
+            />
+          </div>
+          <div className="flex flex-wrap items-center gap-4">
             <Link
               href="/temporizador"
-              className="bx hov press inline-flex min-h-14 items-center px-7 text-[18px] font-bold text-ink-solid sm:text-[22px]"
-              style={{ background: "var(--a2)", "--r": "-1deg" } as React.CSSProperties}
+              className="inline-flex min-h-[52px] items-center gap-3 rounded-button border border-signal bg-signal px-6 font-mono text-[12px] font-medium uppercase tracking-[0.12em] text-ink-solid transition-colors hover:brightness-110"
             >
-              Empezar un tomate →
+              <Play size={14} aria-hidden="true" fill="currentColor" />
+              {skills.length === 0 ? "Empezar" : `Empezar · ${selectedSkill?.name}`}
             </Link>
-            <Link href="/registrar" className="bx hov press inline-flex min-h-14 items-center bg-card px-6 text-[16px] font-bold sm:text-[18px]">
-              + Horas a mano
-            </Link>
+            {skills.length > 0 && (
+              <div role="group" aria-label="Habilidad" className="flex flex-wrap gap-4 pl-1">
+                {skills.map((s) => {
+                  const on = selectedSkill?.id === s.id;
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      aria-pressed={on}
+                      onClick={() => setSelectedSkillId(s.id)}
+                      className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.1em] transition-colors"
+                      style={{ color: on ? "var(--ink)" : "var(--muted)" }}
+                    >
+                      {on && <span aria-hidden="true" className="size-1.5 rounded-full" style={{ background: "var(--signal)" }} />}
+                      {s.name}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
+          {!loading && skills.length === 0 && (
+            <p className="m-0 text-sm text-muted">
+              Todavía no tienes habilidades.{" "}
+              <Link href="/habilidades/nueva" className="font-medium text-ink underline">
+                Crea la primera
+              </Link>
+              .
+            </p>
+          )}
         </div>
 
-        <Link
-          href="/tienda"
-          aria-label={`Ir a la tienda de ${pet?.name ?? "Tomi"}`}
-          className="bx hov flex flex-[1_1_250px] max-w-[300px] flex-col gap-2.5 self-center p-3.5"
-          style={{ "--r": "-1.5deg", transform: "rotate(-1.5deg)" } as React.CSSProperties}
-        >
-          <div className="relative">
-            <Mascot size={230} hat={equipped.hat} cape={equipped.cape} acc={equipped.acc} bg={equipped.bg} />
-            <div
-              className="bx absolute -right-3.5 -top-3 px-3 py-1.5 text-[13px] font-bold text-ink-solid"
-              style={{ background: "var(--a2)", transform: "rotate(6deg)" }}
-            >
-              ¡Racha {streak}!
+        <div className="flex min-w-0 flex-col py-9 pl-0 lg:pl-12">
+          <span className="label-xs">Racha</span>
+          <div className="my-2.5 flex items-baseline gap-3.5">
+            <span className="font-num text-[72px] font-light leading-none tracking-tight sm:text-[88px]">{streak}</span>
+            <span className="font-num text-[13px] text-muted">
+              DÍAS · RÉCORD {bestStreak}
+            </span>
+          </div>
+          <div className="mb-8 grid grid-cols-[repeat(21,1fr)] gap-1.5">
+            {streakDots.map((d, i) => (
+              <i
+                key={i}
+                aria-hidden="true"
+                className="aspect-square rounded-full"
+                style={{ background: d === "signal" ? "var(--signal)" : d === "ink" ? "var(--ink)" : "var(--line)" }}
+              />
+            ))}
+          </div>
+          <div className="mt-auto flex flex-col">
+            <div className="flex items-baseline justify-between border-t border-line py-3">
+              <span className="label-xs">Semana</span>
+              <span className="font-num text-[15px]">{formatHM(weekMinutes)} H</span>
+            </div>
+            <div className="flex items-baseline justify-between border-t border-line py-3">
+              <span className="label-xs">Total</span>
+              <span className="font-num text-[15px]">{formatInt(totalHours)} H</span>
+            </div>
+            <div className="flex items-baseline justify-between border-t border-line py-3">
+              <span className="label-xs">Nivel</span>
+              <span className="font-num text-[15px]">
+                {level} · {formatInt(xpIntoLevel)} XP
+              </span>
+            </div>
+            <div className="flex items-baseline justify-between border-t border-line py-3">
+              <span className="label-xs">Recordatorio</span>
+              <span className="font-num text-[15px]">{nextReminder ? nextReminder.timeOfDay : "—"}</span>
             </div>
           </div>
-          <div className="flex justify-between font-bold">
-            <span>
-              {pet?.name ?? "Tomi"} · Nv. {level}
-            </span>
-            <span className="font-num text-[13px]">{formatInt(coins)} $ →</span>
-          </div>
-        </Link>
-
-        <div
-          className="bx flex min-w-0 flex-[1_1_300px] flex-col gap-3 p-6 text-ink-solid"
-          style={{ background: "var(--a3)", transform: "rotate(1.5deg)" }}
-        >
-          <span className="label-xs !text-ink-solid font-bold opacity-70">Esta semana</span>
-          <div className="font-num text-[56px] font-bold leading-none tracking-tight sm:text-[72px]">
-            {formatInt(weekMinutes / 60)}
-            <span className="text-[22px] sm:text-[28px]"> / {formatInt(weekGoalMin / 60)} h</span>
-          </div>
-          <WeekBars days={weekDays} />
         </div>
       </section>
 
-      <section className="flex flex-col gap-4.5">
-        <div className="flex flex-wrap items-baseline gap-3.5">
-          <h2 className="m-0 text-[32px] font-bold tracking-tight sm:text-[38px]">Tu álbum de sellos</h2>
-          <span className="font-num text-[14px]">1 sello = 100 horas</span>
+      <section className="border-b border-line py-8">
+        <div className="mb-5 flex flex-wrap items-center gap-5">
+          <span className="label-xs flex-1">Actividad · 52 semanas</span>
+          <div role="group" aria-label="Filtrar" className="flex flex-wrap gap-5">
+            <button
+              type="button"
+              aria-pressed={heatmapFilter === null}
+              onClick={() => setHeatmapFilter(null)}
+              className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.1em] transition-colors"
+              style={{ color: heatmapFilter === null ? "var(--ink)" : "var(--muted)" }}
+            >
+              {heatmapFilter === null && <span aria-hidden="true" className="size-1.5 rounded-full" style={{ background: "var(--signal)" }} />}
+              Todas
+            </button>
+            {skills.map((s) => (
+              <button
+                key={s.id}
+                type="button"
+                aria-pressed={heatmapFilter === s.id}
+                onClick={() => setHeatmapFilter(s.id)}
+                className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.1em] transition-colors"
+                style={{ color: heatmapFilter === s.id ? "var(--ink)" : "var(--muted)" }}
+              >
+                {heatmapFilter === s.id && <span aria-hidden="true" className="size-1.5 rounded-full" style={{ background: "var(--signal)" }} />}
+                {s.name}
+              </button>
+            ))}
+          </div>
+        </div>
+        <ConsistencyHeatmap dailyMinutes={heatmapDaily} timezone={timezone} weeks={52} accentColor={heatmapColor} />
+      </section>
+
+      <section className="border-b border-line py-8">
+        <div className="mb-6 flex items-center gap-4">
+          <span className="label-xs flex-1">Horas hacia 10.000</span>
+          <Link href="/habilidades/nueva" className="font-mono text-[12px] uppercase tracking-[0.1em] text-muted transition-colors hover:text-ink">
+            + Nueva habilidad
+          </Link>
         </div>
         {!loading && skills.length === 0 ? (
           <Card className="p-7 text-center text-muted">
             Todavía no tienes habilidades.{" "}
-            <Link href="/habilidades/nueva" className="font-bold text-ink underline">
+            <Link href="/habilidades/nueva" className="font-medium text-ink underline">
               Crea la primera
             </Link>
             .
           </Card>
         ) : (
-          <div className="flex flex-wrap gap-7">
-            {skills.map((s) => (
-              <StampAlbumCard key={s.id} skill={s} />
-            ))}
-            <Link
-              href="/habilidades/nueva"
-              className="bx hov flex min-h-[220px] flex-[0_0_190px] flex-col items-center justify-center gap-2.5 bg-card p-6 text-center text-[22px] font-bold"
-              style={{ borderStyle: "dashed", "--r": "1deg" } as React.CSSProperties}
-            >
-              <span aria-hidden="true" className="text-[56px] leading-none">
-                +
-              </span>
-              Nueva habilidad
-            </Link>
+          <div className="flex flex-col">
+            {skills.map((skill, i) => {
+              const hours = skill.totalMinutes / 60;
+              const skillDaily = buildSkillDailyMinutes(sessions, skill.id, timezone);
+              const perSkillStreak = (() => {
+                // current streak for this skill specifically (any practice day counts)
+                let s = 0;
+                let cursor = todayKey;
+                const shift = (key: string, days: number) => {
+                  const [y, m, d] = key.split("-").map(Number);
+                  const dt = new Date(Date.UTC(y, m - 1, d));
+                  dt.setUTCDate(dt.getUTCDate() + days);
+                  return dt.toISOString().slice(0, 10);
+                };
+                if ((skillDaily[cursor] ?? 0) <= 0) cursor = shift(cursor, -1);
+                for (;;) {
+                  if ((skillDaily[cursor] ?? 0) <= 0) break;
+                  s += 1;
+                  cursor = shift(cursor, -1);
+                }
+                return s;
+              })();
+              const todayForSkill = sessions
+                .filter((s) => s.skillId === skill.id && dateKeyInTz(new Date(s.startedAt), timezone) === todayKey)
+                .reduce((acc, s) => acc + s.durationMin, 0);
+              return (
+                <Link
+                  key={skill.id}
+                  href={`/habilidades/${skill.id}`}
+                  className="grid grid-cols-[32px_1fr] items-center gap-5 border-t border-line py-5 first:border-t-0 sm:grid-cols-[32px_minmax(0,1fr)_minmax(0,320px)_90px]"
+                >
+                  <span className="font-num text-[13px] text-muted">{String(i + 1).padStart(2, "0")}</span>
+                  <div>
+                    <div className="truncate text-[28px] font-medium leading-tight tracking-tight sm:text-[30px]">{skill.name}</div>
+                    <div className="font-num mt-1.5 text-[12px] text-muted">
+                      {formatInt(hours)} / 10.000 H · RACHA {perSkillStreak} D
+                    </div>
+                  </div>
+                  <div className="col-span-2 mt-3 sm:col-span-1 sm:mt-0">
+                    <HourRuler currentHours={hours} showLabels minorHeight={16} majorHeight={28} />
+                  </div>
+                  <span
+                    className="font-num text-right text-[14px]"
+                    style={{ color: todayForSkill > 0 ? "var(--signal)" : "var(--muted)" }}
+                  >
+                    {todayForSkill > 0 ? `+${formatHM(todayForSkill)}` : "00:00"}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         )}
       </section>
 
-      <section className="grid grid-cols-[repeat(auto-fit,minmax(min(380px,100%),1fr))] gap-5">
-        <Card className="flex flex-col gap-4 p-6">
-          <CardHeading>Constancia</CardHeading>
-          <ConsistencyHeatmap dailyMinutes={dailyMinutes} timezone={timezone} />
-        </Card>
-
-        <TenThousandProjectionCard skills={skills} sessions={sessions} />
-
-        <Card className="flex flex-col gap-2 p-6">
-          <div className="flex flex-wrap items-baseline justify-between gap-3">
-            <CardHeading>Próximos recordatorios</CardHeading>
-            <Link href="/recordatorios" className="min-h-11 inline-flex items-center text-sm font-bold underline">
-              Gestionar →
-            </Link>
-          </div>
-          {reminders.length === 0 ? (
-            <p className="py-3 text-sm text-muted">No tienes recordatorios activos.</p>
+      <section className="grid grid-cols-1 py-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+        <div className="min-w-0 pr-0 lg:border-r lg:border-line lg:pr-12">
+          <div className="label-xs mb-3.5">Sesiones de hoy</div>
+          {todaySessions.length === 0 ? (
+            <p className="py-3 text-sm text-muted">Todavía no has practicado hoy.</p>
           ) : (
-            reminders.slice(0, 4).map((r) => (
-              <div key={r.id} className="flex flex-wrap items-center gap-4 border-t-2 border-dashed border-ink py-3">
-                <span className="font-num min-w-[72px] text-sm font-bold">{r.timeOfDay}</span>
-                <span className="min-w-[180px] flex-1 font-bold">{r.message || reminderDefaultTitle(r.kind)}</span>
-                <span className="text-[13px] text-muted">{reminderDaysLabel(r.days)}</span>
-              </div>
-            ))
+            todaySessions.map((s) => {
+              const skill = skills.find((sk) => sk.id === s.skillId);
+              return (
+                <div key={s.id} className="grid grid-cols-[70px_1fr_60px] items-center gap-4 border-t border-line/60 py-3">
+                  <span className="font-num text-[13px] text-muted">{formatClock24(new Date(s.startedAt))}</span>
+                  <span className="truncate text-[16px]">{skill?.name ?? (s.note || "Sesión libre")}</span>
+                  <span className="font-num text-right text-[13px]">{formatHM(s.durationMin)}</span>
+                </div>
+              );
+            })
           )}
-        </Card>
+        </div>
+
+        <div className="min-w-0 pl-0 pt-8 lg:pl-12 lg:pt-0">
+          {activeChallenge ? (
+            <>
+              <div className="label-xs flex justify-between">
+                <Link href={`/retos/${activeChallenge.challenge.id}`} className="text-muted transition-colors hover:text-ink">
+                  Reto · {activeChallenge.challenge.name} →
+                </Link>
+                <span className="text-ink">
+                  {Math.min(activeChallenge.currentDayNumber, activeChallenge.challenge.totalDays)} / {activeChallenge.challenge.totalDays}
+                </span>
+              </div>
+              <div className="my-6 grid grid-cols-[repeat(10,1fr)] gap-2">
+                {sampleDayDots(activeChallenge.states, 30).map((st, i) => (
+                  <i
+                    key={i}
+                    aria-hidden="true"
+                    className="aspect-square rounded-full"
+                    style={{ background: DAY_STATE_STYLE[st].dot }}
+                  />
+                ))}
+              </div>
+              <p className="m-0 text-[15px] text-muted">
+                {activeChallenge.challenge.why ? (
+                  <>
+                    Tu porqué: <span className="text-ink">{activeChallenge.challenge.why}</span>
+                  </>
+                ) : (
+                  <>Sigue con tu reto de hoy.</>
+                )}
+              </p>
+              <Link
+                href={`/retos/${activeChallenge.challenge.id}/dia`}
+                className="mt-5 inline-flex min-h-11 items-center rounded-button border border-border px-5 font-mono text-[12px] uppercase tracking-[0.12em] transition-colors hover:border-border-hover hover:bg-card"
+              >
+                Añadir nota
+              </Link>
+            </>
+          ) : (
+            <div className="flex flex-col items-start gap-3">
+              <span className="label-xs">Retos</span>
+              <p className="m-0 text-[15px] text-muted">
+                Aprende algo nuevo en un número fijo de días, con diario y seguimiento.
+              </p>
+              <Link
+                href="/retos/nuevo"
+                className="mt-1 inline-flex min-h-11 items-center rounded-button border border-border px-5 font-mono text-[12px] uppercase tracking-[0.12em] transition-colors hover:border-border-hover hover:bg-card"
+              >
+                + Nuevo reto
+              </Link>
+            </div>
+          )}
+        </div>
       </section>
     </>
   );
-}
-
-function reminderDefaultTitle(kind: Reminder["kind"]) {
-  if (kind === "streak_guard") return "Protección de racha";
-  if (kind === "weekly_review") return "Revisión semanal de horas";
-  return "Bloque de práctica";
-}
-
-function reminderDaysLabel(days: number[]) {
-  if (days.length === 7) return "Todos los días";
-  if (days.length === 5 && !days.includes(6) && !days.includes(7)) return "Lunes a viernes";
-  return days.map((d) => DAY_NAMES_LONG[d - 1]?.slice(0, 3)).join(", ");
 }

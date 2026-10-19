@@ -4,13 +4,13 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Volume2, VolumeX } from "lucide-react";
 import { useState } from "react";
 import { AmbientPicker } from "@/components/sound/AmbientPicker";
-import { ProgressBar } from "@/components/ui/progress-bar";
+import { DotDigits } from "@/components/ui/DotDigits";
 import { useSound } from "@/lib/sound/SoundProvider";
 import type { Skill } from "@/lib/types";
 
 /**
- * Fullscreen Pomodoro takeover (design-reference/pomodoro-fullscreen):
- * PegatinaFoco / PegatinaFocoZen / PegatinaPausaCorta / PegatinaPausaLarga.
+ * Fullscreen Pomodoro takeover (design-reference/punto): PuntoFoco /
+ * PuntoFocoZen / PuntoPausaCorta / PuntoPausaLarga.
  *
  * These are view states of the *existing* /temporizador screen and
  * store/timer-store.ts, not a parallel timer. This component owns none of
@@ -50,13 +50,6 @@ export function SoundControl({ zen = false }: { zen?: boolean }) {
   const sound = useSound();
   const [open, setOpen] = useState(false);
 
-  const iconButtonClass = zen
-    ? "press flex size-11 items-center justify-center rounded-chip border-[3px]"
-    : "bx press flex size-11 items-center justify-center rounded-chip border-ink";
-  const iconButtonStyle = zen
-    ? { background: "transparent", color: "#FFF4D6", borderColor: "#FFF4D6" }
-    : undefined;
-
   return (
     <div className="relative">
       <button
@@ -65,25 +58,29 @@ export function SoundControl({ zen = false }: { zen?: boolean }) {
         aria-expanded={open}
         aria-label="Sonido"
         title="Sonido"
-        className={iconButtonClass}
-        style={iconButtonStyle}
+        className="flex size-9 items-center justify-center rounded-chip border transition-colors"
+        style={
+          zen
+            ? { background: "transparent", color: "#FFF4D6", borderColor: "#FFF4D6" }
+            : { background: "transparent", color: "var(--ink)", borderColor: "var(--border)" }
+        }
       >
-        {sound.soundEffectsEnabled ? <Volume2 size={19} aria-hidden="true" /> : <VolumeX size={19} aria-hidden="true" />}
+        {sound.soundEffectsEnabled ? <Volume2 size={17} aria-hidden="true" /> : <VolumeX size={17} aria-hidden="true" />}
       </button>
       {open && (
-        <div className="bx absolute right-0 top-[calc(100%+10px)] z-10 flex w-[280px] flex-col gap-4 p-4.5 text-ink">
+        <div className="absolute right-0 top-[calc(100%+10px)] z-10 flex w-[280px] flex-col gap-4 rounded-card border border-line bg-card p-4.5 text-ink">
           <button
             type="button"
             onClick={() => sound.toggleAllSound()}
-            className="bx press flex min-h-11 items-center justify-center gap-2.5 bg-card text-[14px] font-bold"
+            className="flex min-h-10 items-center justify-center gap-2.5 rounded-button border border-border font-mono text-[12px] uppercase tracking-[0.1em] transition-colors hover:border-border-hover"
           >
             {sound.soundEffectsEnabled ? (
               <>
-                <Volume2 size={18} aria-hidden="true" /> Sonido activado
+                <Volume2 size={16} aria-hidden="true" /> Sonido activado
               </>
             ) : (
               <>
-                <VolumeX size={18} aria-hidden="true" /> Sonido silenciado
+                <VolumeX size={16} aria-hidden="true" /> Sonido silenciado
               </>
             )}
           </button>
@@ -92,13 +89,6 @@ export function SoundControl({ zen = false }: { zen?: boolean }) {
       )}
     </div>
   );
-}
-
-function fmt(totalSeconds: number): string {
-  const s = Math.max(0, Math.round(totalSeconds));
-  const mm = String(Math.floor(s / 60)).padStart(2, "0");
-  const ss = String(s % 60).padStart(2, "0");
-  return `${mm}:${ss}`;
 }
 
 export interface FullscreenTimerProps {
@@ -143,8 +133,6 @@ export function FullscreenTimer({
   onToggleZen,
   onExit,
 }: FullscreenTimerProps) {
-  const pct = total > 0 ? Math.max(0, Math.min(100, Math.round((1 - remaining / total) * 100))) : 0;
-
   function handleEscape(e: KeyboardEvent | Event) {
     e.preventDefault();
     if (zen) {
@@ -175,7 +163,7 @@ export function FullscreenTimer({
               currentTomato={currentTomato}
               running={running}
               remaining={remaining}
-              pct={pct}
+              total={total}
               onToggleRunning={onToggleRunning}
               onExit={onToggleZen}
             />
@@ -188,7 +176,7 @@ export function FullscreenTimer({
               intention={intention}
               running={running}
               remaining={remaining}
-              pct={pct}
+              total={total}
               onToggleRunning={onToggleRunning}
               onExtend={() => onExtend(300)}
               onFinishNow={onFinishNow}
@@ -205,7 +193,7 @@ export function FullscreenTimer({
               skill={skill}
               dotsFilled={dotsFilled}
               remaining={remaining}
-              pct={pct}
+              total={total}
               onExtend={() => onExtend(120)}
               onSkipBreak={onSkipBreak}
               onExit={onExit}
@@ -223,15 +211,37 @@ export function ExitChip({ onClick, children, zen = false }: { onClick: () => vo
       id="fs-timer-exit"
       type="button"
       onClick={onClick}
-      className={
+      className="inline-flex min-h-10 items-center rounded-chip border px-4 font-mono text-[12px] uppercase tracking-[0.1em] transition-colors"
+      style={
         zen
-          ? "bx press min-h-11 rounded-chip border-[3px] px-4.5 text-[15px] font-bold"
-          : "bx press min-h-11 rounded-chip border-[3px] border-ink px-4.5 text-[15px] font-bold text-ink-solid"
+          ? { background: "transparent", color: "#FFF4D6", borderColor: "#FFF4D6" }
+          : { background: "transparent", color: "var(--muted)", borderColor: "var(--border)" }
       }
-      style={zen ? { background: "transparent", color: "#FFF4D6", borderColor: "#FFF4D6" } : { background: "var(--a2)" }}
     >
       {children}
     </button>
+  );
+}
+
+function TickStrip({ total, elapsed, width = 880 }: { total: number; elapsed: number; width?: number }) {
+  const minutes = Math.max(1, Math.round(total / 60));
+  const ticks = Array.from({ length: minutes }, (_, i) => ({
+    h: (i + 1) % 5 === 0 ? 26 : 16,
+    bg: elapsed >= (i + 1) * 60 ? "var(--ink)" : elapsed > i * 60 ? "var(--signal)" : "var(--line)",
+  }));
+  const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(Math.max(0, Math.round(s)) % 60).padStart(2, "0")}`;
+  return (
+    <div style={{ width: "100%", maxWidth: width }}>
+      <div className="flex items-end gap-1" style={{ height: 26 }}>
+        {ticks.map((t, i) => (
+          <i key={i} aria-hidden="true" className="flex-1 rounded-[1px] transition-[background]" style={{ height: t.h, background: t.bg }} />
+        ))}
+      </div>
+      <div className="label-xs mt-2 flex justify-between text-[10px]">
+        <span>{fmt(elapsed)}</span>
+        <span>{fmt(total)}</span>
+      </div>
+    </div>
   );
 }
 
@@ -243,7 +253,7 @@ function FocusView({
   intention,
   running,
   remaining,
-  pct,
+  total,
   onToggleRunning,
   onExtend,
   onFinishNow,
@@ -257,7 +267,7 @@ function FocusView({
   intention: string;
   running: boolean;
   remaining: number;
-  pct: number;
+  total: number;
   onToggleRunning: () => void;
   onExtend: () => void;
   onFinishNow: () => void;
@@ -265,81 +275,65 @@ function FocusView({
   onExit: () => void;
 }) {
   const atZero = remaining <= 0;
+  const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
+  const ss = String(remaining % 60).padStart(2, "0");
   return (
     <div className="flex size-full flex-col gap-8 overflow-y-auto bg-paper px-6 py-7 text-ink sm:px-12">
-      <div className="flex flex-wrap items-center gap-3.5">
-        <span
-          className="bx inline-flex min-h-11 items-center gap-2.5 rounded-chip border-[3px] border-ink px-4.5 text-[15px] font-bold text-ink-solid"
-          style={{ background: "var(--a3)" }}
-        >
-          <span aria-hidden="true" className="size-3.5 rounded-full border-[3px] border-ink" style={{ background: "var(--a1)" }} />
-          {skill?.name ?? "Sin habilidad"}
-          {challengeDayLabel ? ` · ${challengeDayLabel}` : ""}
+      <div className="flex flex-wrap items-center gap-5">
+        <span className="label-xs">
+          <span className="text-ink">{skill?.name ?? "Sin habilidad"}</span>
+          {challengeDayLabel ? ` · ${challengeDayLabel}` : ""} · Tomate {currentTomato} de 4
         </span>
-        <span className="bx inline-flex min-h-11 items-center gap-2.5 rounded-chip border-[3px] border-ink bg-card px-4.5 text-[15px] font-bold">
-          <span className="font-bold">Tomate {currentTomato} de 4</span>
-          <span aria-hidden="true" className="flex gap-1.5">
-            {[0, 1, 2, 3].map((i) => (
-              <span
-                key={i}
-                className="size-4 rounded-full border-[3px] border-ink"
-                style={{ background: i < dotsFilled ? "var(--a2)" : i === dotsFilled ? "var(--a1)" : "var(--paper)" }}
-              />
-            ))}
-          </span>
+        <span aria-hidden="true" className="flex gap-1.5">
+          {[0, 1, 2, 3].map((i) => (
+            <span
+              key={i}
+              className="size-2 rounded-full"
+              style={{ background: i < dotsFilled ? "var(--ink)" : i === dotsFilled ? "var(--signal)" : "var(--line)" }}
+            />
+          ))}
         </span>
         <span className="flex-1" />
         <SoundControl />
-        <button type="button" onClick={onToggleZen} className="bx press min-h-11 rounded-chip border-[3px] border-ink bg-card px-4.5 text-[15px] font-bold">
+        <button type="button" onClick={onToggleZen} className="label-xs underline decoration-border underline-offset-4 transition-colors hover:text-ink">
           Modo zen
         </button>
         <ExitChip onClick={onExit}>Salir ✕</ExitChip>
       </div>
 
-      <main className="flex flex-1 flex-col items-center justify-center gap-6">
-        <span
-          className="label-xs rounded-chip px-4.5 py-1.5 text-[16px]"
-          style={{ background: "var(--ink)", color: "var(--paper)" }}
-        >
+      <main className="flex flex-1 flex-col items-center justify-center gap-7">
+        <span className="label-xs rounded-chip px-4.5 py-1.5 text-[13px]" style={{ background: "var(--ink)", color: "var(--paper)" }}>
           {atZero ? "Tomate listo" : running ? "Enfoque" : "En pausa"}
         </span>
-        <div
-          role="timer"
-          aria-label="Tiempo restante"
-          className="font-num text-[88px] font-bold leading-[.9] tracking-tight sm:text-[160px] md:text-[220px]"
-          style={{ textShadow: `8px 8px 0 ${running ? "var(--a2)" : "var(--muted)"}`, fontVariantNumeric: "tabular-nums" }}
-        >
-          {fmt(remaining)}
+        <div className="overflow-x-auto">
+          <DotDigits value={`${mm}:${ss}`} size={38} gap={9} running={running} ariaLabel="Tiempo restante" />
         </div>
+        <TickStrip total={total} elapsed={total - remaining} width={1160} />
         {intention && (
           <div
-            className="bx max-w-[900px] rounded-card border-[3px] border-ink px-6 py-3 text-center text-[20px] font-bold text-ink-solid sm:text-[26px]"
-            style={{ background: "var(--a1)", transform: "rotate(-1.2deg)" }}
+            className="max-w-[900px] rounded-card border border-signal px-6 py-3 text-center text-[18px] font-medium text-ink sm:text-[22px]"
           >
             {intention}
           </div>
         )}
       </main>
 
-      <div className="flex flex-wrap items-center justify-center gap-4">
+      <div className="flex flex-wrap items-center justify-center gap-3">
         <button
           type="button"
           onClick={onToggleRunning}
           disabled={atZero}
-          className="bx press min-h-[72px] min-w-[220px] rounded-button border-[3px] border-ink text-[22px] font-bold text-ink-solid disabled:opacity-60 sm:text-[26px]"
-          style={{ background: running ? "var(--a1)" : "var(--a3)" }}
+          className="inline-flex min-h-[64px] min-w-[220px] items-center justify-center rounded-button border border-signal bg-signal text-[16px] font-medium uppercase tracking-[0.1em] text-ink-solid transition-colors hover:brightness-110 disabled:pointer-events-none disabled:opacity-50"
         >
           {atZero ? "Listo" : running ? "Pausa" : "Reanudar"}
         </button>
-        <button type="button" onClick={onExtend} className="bx press min-h-[72px] rounded-button border-[3px] border-ink bg-card px-6 text-[18px] font-bold sm:text-[20px]">
+        <button type="button" onClick={onExtend} className="inline-flex min-h-[64px] items-center rounded-button border border-border px-6 font-mono text-[13px] uppercase tracking-[0.1em] transition-colors hover:border-border-hover hover:bg-card">
           + 5 min
         </button>
-        <button type="button" onClick={onFinishNow} className="bx press min-h-[72px] rounded-button border-[3px] border-ink bg-card px-6 text-[18px] font-bold sm:text-[20px]">
+        <button type="button" onClick={onFinishNow} className="inline-flex min-h-[64px] items-center rounded-button border border-border px-6 font-mono text-[13px] uppercase tracking-[0.1em] transition-colors hover:border-border-hover hover:bg-card">
           Terminar ya
         </button>
       </div>
-
-      <ProgressBar pct={pct} color="var(--a2)" ariaLabel="Progreso del tomate" height={30} />
     </div>
   );
 }
@@ -349,7 +343,7 @@ function BreakView({
   skill,
   dotsFilled,
   remaining,
-  pct,
+  total,
   onExtend,
   onSkipBreak,
   onExit,
@@ -358,7 +352,7 @@ function BreakView({
   skill: Skill | null;
   dotsFilled: number;
   remaining: number;
-  pct: number;
+  total: number;
   onExtend: () => void;
   onSkipBreak: () => void;
   onExit: () => void;
@@ -369,44 +363,29 @@ function BreakView({
   // component with key={mode} on a short<->long transition; within the
   // same break it simply keeps the checks the user made.
   const [checked, setChecked] = useState<number[]>([]);
-
-  const accent = long ? "#7CC4FF" : "var(--a3)";
-  const bgTint = long ? "color-mix(in srgb, #7CC4FF 20%, var(--paper))" : "color-mix(in srgb, var(--a3) 20%, var(--paper))";
+  const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
+  const ss = String(remaining % 60).padStart(2, "0");
 
   return (
-    <div className="flex size-full flex-col gap-8 overflow-y-auto px-6 py-7 text-ink sm:px-12" style={{ background: bgTint }}>
-      <div className="flex flex-wrap items-center gap-3.5">
-        <span
-          className="bx inline-flex min-h-11 items-center rounded-chip border-[3px] border-ink px-4.5 text-[15px] font-bold text-ink-solid"
-          style={{ background: accent }}
-        >
+    <div className="flex size-full flex-col gap-8 overflow-y-auto bg-paper px-6 py-7 text-ink sm:px-12">
+      <div className="flex flex-wrap items-center gap-5">
+        <span className="label-xs rounded-chip border px-3.5 py-1.5" style={{ borderColor: "var(--border)" }}>
           {long ? "Descanso largo · ciclo completo" : "Descanso corto"}
         </span>
-        <span className="bx inline-flex min-h-11 items-center gap-2.5 rounded-chip border-[3px] border-ink bg-card px-4.5 text-[15px] font-bold">
-          <span className="font-bold">{long ? "4 de 4 tomates" : `Tomate ${dotsFilled} de 4 hecho`}</span>
-          <span aria-hidden="true" className="flex gap-1.5">
-            {[0, 1, 2, 3].map((i) => (
-              <span key={i} className="size-4 rounded-full border-[3px] border-ink" style={{ background: i < dotsFilled || long ? "var(--a2)" : "var(--paper)" }} />
-            ))}
-          </span>
-        </span>
+        <span className="label-xs">{long ? "4 de 4 tomates" : `Tomate ${dotsFilled} de 4 hecho`}</span>
         <span className="flex-1" />
         <SoundControl />
         <ExitChip onClick={onExit}>Salir ✕</ExitChip>
       </div>
 
-      <main className="flex flex-1 flex-wrap items-center justify-center gap-10">
-        <div className="flex max-w-[560px] flex-1 flex-col items-start gap-5">
-          <span className="label-xs text-[18px]">{long ? "Te lo ganaste" : "Respira un momento"}</span>
-          <div
-            role="timer"
-            aria-label="Tiempo de descanso restante"
-            className="font-num text-[70px] font-bold leading-[.9] tracking-tight sm:text-[120px] md:text-[160px]"
-            style={{ textShadow: `7px 7px 0 ${accent}`, fontVariantNumeric: "tabular-nums" }}
-          >
-            {fmt(remaining)}
+      <main className="flex flex-1 flex-wrap items-center justify-center gap-12">
+        <div className="flex max-w-[600px] flex-1 flex-col items-start gap-6">
+          <span className="label-xs">{long ? "Te lo ganaste" : "Respira un momento"}</span>
+          <div className="overflow-x-auto">
+            <DotDigits value={`${mm}:${ss}`} size={26} gap={9} ariaLabel="Tiempo de descanso restante" />
           </div>
-          <div className="flex w-full max-w-[560px] flex-col gap-2.5">
+          <TickStrip total={total} elapsed={total - remaining} width={560} />
+          <div className="flex w-full max-w-[560px] flex-col">
             {tips.map((label, i) => {
               const on = checked.includes(i);
               return (
@@ -415,12 +394,10 @@ function BreakView({
                   type="button"
                   aria-pressed={on}
                   onClick={() => setChecked((c) => (on ? c.filter((x) => x !== i) : c.concat(i)))}
-                  className="bx press flex min-h-[56px] items-center gap-3.5 rounded-card border-[3px] border-ink px-4.5 text-left text-[18px] font-bold text-ink-solid sm:text-[20px]"
-                  style={{ background: on ? "var(--a3)" : "var(--card)", color: on ? "var(--ink-solid)" : "var(--ink)" }}
+                  className="flex min-h-[52px] items-center gap-3.5 border-t border-line text-left text-[16px] transition-colors"
+                  style={{ color: on ? "var(--ink)" : "var(--muted)" }}
                 >
-                  <span aria-hidden="true" className="flex size-7 shrink-0 items-center justify-center rounded-md border-[3px] border-ink bg-card text-[14px] text-ink">
-                    {on ? "✓" : ""}
-                  </span>
+                  <i aria-hidden="true" className="block size-4 shrink-0 rounded-full border" style={{ background: on ? "var(--signal)" : "transparent", borderColor: on ? "var(--signal)" : "var(--border)" }} />
                   {label}
                 </button>
               );
@@ -430,25 +407,22 @@ function BreakView({
       </main>
 
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="bx rounded-card border-[3px] border-ink bg-card px-5 py-2.5 text-[16px] font-bold sm:text-[18px]">
-          Siguiente: {skill?.name ?? "—"} · 25 min · tomate {long ? "1 del nuevo ciclo" : "siguiente"}
+        <div className="label-xs rounded-chip border border-line px-5 py-2.5">
+          Siguiente: {skill?.name ?? "—"} · tomate {long ? "1 del nuevo ciclo" : "siguiente"}
         </div>
-        <div className="flex flex-wrap gap-3.5">
-          <button type="button" onClick={onExtend} className="bx press min-h-16 rounded-button border-[3px] border-ink bg-card px-5 text-[18px] font-bold sm:text-[20px]">
+        <div className="flex flex-wrap gap-3">
+          <button type="button" onClick={onExtend} className="inline-flex min-h-[56px] items-center rounded-button border border-border px-5 font-mono text-[13px] uppercase tracking-[0.1em] transition-colors hover:border-border-hover hover:bg-card">
             + 2 min
           </button>
           <button
             type="button"
             onClick={onSkipBreak}
-            className="bx press min-h-16 min-w-[220px] rounded-button border-[3px] border-ink px-5 text-[20px] font-bold text-ink-solid sm:text-[22px]"
-            style={{ background: "var(--a1)" }}
+            className="inline-flex min-h-[56px] min-w-[200px] items-center justify-center rounded-button border border-signal bg-signal px-5 text-[14px] font-medium uppercase tracking-[0.1em] text-ink-solid transition-colors hover:brightness-110"
           >
             Saltar descanso
           </button>
         </div>
       </div>
-
-      <ProgressBar pct={pct} color={accent} ariaLabel="Progreso del descanso" height={30} />
     </div>
   );
 }
@@ -458,7 +432,7 @@ function ZenView({
   currentTomato,
   running,
   remaining,
-  pct,
+  total,
   onToggleRunning,
   onExit,
 }: {
@@ -466,47 +440,35 @@ function ZenView({
   currentTomato: number;
   running: boolean;
   remaining: number;
-  pct: number;
+  total: number;
   onToggleRunning: () => void;
   onExit: () => void;
 }) {
+  void total;
+  const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
+  const ss = String(remaining % 60).padStart(2, "0");
   return (
-    <div className="flex size-full flex-col gap-8 px-6 py-7 sm:px-12" style={{ background: "#111111" }}>
-      <div className="flex flex-wrap items-center gap-3.5" style={{ color: "#FFF4D6" }}>
-        <span className="font-num text-[15px] font-bold opacity-75">
+    <div className="relative flex size-full flex-col items-center justify-center gap-0" style={{ background: "#111111" }}>
+      <div className="absolute left-0 right-0 top-7 flex justify-center px-6" style={{ color: "#FFF4D6" }}>
+        <span className="font-num text-[13px] opacity-70">
           {skill?.name ?? "Sin habilidad"} · tomate {currentTomato} de 4
         </span>
-        <span className="flex-1" />
-        <SoundControl zen />
-        <ExitChip onClick={onExit} zen>
-          Salir del modo zen
-        </ExitChip>
       </div>
-      <main className="flex flex-1 flex-col items-center justify-center gap-6">
-        <div
-          role="timer"
-          aria-label="Tiempo restante"
-          className="font-num text-[90px] font-bold leading-[.85] tracking-tight sm:text-[180px] md:text-[260px]"
-          style={{ color: "#FFF4D6", fontVariantNumeric: "tabular-nums" }}
-        >
-          {fmt(remaining)}
-        </div>
-        <span className="font-num text-[16px]" style={{ color: "#FFF4D6", opacity: 0.6 }}>
-          {running ? "Solo tú y el tiempo. Sin notificaciones." : "En pausa. Respira."}
-        </span>
-      </main>
-      <div className="flex justify-center gap-4">
+      <div className="overflow-x-auto">
+        <DotDigits value={`${mm}:${ss}`} size={39} gap={9} onColor="#FFF4D6" offColor="#1e1e1e" signalColor="#FFF4D6" running={running} ariaLabel="Tiempo restante" />
+      </div>
+      <div className="absolute bottom-10 left-0 right-0 flex justify-center gap-8">
         <button
           type="button"
           onClick={onToggleRunning}
-          className="press min-h-[52px] rounded-chip border-[3px] px-7 text-[18px] font-bold"
-          style={{ background: "transparent", color: "#FFF4D6", borderColor: "#FFF4D6" }}
+          className="label-xs"
+          style={{ color: "#FFF4D6" }}
         >
-          {remaining <= 0 ? "Listo" : running ? "Pausa" : "Reanudar"}
+          Espacio · {remaining <= 0 ? "Listo" : running ? "Pausar" : "Seguir"}
         </button>
-      </div>
-      <div role="progressbar" aria-label="Progreso" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct} className="h-3 overflow-hidden rounded-chip" style={{ background: "#2b2b2b" }}>
-        <div className="h-full" style={{ width: `${pct}%`, background: "var(--a2)" }} />
+        <button type="button" onClick={onExit} className="label-xs" style={{ color: "#FFF4D6" }}>
+          Salir del modo zen
+        </button>
       </div>
     </div>
   );

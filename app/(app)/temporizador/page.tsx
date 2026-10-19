@@ -1,9 +1,10 @@
 "use client";
 
-import { Maximize2, Volume2, VolumeX } from "lucide-react";
+import { Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { Card, CardHeading } from "@/components/ui/card";
 import { Chip } from "@/components/ui/chip";
+import { DotDigits } from "@/components/ui/DotDigits";
 import { AmbientPicker } from "@/components/sound/AmbientPicker";
 import { SessionSaveDialog } from "@/components/timer/SessionSaveDialog";
 import { FullscreenTimer } from "@/components/timer/FullscreenTimer";
@@ -29,19 +30,56 @@ import { dateKeyInTz } from "@/lib/tz";
 import type { Challenge } from "@/lib/types";
 
 const MODE_TABS: { id: PomodoroMode; label: string }[] = [
-  { id: "focus", label: "Enfoque" },
-  { id: "short", label: "Corto" },
-  { id: "long", label: "Largo" },
+  { id: "focus", label: "Foco" },
+  { id: "short", label: "Descanso corto" },
+  { id: "long", label: "Descanso largo" },
 ];
-
-const MODE_FRUIT: Record<PomodoroMode, string> = { focus: "var(--a2)", short: "var(--a3)", long: "#7CC4FF" };
-const MODE_LABEL: Record<PomodoroMode, string> = { focus: "Modo enfoque", short: "Respira", long: "Descanso largo" };
 
 type ScreenMode = "pomodoro" | "libre";
 const SCREEN_TABS: { id: ScreenMode; label: string }[] = [
   { id: "pomodoro", label: "Pomodoro" },
   { id: "libre", label: "Libre" },
 ];
+
+/** A row of text toggle buttons in the reference's ".opt" style: muted
+ * label, a small signal-colored dot bullet + ink text when selected. Used
+ * for mode/screen tabs and the "Habilidad" skill picker list. */
+function OptTab({ on, onClick, children, className }: { on: boolean; onClick: () => void; children: React.ReactNode; className?: string }) {
+  return (
+    <button
+      type="button"
+      aria-pressed={on}
+      onClick={onClick}
+      className={`inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.1em] transition-colors ${className ?? ""}`}
+      style={{ color: on ? "var(--ink)" : "var(--muted)" }}
+    >
+      {on && <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full" style={{ background: "var(--signal)" }} />}
+      {children}
+    </button>
+  );
+}
+
+function TickStrip({ total, elapsed }: { total: number; elapsed: number }) {
+  const minutes = Math.max(1, Math.round(total / 60));
+  const ticks = Array.from({ length: minutes }, (_, i) => ({
+    h: (i + 1) % 5 === 0 ? 28 : 18,
+    bg: elapsed >= (i + 1) * 60 ? "var(--ink)" : elapsed > i * 60 ? "var(--signal)" : "var(--line)",
+  }));
+  const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(Math.max(0, Math.round(s)) % 60).padStart(2, "0")}`;
+  return (
+    <div className="w-full max-w-[880px]">
+      <div className="flex items-end gap-1" style={{ height: 28 }}>
+        {ticks.map((t, i) => (
+          <i key={i} aria-hidden="true" className="flex-1 rounded-[1px] transition-[background]" style={{ height: t.h, background: t.bg }} />
+        ))}
+      </div>
+      <div className="label-xs mt-2 flex justify-between text-[10px]">
+        <span>{fmt(elapsed)}</span>
+        <span>{fmt(total)}</span>
+      </div>
+    </div>
+  );
+}
 
 export default function TemporizadorPage() {
   const { user, skills, profile, sessions, timezone, todayKey } = useAppData();
@@ -388,149 +426,94 @@ export default function TemporizadorPage() {
     return result;
   }
 
+  const elapsed = total - remaining;
+  const session = String((store.completedFocusCount % 4) + 1).padStart(2, "0");
+
   return (
     <>
-      <div role="group" aria-label="Tipo de sesión" className="flex flex-wrap gap-2.5">
-        {SCREEN_TABS.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            aria-pressed={screenMode === t.id}
-            onClick={() => {
-              sound.playClick();
-              setScreenMode(t.id);
-            }}
-            className="bx press min-h-12 px-4.5 text-[16px] font-bold"
-            style={
-              screenMode === t.id
-                ? {
-                    background: "var(--ink)",
-                    color: "var(--paper)",
-                    boxShadow: "2px 2px 0 var(--shadow)",
-                    transform: "translate(4px,4px)",
-                  }
-                : { background: "var(--card)" }
-            }
-          >
-            {t.label}
-          </button>
-        ))}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line py-5">
+        <div role="group" aria-label="Tipo de sesión" className="flex flex-wrap gap-7">
+          {SCREEN_TABS.map((t) => (
+            <OptTab key={t.id} on={screenMode === t.id} onClick={() => { sound.playClick(); setScreenMode(t.id); }}>
+              {t.label}
+            </OptTab>
+          ))}
+        </div>
       </div>
 
       {screenMode === "pomodoro" && (
         <>
-          <div className="label-xs -mb-2 font-bold">
-            Tomate {n} de 4 · {selectedSkill?.name ?? "—"}
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-10">
-        <div className="relative flex items-center justify-center">
-          <div
-            className="bx flex size-[320px] flex-col items-center justify-center gap-1 rounded-full text-ink-solid sm:size-[400px]"
-            style={{ background: MODE_FRUIT[store.mode], boxShadow: "10px 10px 0 var(--shadow)" }}
-          >
-            <span
-              role="timer"
-              className="font-num text-[88px] font-bold leading-none tracking-tight sm:text-[120px]"
-              style={{ fontVariantNumeric: "tabular-nums" }}
-            >
-              {mm}:{ss}
-            </span>
-            <span className="label-xs !text-ink-solid font-bold opacity-70">{MODE_LABEL[store.mode]}</span>
-          </div>
-          <div
-            className="bx absolute -right-3 top-10 px-4 py-2 text-[18px] font-bold text-ink-solid"
-            style={{ background: "var(--a1)", transform: "rotate(8deg)" }}
-          >
-            {store.running ? "¡Sin distraerte!" : remaining === total ? "¡A darle!" : "En pausa"}
-          </div>
-        </div>
-
-        <div className="flex min-w-[300px] flex-1 flex-col gap-5">
-          <div className="flex flex-wrap items-center justify-between gap-2.5">
-            <div role="group" aria-label="Modo" className="flex flex-wrap gap-2.5">
+          <div className="flex flex-wrap items-center gap-5 pt-6">
+            <div role="tablist" aria-label="Modo" className="flex flex-1 flex-wrap gap-7">
               {MODE_TABS.map((t) => (
-                <button
-                  key={t.id}
-                  type="button"
-                  aria-pressed={store.mode === t.id}
-                  onClick={() => store.setMode(t.id)}
-                  className="bx press min-h-12 px-4.5 text-[16px] font-bold"
-                  style={
-                    store.mode === t.id
-                      ? {
-                          background: "var(--a1)",
-                          color: "var(--ink-solid)",
-                          boxShadow: "2px 2px 0 var(--shadow)",
-                          transform: "translate(4px,4px)",
-                        }
-                      : { background: "var(--card)" }
-                  }
-                >
+                <OptTab key={t.id} on={store.mode === t.id} onClick={() => store.setMode(t.id)}>
                   {t.label}
-                </button>
+                </OptTab>
               ))}
             </div>
-            <button
-              type="button"
-              onClick={() => sound.setSoundEffectsEnabled(!sound.soundEffectsEnabled)}
-              aria-label={sound.soundEffectsEnabled ? "Silenciar sonidos" : "Activar sonidos"}
-              title={sound.soundEffectsEnabled ? "Silenciar sonidos" : "Activar sonidos"}
-              className="bx press flex size-12 items-center justify-center bg-card"
-            >
-              {sound.soundEffectsEnabled ? (
-                <Volume2 size={20} aria-hidden="true" />
-              ) : (
-                <VolumeX size={20} aria-hidden="true" />
-              )}
-            </button>
-          </div>
-
-          <button
-            type="button"
-            onClick={handlePlayPause}
-            className="bx press min-h-[84px] text-[28px] font-bold"
-            style={{ background: "var(--ink)", color: "var(--paper)", boxShadow: "6px 6px 0 var(--a2)" }}
-          >
-            {store.running ? "Pausa" : "Dale"}
-          </button>
-
-          <div className="flex gap-3">
-            <button type="button" onClick={handleReset} className="bx press min-h-13 flex-1 bg-card text-[16px] font-bold">
-              Reiniciar
-            </button>
-            <button type="button" onClick={handleSkip} className="bx press min-h-13 flex-1 bg-card text-[16px] font-bold">
-              Saltar
-            </button>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setFullscreen(true)}
-            className="bx press flex min-h-13 items-center justify-center gap-2 bg-card text-[16px] font-bold"
-          >
-            <Maximize2 size={18} aria-hidden="true" />
-            Modo enfoque (pantalla completa)
-          </button>
-
-          <Card className="flex flex-col gap-3 p-4.5">
-            <CardHeading className="text-[18px]">Sonido ambiente</CardHeading>
-            <AmbientPicker label="Elige un ambiente" />
-          </Card>
-
-          <Card className="flex flex-col gap-3 p-4.5">
-            <CardHeading className="text-[18px]">¿Qué vas a practicar?</CardHeading>
-            <div role="group" aria-label="Habilidad" className="flex flex-wrap gap-2">
-              {skills.map((s) => (
-                <Chip key={s.id} pressed={store.skillId === s.id} dotColor={resolveSkillColor(s.color)} onClick={() => store.setSkill(s.id)}>
-                  {s.name}
-                </Chip>
-              ))}
+            <div className="flex items-center gap-6">
+              <button
+                type="button"
+                onClick={() => sound.setSoundEffectsEnabled(!sound.soundEffectsEnabled)}
+                aria-label={sound.soundEffectsEnabled ? "Silenciar sonidos" : "Activar sonidos"}
+                title={sound.soundEffectsEnabled ? "Silenciar sonidos" : "Activar sonidos"}
+                className="text-muted transition-colors hover:text-ink"
+              >
+                {sound.soundEffectsEnabled ? <Volume2 size={18} aria-hidden="true" /> : <VolumeX size={18} aria-hidden="true" />}
+              </button>
+              <button type="button" onClick={() => setFullscreen(true)} className="label-xs underline decoration-border underline-offset-4 transition-colors hover:text-ink">
+                Pantalla completa
+              </button>
+              <span className="label-xs">
+                Sesión <span className="text-ink">{session}</span> / 04
+              </span>
             </div>
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="intencion" className="label-xs">
-                Intención de esta sesión
-              </label>
+          </div>
+
+          <div className="flex flex-col items-center gap-8 py-14">
+            <div className="overflow-x-auto">
+              <DotDigits value={`${mm}:${ss}`} size={26} gap={9} running={store.running} ariaLabel={`Tiempo restante ${mm}:${ss}`} />
+            </div>
+            <TickStrip total={total} elapsed={elapsed} />
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={handleReset}
+                className="inline-flex min-h-[52px] items-center gap-2.5 rounded-button border border-border px-6 font-mono text-[12px] uppercase tracking-[0.12em] transition-colors hover:border-border-hover hover:bg-card"
+              >
+                Reiniciar
+              </button>
+              <button
+                type="button"
+                onClick={handlePlayPause}
+                className="inline-flex min-h-[52px] min-w-[200px] items-center justify-center gap-3 rounded-button border border-signal bg-signal px-6 font-mono text-[12px] font-medium uppercase tracking-[0.12em] text-ink-solid transition-colors hover:brightness-110"
+              >
+                {store.running ? <Pause size={14} aria-hidden="true" fill="currentColor" /> : <Play size={14} aria-hidden="true" fill="currentColor" />}
+                {store.running ? "Pausar" : remaining === total ? "Empezar" : "Seguir"}
+              </button>
+              <button
+                type="button"
+                onClick={handleSkip}
+                className="inline-flex min-h-[52px] items-center gap-2.5 rounded-button border border-border px-6 font-mono text-[12px] uppercase tracking-[0.12em] transition-colors hover:border-border-hover hover:bg-card"
+              >
+                Saltar
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 border-t border-line sm:grid-cols-3">
+            <div className="py-6 pr-0 sm:pr-7">
+              <div className="label-xs mb-3.5">Habilidad</div>
+              <div role="group" aria-label="Habilidad" className="flex flex-wrap gap-2">
+                {skills.map((s) => (
+                  <Chip key={s.id} pressed={store.skillId === s.id} dotColor={resolveSkillColor(s.color)} onClick={() => store.setSkill(s.id)}>
+                    {s.name}
+                  </Chip>
+                ))}
+              </div>
+            </div>
+            <div className="border-t border-line py-6 sm:border-l sm:border-t-0 sm:px-7">
+              <div className="label-xs mb-3.5">Intención</div>
               <input
                 id="intencion"
                 type="text"
@@ -539,108 +522,77 @@ export default function TemporizadorPage() {
                   setIntentionLocal(e.target.value);
                   store.setIntention(e.target.value);
                 }}
-                placeholder="Ej. Terminar el módulo de autenticación"
-                className="box-border w-full min-h-12 rounded-button border-[3px] border-ink bg-card px-3.5 text-[15px] placeholder:text-muted"
+                placeholder="¿Qué vas a practicar?"
+                className="w-full min-h-10 border-0 border-b border-border bg-transparent px-0 pb-3 pt-2 text-[16px] text-ink placeholder:text-muted focus:border-signal focus:outline-none"
               />
             </div>
-          </Card>
-
-          <div className="flex gap-2.5" aria-label="Tomates de hoy">
-            {[0, 1, 2, 3].map((i) => (
-              <span key={i} className="size-9 rounded-full border-[3px] border-ink" style={{ background: i < filled ? "var(--a2)" : "var(--card)" }} />
-            ))}
-          </div>
-          </div>
+            <div className="border-t border-line py-6 sm:border-l sm:border-t-0 sm:pl-7">
+              <AmbientPicker label="Ambiente" />
+            </div>
           </div>
         </>
       )}
 
       {screenMode === "libre" && (
         <>
-          <div className="label-xs -mb-2 font-bold">
-            Hoy: {todayLibreSessions.length === 0
-              ? "ninguna sesión libre aún"
-              : `${todayLibreSessions.length} sesión${todayLibreSessions.length === 1 ? "" : "es"} libre${todayLibreSessions.length === 1 ? "" : "s"} · ${formatMinutes(todayLibreMinutes)}`}
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-10">
-          <div className="relative flex items-center justify-center">
-            <div
-              className="bx flex size-[320px] flex-col items-center justify-center gap-1 rounded-full text-ink-solid sm:size-[400px]"
-              style={{ background: "var(--a3)", boxShadow: "10px 10px 0 var(--shadow)" }}
-            >
-              <span
-                role="timer"
-                className="font-num text-[72px] font-bold leading-none tracking-tight sm:text-[100px]"
-                style={{ fontVariantNumeric: "tabular-nums" }}
-              >
-                {formatStopwatchClock(stopwatchElapsedMs)}
-              </span>
-              <span className="label-xs !text-ink-solid font-bold opacity-70">Sesión libre</span>
-            </div>
-            <div
-              className="bx absolute -right-3 top-10 px-4 py-2 text-[18px] font-bold text-ink-solid"
-              style={{ background: "var(--a1)", transform: "rotate(8deg)" }}
-            >
-              {stopwatch.running ? "¡Dale que vas bien!" : stopwatchHasTime ? "En pausa" : "¡A darle!"}
-            </div>
-          </div>
-
-          <div className="flex min-w-[300px] flex-1 flex-col gap-5">
-            <div className="flex flex-wrap items-center justify-between gap-2.5">
-              <p className="m-0 max-w-[320px] text-sm text-muted">
-                Sin ciclos ni duración fija: pulsa Dale, practica, y Detener cuando termines.
-              </p>
+          <div className="flex flex-wrap items-center gap-5 pt-6">
+            <span className="label-xs flex-1">
+              {todayLibreSessions.length === 0
+                ? "Hoy: ninguna sesión libre aún"
+                : `Hoy: ${todayLibreSessions.length} sesión${todayLibreSessions.length === 1 ? "" : "es"} libre${todayLibreSessions.length === 1 ? "" : "s"} · ${formatMinutes(todayLibreMinutes)}`}
+            </span>
+            <div className="flex items-center gap-6">
               <button
                 type="button"
                 onClick={() => sound.setSoundEffectsEnabled(!sound.soundEffectsEnabled)}
                 aria-label={sound.soundEffectsEnabled ? "Silenciar sonidos" : "Activar sonidos"}
                 title={sound.soundEffectsEnabled ? "Silenciar sonidos" : "Activar sonidos"}
-                className="bx press flex size-12 items-center justify-center bg-card"
+                className="text-muted transition-colors hover:text-ink"
               >
-                {sound.soundEffectsEnabled ? (
-                  <Volume2 size={20} aria-hidden="true" />
-                ) : (
-                  <VolumeX size={20} aria-hidden="true" />
-                )}
+                {sound.soundEffectsEnabled ? <Volume2 size={18} aria-hidden="true" /> : <VolumeX size={18} aria-hidden="true" />}
+              </button>
+              <button type="button" onClick={() => setLibreFullscreen(true)} className="label-xs underline decoration-border underline-offset-4 transition-colors hover:text-ink">
+                Pantalla completa
               </button>
             </div>
+          </div>
 
-            <button
-              type="button"
-              onClick={handleStopwatchPlayPause}
-              className="bx press min-h-[84px] text-[28px] font-bold"
-              style={{ background: "var(--ink)", color: "var(--paper)", boxShadow: "6px 6px 0 var(--a3)" }}
-            >
-              {stopwatch.running ? "Pausa" : "Dale"}
-            </button>
-
-            <div className="flex gap-3">
+          <div className="flex flex-col items-center gap-8 py-14">
+            <div className="overflow-x-auto">
+              <DotDigits value={formatStopwatchClock(stopwatchElapsedMs)} size={26} gap={9} running={stopwatch.running} ariaLabel="Tiempo transcurrido" />
+            </div>
+            <p className="m-0 max-w-[420px] text-center text-sm text-muted">
+              Sin ciclos ni duración fija: pulsa Empezar, practica, y Detener cuando termines.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={handleStopwatchPlayPause}
+                className="inline-flex min-h-[52px] min-w-[200px] items-center justify-center gap-3 rounded-button border border-signal bg-signal px-6 font-mono text-[12px] font-medium uppercase tracking-[0.12em] text-ink-solid transition-colors hover:brightness-110"
+              >
+                {stopwatch.running ? <Pause size={14} aria-hidden="true" fill="currentColor" /> : <Play size={14} aria-hidden="true" fill="currentColor" />}
+                {stopwatch.running ? "Pausar" : "Empezar"}
+              </button>
               <button
                 type="button"
                 onClick={handleStopwatchStop}
                 disabled={!stopwatchHasTime}
-                className="bx press min-h-13 flex-1 bg-card text-[16px] font-bold disabled:opacity-60"
+                className="inline-flex min-h-[52px] items-center gap-2.5 rounded-button border border-border px-6 font-mono text-[12px] uppercase tracking-[0.12em] transition-colors hover:border-border-hover hover:bg-card disabled:pointer-events-none disabled:opacity-50"
               >
                 Detener
               </button>
-              <button type="button" onClick={handleStopwatchReset} className="bx press min-h-13 flex-1 bg-card text-[16px] font-bold">
+              <button
+                type="button"
+                onClick={handleStopwatchReset}
+                className="inline-flex min-h-[52px] items-center gap-2.5 rounded-button border border-border px-6 font-mono text-[12px] uppercase tracking-[0.12em] transition-colors hover:border-border-hover hover:bg-card"
+              >
                 Reiniciar
               </button>
             </div>
 
-            <button
-              type="button"
-              onClick={() => setLibreFullscreen(true)}
-              className="bx press flex min-h-13 items-center justify-center gap-2 bg-card text-[16px] font-bold"
-            >
-              <Maximize2 size={18} aria-hidden="true" />
-              Modo libre (pantalla completa)
-            </button>
-
             {tooShortNotice && (
-              <div className="bx px-4 py-2.5 text-[15px] font-bold text-ink-solid" style={{ background: "var(--a1)" }}>
-                Practica al menos {MIN_STOPWATCH_MS / 60_000} minuto para poder guardar la sesión. Tu tiempo sigue contando: pulsa Dale para seguir.
+              <div className="max-w-[560px] rounded-card border border-line bg-card px-5 py-3 text-center text-[14px] text-ink">
+                Practica al menos {MIN_STOPWATCH_MS / 60_000} minuto para poder guardar la sesión. Tu tiempo sigue contando: pulsa Empezar para seguir.
               </div>
             )}
 
@@ -648,38 +600,50 @@ export default function TemporizadorPage() {
                 show up here too if it triggers while the user is on this
                 normal panel rather than in fullscreen — the polished
                 dedicated break view with tips is fullscreen-only, but this
-                inline banner (same visual pattern as tooShortNotice above)
-                keeps the normal panel from looking broken or stuck. */}
+                inline banner keeps the normal panel from looking broken or
+                stuck. */}
             {stopwatch.onBreak && (
-              <div className="bx flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 text-[15px] font-bold text-ink-solid" style={{ background: "var(--a1)" }}>
+              <div className="flex max-w-[640px] flex-wrap items-center justify-between gap-3 rounded-card border border-line bg-card px-5 py-3 text-[14px] text-ink">
                 <span>
                   Es hora de un descanso de {stopwatch.breakLengthMin} min · quedan {formatStopwatchClock(breakRemainingMs)}
                 </span>
                 <button
                   type="button"
                   onClick={handleEndBreakNow}
-                  className="bx press min-h-9 rounded-chip border-[3px] border-ink bg-card px-3 text-[13px] font-bold text-ink"
+                  className="inline-flex min-h-9 items-center rounded-chip border border-border px-3.5 font-mono text-[11px] uppercase tracking-[0.1em] transition-colors hover:border-border-hover"
                 >
                   Terminar descanso ahora
                 </button>
               </div>
             )}
+          </div>
 
-            <Card className="flex flex-col gap-3 p-4.5">
-              <CardHeading className="text-[18px]">Sonido ambiente</CardHeading>
-              <AmbientPicker label="Elige un ambiente" />
-            </Card>
-
-            <Card className="flex flex-col gap-3 p-4.5">
-              <CardHeading className="text-[18px]">Recordatorio de descanso</CardHeading>
-              <p className="m-0 text-sm text-muted">
-                Opcional: pausa automáticamente la sesión libre para avisarte de tomar un descanso.
-              </p>
+          <div className="grid grid-cols-1 border-t border-line sm:grid-cols-3">
+            <div className="py-6 pr-0 sm:pr-7">
+              <div className="label-xs mb-3.5">Intención</div>
+              <input
+                id="sw-intencion"
+                type="text"
+                value={swIntention}
+                onChange={(e) => {
+                  setSwIntentionLocal(e.target.value);
+                  stopwatch.setIntention(e.target.value);
+                }}
+                placeholder="¿En qué vas a trabajar?"
+                className="w-full min-h-10 border-0 border-b border-border bg-transparent px-0 pb-3 pt-2 text-[16px] text-ink placeholder:text-muted focus:border-signal focus:outline-none"
+              />
+            </div>
+            <div className="border-t border-line py-6 sm:border-l sm:border-t-0 sm:px-7">
+              <AmbientPicker label="Ambiente" />
+            </div>
+            <div className="border-t border-line py-6 sm:border-l sm:border-t-0 sm:pl-7">
+              <div className="label-xs mb-3.5">Recordatorio de descanso</div>
+              <p className="m-0 mb-3 text-[13px] text-muted">Pausa automáticamente la sesión libre para avisarte de tomar un descanso.</p>
               <BreakNotifyInline />
-              <div className="grid grid-cols-[repeat(auto-fit,minmax(min(180px,100%),1fr))] gap-3">
+              <div className="mt-3 grid grid-cols-[repeat(auto-fit,minmax(min(150px,100%),1fr))] gap-3">
                 <div className="flex flex-col gap-1.5">
                   <label htmlFor="sw-break-min" className="label-xs">
-                    Avisar cada (min, 0 = desactivado)
+                    Cada (min, 0 = off)
                   </label>
                   <input
                     id="sw-break-min"
@@ -692,12 +656,12 @@ export default function TemporizadorPage() {
                       const v = Math.max(0, Math.round(Number(e.target.value) || 0));
                       handleChangeBreakSettings(v > 0 ? v : null, stopwatch.breakLengthMin);
                     }}
-                    className="box-border w-full min-h-12 rounded-button border-[3px] border-ink bg-card px-3.5 text-[15px]"
+                    className="w-full min-h-10 border-0 border-b border-border bg-transparent px-0 pb-3 pt-2 text-[15px] text-ink focus:border-signal focus:outline-none"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label htmlFor="sw-break-length" className="label-xs">
-                    Duración del descanso (min)
+                    Duración (min)
                   </label>
                   <input
                     id="sw-break-length"
@@ -711,45 +675,24 @@ export default function TemporizadorPage() {
                       const v = Math.max(1, Math.round(Number(e.target.value) || 1));
                       handleChangeBreakSettings(stopwatch.breakReminderMin, v);
                     }}
-                    className="box-border w-full min-h-12 rounded-button border-[3px] border-ink bg-card px-3.5 text-[15px] disabled:opacity-50"
+                    className="w-full min-h-10 border-0 border-b border-border bg-transparent px-0 pb-3 pt-2 text-[15px] text-ink focus:border-signal focus:outline-none disabled:opacity-50"
                   />
                 </div>
               </div>
-            </Card>
-
-            <Card className="flex flex-col gap-3 p-4.5">
-              <CardHeading className="text-[18px]">¿En qué vas a trabajar?</CardHeading>
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="sw-intencion" className="label-xs">
-                  Intención de esta sesión
-                </label>
-                <input
-                  id="sw-intencion"
-                  type="text"
-                  value={swIntention}
-                  onChange={(e) => {
-                    setSwIntentionLocal(e.target.value);
-                    stopwatch.setIntention(e.target.value);
-                  }}
-                  placeholder="Ej. Improvisar sobre un acorde"
-                  className="box-border w-full min-h-12 rounded-button border-[3px] border-ink bg-card px-3.5 text-[15px] placeholder:text-muted"
-                />
-              </div>
-            </Card>
-          </div>
+            </div>
           </div>
         </>
       )}
 
       {todaySessions.length > 0 && (
-        <Card className="flex flex-col gap-1 p-4.5">
+        <Card className="flex flex-col gap-1 p-5">
           <CardHeading className="mb-1 text-[16px]">Sesiones de hoy</CardHeading>
           {todaySessions.map((s) => {
             const skill = skills.find((sk) => sk.id === s.skillId);
             return (
-              <div key={s.id} className="flex flex-wrap items-center gap-3 border-t-2 border-dashed border-ink py-2.5">
+              <div key={s.id} className="flex flex-wrap items-center gap-3 border-t border-line py-2.5">
                 <span className="font-num min-w-16 text-[13px] text-muted">{formatTimeEs(new Date(s.startedAt))}</span>
-                <span className="min-w-[100px] flex-1 font-bold">{skill?.name ?? "—"}</span>
+                <span className="min-w-[100px] flex-1">{skill?.name ?? "Sesión libre"}</span>
                 <span className="font-num text-sm">{formatMinutes(s.durationMin)}</span>
               </div>
             );
