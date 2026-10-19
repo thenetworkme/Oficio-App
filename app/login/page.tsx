@@ -3,8 +3,10 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { AuthShell, GoogleSwatch } from "@/components/auth/AuthShell";
-import { Input, Label } from "@/components/ui/input";
+import { AuthShell } from "@/components/auth/AuthShell";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { useAuth } from "@/lib/auth/AuthProvider";
 
 export default function LoginPage() {
@@ -13,6 +15,12 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
+  // Presentational only — mirrors PuntoLogin.dc.html's "Mantener la sesión
+  // iniciada" toggle, which is likewise local UI state with no backend
+  // effect in the reference mockup. Wiring real Firebase Auth session
+  // persistence to it would be an auth *behavior* change, out of scope for
+  // this visual-only rebuild.
+  const [remember, setRemember] = useState(true);
   const [tried, setTried] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -55,74 +63,61 @@ export default function LoginPage() {
   }
 
   return (
-    <AuthShell asideColor="var(--a1)" bubble="¡Te estaba esperando!" headline="10.000 horas no se hacen solas.">
-      <div>
-        <h1 className="m-0 text-[40px] font-bold leading-[1.05] tracking-tight sm:text-[48px]">Qué bueno verte de nuevo.</h1>
-        <p className="mb-0 mt-2.5 text-[18px] font-medium">Tu racha te espera.</p>
-      </div>
+    <AuthShell eyebrow="Acceso" title={<>Bienvenido<br />de nuevo</>}>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-7">
+        <label className="block">
+          <span className="label-xs mb-2 block">Correo</span>
+          <Input type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@correo.com" />
+          {emailErr && (
+            <span role="alert" className="mt-1.5 block text-[13px] font-medium text-danger">
+              {emailErr}
+            </span>
+          )}
+        </label>
 
-      <button type="button" onClick={handleGoogle} disabled={submitting} className="bx press flex min-h-14 w-full items-center justify-center gap-3 bg-card text-[18px] font-bold disabled:opacity-60">
-        <GoogleSwatch />
-        {submitting ? "Conectando con Google…" : "Continuar con Google"}
-      </button>
+        <label className="block">
+          <span className="label-xs mb-2 flex items-center justify-between gap-3">
+            <span>Contraseña</span>
+            <span className="flex items-center gap-3 normal-case tracking-normal">
+              <button type="button" onClick={() => setShow((s) => !s)} aria-pressed={show} className="text-muted underline decoration-border underline-offset-2 transition-colors hover:text-ink">
+                {show ? "Ocultar" : "Mostrar"}
+              </button>
+              <Link href="/recuperar" className="text-muted underline decoration-border underline-offset-2 transition-colors hover:text-ink">
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </span>
+          </span>
+          <Input type={show ? "text" : "password"} autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
+          {passErr && (
+            <span role="alert" className="mt-1.5 block text-[13px] font-medium text-danger">
+              {passErr}
+            </span>
+          )}
+        </label>
 
-      <div className="flex items-center gap-3.5" aria-hidden="true">
-        <span className="h-0 flex-1 border-t-[3px] border-dashed border-ink" />
-        <span className="label-xs">o con correo</span>
-        <span className="h-0 flex-1 border-t-[3px] border-dashed border-ink" />
-      </div>
-
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="email">Correo</Label>
-          <Input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@correo.com" style={emailErr ? { borderColor: "var(--danger)" } : undefined} />
-          {emailErr && <span role="alert" className="text-[14px] font-bold text-danger">{emailErr}</span>}
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-baseline justify-between">
-            <Label htmlFor="password">Contraseña</Label>
-            <Link href="/recuperar" className="text-[14px] font-bold underline">
-              ¿Olvidaste tu contraseña?
-            </Link>
-          </div>
-          <div className="flex gap-2.5">
-            <Input
-              id="password"
-              type={show ? "text" : "password"}
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Tu contraseña"
-              style={passErr ? { borderColor: "var(--danger)" } : undefined}
-              className="flex-1"
-            />
-            <button type="button" onClick={() => setShow((s) => !s)} aria-pressed={show} className="bx press min-w-[96px] font-bold">
-              {show ? "Ocultar" : "Mostrar"}
-            </button>
-          </div>
-          {passErr && <span role="alert" className="text-[14px] font-bold text-danger">{passErr}</span>}
+        <div className="flex items-center gap-3.5">
+          <Switch checked={remember} onCheckedChange={setRemember} label="Mantener la sesión iniciada" />
+          <span className="text-muted">Mantener la sesión iniciada</span>
         </div>
 
         {error && (
-          <p role="alert" className="m-0 text-[14px] font-bold text-danger">
+          <p role="alert" className="m-0 text-[14px] font-medium text-danger">
             {error}
           </p>
         )}
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="bx press min-h-14 w-full text-[18px] font-bold text-ink-solid disabled:opacity-60"
-          style={{ background: "var(--a1)" }}
-        >
-          {submitting ? "¡Entrando…!" : "Entrar"}
-        </button>
+        <Button type="submit" disabled={submitting} className="w-full">
+          {submitting ? "Entrando…" : "Entrar"}
+        </Button>
+        <Button type="button" variant="outline" onClick={handleGoogle} disabled={submitting} className="w-full">
+          {submitting ? "Conectando…" : "Continuar con Google"}
+        </Button>
       </form>
 
-      <p className="m-0 text-center font-medium">
-        ¿Primera vez?{" "}
-        <Link href="/registro" className="font-bold underline">
-          Crea tu cuenta
+      <p className="m-0 mt-9 text-muted">
+        ¿Aún no tienes cuenta?{" "}
+        <Link href="/registro" className="text-ink underline decoration-border underline-offset-2 hover:decoration-ink">
+          Crear cuenta
         </Link>
       </p>
     </AuthShell>

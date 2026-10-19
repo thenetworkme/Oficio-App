@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { AuthShell } from "@/components/auth/AuthShell";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
 import { useAuth } from "@/lib/auth/AuthProvider";
 
@@ -45,65 +47,57 @@ export default function RecuperarPage() {
   }
 
   return (
-    <AuthShell asideColor="var(--a3)" bubble="¡Yo te ayudo!" headline="A todos se nos olvida alguna vez.">
-      <div>
-        <h1 className="m-0 text-[40px] font-bold leading-[1.05] tracking-tight sm:text-[48px]">Recupera tu contraseña.</h1>
-        <p className="mb-0 mt-2.5 text-[18px] font-medium">Te mandamos un enlace a tu correo.</p>
-      </div>
-
+    <AuthShell eyebrow="Recuperar acceso" title="Restablece tu contraseña">
       {(status === "form" || status === "sending" || status === "error") && (
-        <form onSubmit={handleSend} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
+        <form onSubmit={handleSend} className="flex flex-col gap-7">
+          <p className="m-0 text-muted">Escribe el correo de tu cuenta y te enviaremos un enlace para crear una contraseña nueva.</p>
+
+          <label className="block">
             <Label htmlFor="email">Correo</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="tu@correo.com"
-              style={emailErr || status === "error" ? { borderColor: "var(--danger)" } : undefined}
-            />
+            <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@correo.com" className="mt-2" />
             {emailErr && (
-              <span role="alert" className="text-[14px] font-bold text-danger">
+              <span role="alert" className="mt-1.5 block text-[13px] font-medium text-danger">
                 {emailErr}
               </span>
             )}
-          </div>
+          </label>
 
           {status === "error" && error && (
-            <p role="alert" className="m-0 text-[14px] font-bold text-danger">
+            <p role="alert" className="m-0 text-[14px] font-medium text-danger">
               {error}
             </p>
           )}
 
-          <button
-            type="submit"
-            disabled={status === "sending"}
-            className="bx press min-h-14 w-full text-[18px] font-bold text-ink-solid disabled:opacity-60"
-            style={{ background: "var(--a1)" }}
-          >
+          <Button type="submit" disabled={status === "sending"} className="w-full">
             {status === "sending" ? "Enviando…" : "Enviar enlace"}
-          </button>
+          </Button>
         </form>
       )}
 
       {status === "sent" && (
-        <div className="flex flex-col gap-4">
-          <div className="bx flex flex-col gap-2 p-5 text-ink-solid" style={{ background: "var(--a3)" }}>
-            <span className="text-[20px] font-bold">Revisa tu correo</span>
-            <p className="m-0 font-medium">
-              Te mandamos un enlace a <b>{email}</b> para que elijas una contraseña nueva.
-            </p>
-          </div>
-          <button type="button" onClick={handleResend} className="bx press min-h-13 bg-card font-bold">
+        <div className="flex flex-col gap-6">
+          <Card className="flex items-center gap-4.5 p-7">
+            <span
+              aria-hidden="true"
+              className="size-3.5 shrink-0 rounded-full bg-signal"
+              style={{ boxShadow: "0 0 0 6px color-mix(in srgb, var(--signal) 20%, transparent)" }}
+            />
+            <div>
+              <div className="text-[18px] text-ink">Revisa tu correo</div>
+              <div className="mt-0.5 text-[14px] text-muted">
+                Enviamos el enlace a <span className="text-ink">{email}</span>. Vence en 30 minutos.
+              </div>
+            </div>
+          </Card>
+          <Button type="button" variant="outline" onClick={handleResend} className="w-full">
             Reenviar correo
-          </button>
+          </Button>
         </div>
       )}
 
-      <p className="m-0 text-center font-medium">
-        <Link href="/login" className="font-bold underline">
-          Volver a iniciar sesión
+      <p className="m-0 mt-9">
+        <Link href="/login" className="text-muted underline decoration-border underline-offset-2 transition-colors hover:text-ink">
+          ← Volver a iniciar sesión
         </Link>
       </p>
     </AuthShell>

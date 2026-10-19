@@ -3,10 +3,12 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Mascot } from "@/components/mascot/Mascot";
+import { Wordmark } from "@/components/layout/TopNav";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Chip } from "@/components/ui/chip";
 import { Input, Label } from "@/components/ui/input";
 import { useAuth } from "@/lib/auth/AuthProvider";
-import { cn } from "@/lib/cn";
 import { createReminder } from "@/lib/firestore/reminders";
 import { createSkill } from "@/lib/firestore/skills";
 import { updateProfile } from "@/lib/firestore/profiles";
@@ -38,14 +40,6 @@ function hm(m: number) {
   if (h === 0) return `${r} min`;
   return r === 0 ? `${h} h` : `${h} h ${r} min`;
 }
-
-const TITLES = ["Conoce a tu compañero.", "¿Qué quieres dominar?", "¿Cuánto vas a practicar?", "Todo listo."];
-const BUBBLES = (pet: string) => [
-  `¡Hola! Soy ${pet}. Voy a contar tus horas contigo.`,
-  "Elige una. Yo la anoto en tu álbum.",
-  "Mejor poco todos los días que mucho un día.",
-  "¡Vamos por las primeras 10.000 h!",
-];
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -105,200 +99,179 @@ export default function OnboardingPage() {
     router.replace("/");
   }
 
-  const bubbles = BUBBLES(petName.trim() || "Tomi");
-
   return (
-    <div className="flex min-h-screen flex-col gap-7 bg-paper px-5 py-7 sm:px-12 sm:py-9">
-      <header className="flex flex-wrap items-center gap-5">
-        <div className="bx inline-flex bg-a1 px-4.5 py-1.5 text-ink-solid" style={{ transform: "rotate(-2deg)" }}>
-          <span className="text-[26px] font-bold tracking-tight">oficio!</span>
-        </div>
-        <div className="ml-auto flex max-w-[420px] flex-1 gap-2.5" role="progressbar" aria-valuenow={step} aria-valuemin={1} aria-valuemax={4} aria-label="Progreso del inicio">
-          {[1, 2, 3, 4].map((n) => (
-            <span key={n} className="h-4.5 flex-1 rounded-chip border-[3px] border-ink" style={{ background: n <= step ? "var(--ink)" : "var(--card)" }} />
-          ))}
-        </div>
-        <button type="button" onClick={skip} className="font-bold underline">
+    <div className="flex min-h-screen flex-col">
+      <header className="flex h-[68px] items-center gap-6 border-b border-line px-5 sm:px-10">
+        <Wordmark />
+        <span className="label-xs ml-auto">Paso {step} de 4</span>
+        <button type="button" onClick={skip} className="label-xs text-muted transition-colors hover:text-ink">
           Saltar
         </button>
       </header>
 
-      <main className="flex flex-1 flex-wrap items-center gap-10">
-        <aside className="flex min-w-[300px] flex-[0_1_420px] flex-col items-center gap-4.5">
-          <div className="relative">
-            <Mascot size={260} bodyColor={PALETTE[colorIdx][1]} hat={step >= 4 ? "cap" : null} mood={step === 4 ? "cheer" : "idle"} />
-            <div className="bx absolute -left-4 -top-3.5 max-w-[230px] bg-card px-4.5 py-2.5 font-bold" style={{ transform: "rotate(-5deg)" }}>
-              {bubbles[step - 1]}
+      <main className="mx-auto w-full max-w-[860px] flex-1 px-5 py-12 sm:px-10 sm:py-14">
+        <div
+          className="mb-12 flex gap-1.5 sm:mb-16"
+          role="progressbar"
+          aria-valuenow={step}
+          aria-valuemin={1}
+          aria-valuemax={4}
+          aria-label="Progreso del inicio"
+        >
+          {[1, 2, 3, 4].map((n) => (
+            <span key={n} className="h-1 flex-1 rounded-chip" style={{ background: n <= step ? "var(--ink)" : "var(--line)" }} />
+          ))}
+        </div>
+
+        {step === 1 && (
+          <section className="flex flex-col gap-9">
+            <div>
+              <span className="label-xs mb-3.5 block">01 · Tu compañero</span>
+              <h1 className="m-0 text-[40px] font-light leading-[0.98] tracking-tighter text-ink sm:text-[56px]">
+                Ponle nombre
+                <br />y color.
+              </h1>
             </div>
-          </div>
-          <span className="font-num font-bold">
-            {petName.trim() || "Tomi"} · Nv. 1
-          </span>
-        </aside>
-
-        <section className="bx flex min-w-0 flex-[1_1_560px] flex-col gap-6 p-9">
-          <span className="label-xs">Paso {step} de 4</span>
-          <h1 className="m-0 text-[42px] font-bold leading-[1.05] tracking-tight sm:text-[52px]">{TITLES[step - 1]}</h1>
-
-          {step === 1 && (
-            <div className="flex flex-col gap-5.5">
-              <div className="flex flex-col gap-2">
-                <span className="label-xs">Color</span>
-                <div className="flex gap-3">
-                  {PALETTE.map(([name, hex], i) => (
-                    <button
-                      key={name}
-                      type="button"
-                      aria-pressed={colorIdx === i}
-                      aria-label={name}
-                      onClick={() => setColorIdx(i)}
-                      className="size-13 rounded-full border-[3px] border-ink p-0"
-                      style={{ background: hex, boxShadow: colorIdx === i ? "5px 5px 0 var(--shadow)" : "none" }}
-                    />
-                  ))}
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="pn">Ponle nombre</Label>
-                <Input id="pn" value={petName} onChange={(e) => setPetNameLocal(e.target.value.slice(0, 14))} className="text-[22px] font-bold" />
-              </div>
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className="flex flex-col gap-4.5">
-              <span className="label-xs">Elige tu primera habilidad</span>
-              <div className="flex flex-wrap gap-2.5">
-                {SKILL_OPTIONS.map(([name, icon], i) => (
+            <label className="block max-w-[360px]">
+              <Label htmlFor="pn">Nombre</Label>
+              <Input id="pn" value={petName} onChange={(e) => setPetNameLocal(e.target.value.slice(0, 14))} className="mt-2 text-[22px]" />
+            </label>
+            <div className="flex flex-col gap-3">
+              <span className="label-xs">Color</span>
+              <div className="flex gap-3">
+                {PALETTE.map(([name, hex], i) => (
                   <button
                     key={name}
                     type="button"
-                    aria-pressed={!custom.trim() && skillIdx === i}
-                    onClick={() => {
-                      setSkillIdx(i);
-                      setCustom("");
+                    aria-pressed={colorIdx === i}
+                    aria-label={name}
+                    onClick={() => setColorIdx(i)}
+                    className="size-11 shrink-0 rounded-full border border-border p-0 transition-[box-shadow]"
+                    style={{
+                      background: hex,
+                      boxShadow: colorIdx === i ? "0 0 0 2px var(--paper), 0 0 0 4px var(--ink)" : "none",
                     }}
-                    className={cn(
-                      "bx press min-h-12 px-4 text-[16px] font-bold",
-                      !custom.trim() && skillIdx === i && "text-ink-solid",
-                    )}
-                    style={{ background: !custom.trim() && skillIdx === i ? PALETTE[colorIdx][1] : "var(--card)" }}
-                  >
-                    {icon} {name}
-                  </button>
+                  />
                 ))}
               </div>
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="ot">¿Otra? Escríbela</Label>
-                <Input id="ot" value={custom} onChange={(e) => setCustom(e.target.value)} placeholder="Ej: Ajedrez, Piano, Dibujo…" />
-              </div>
-              <p className="m-0 font-medium">Después puedes agregar más. Mejor una a la vez.</p>
             </div>
-          )}
+          </section>
+        )}
 
-          {step === 3 && (
-            <div className="flex flex-col gap-5.5">
-              <div className="flex flex-col gap-2">
-                <span className="label-xs">Tiempo por día</span>
-                <div className="flex flex-wrap gap-2">
-                  {DAILY_OPTS.map((m) => (
-                    <button
-                      key={m}
-                      type="button"
-                      aria-pressed={daily === m}
-                      onClick={() => setDaily(m)}
-                      className={cn("bx press min-h-12 px-4 font-bold", daily === m && "text-ink-solid")}
-                      style={{ background: daily === m ? PALETTE[colorIdx][1] : "var(--card)" }}
-                    >
-                      {hm(m)}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <span className="label-xs">Días por semana</span>
-                <div className="flex gap-2">
-                  {[1, 2, 3, 4, 5, 6, 7].map((n) => (
-                    <button
-                      key={n}
-                      type="button"
-                      aria-pressed={days === n}
-                      onClick={() => setDays(n)}
-                      className={cn("bx press min-h-13 flex-1 text-[18px] font-bold", days === n && "text-ink-solid")}
-                      style={{ background: days === n ? PALETTE[colorIdx][1] : "var(--card)" }}
-                    >
-                      {n}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="flex max-w-[260px] flex-col gap-1.5">
-                <Label htmlFor="rt">Te aviso a las</Label>
-                <Input id="rt" type="time" value={time} onChange={(e) => setTime(e.target.value)} />
-              </div>
-              <div className="bx p-4.5 text-ink-solid" style={{ background: "var(--a1)", transform: "rotate(-1deg)" }}>
-                <span className="label-xs !text-ink-solid opacity-70">A este ritmo</span>
-                <div className="text-[26px] font-bold tracking-tight">
-                  {hm(weeklyMin)} por semana · llegas en {eta}
-                </div>
-              </div>
+        {step === 2 && (
+          <section className="flex flex-col gap-9">
+            <div>
+              <span className="label-xs mb-3.5 block">02 · Tu primera habilidad</span>
+              <h1 className="m-0 text-[40px] font-light leading-[0.98] tracking-tighter text-ink sm:text-[56px]">¿Qué quieres dominar?</h1>
             </div>
-          )}
-
-          {step === 4 && (
-            <div className="flex flex-col gap-4">
-              {[
-                ["Compañero", `${petName.trim() || "Tomi"}`],
-                ["Habilidad", skillName],
-                ["Ritmo", `${hm(daily)} · ${days} días por semana`],
-                ["Aviso", `A las ${time}`],
-              ].map(([k, v]) => (
-                <div key={k} className="flex flex-wrap gap-4 border-t-2 border-dashed border-ink py-3">
-                  <span className="label-xs min-w-[120px] pt-1">{k}</span>
-                  <span className="text-[18px] font-bold">{v}</span>
-                </div>
+            <div className="flex flex-wrap gap-2.5">
+              {SKILL_OPTIONS.map(([name, icon], i) => (
+                <Chip
+                  key={name}
+                  pressed={!custom.trim() && skillIdx === i}
+                  onClick={() => {
+                    setSkillIdx(i);
+                    setCustom("");
+                  }}
+                >
+                  {icon} {name}
+                </Chip>
               ))}
-              <div className="bx flex items-center gap-3.5 p-4.5 text-ink-solid" style={{ background: "var(--a3)", transform: "rotate(1deg)" }}>
-                <span aria-hidden="true" className="flex size-11 items-center justify-center rounded-full border-[3px] border-ink bg-paper text-ink text-[22px] font-bold">
-                  $
-                </span>
-                <div>
-                  <b className="text-[20px]">+{WELCOME_COINS} monedas de bienvenida</b>
-                  <div className="font-medium">Pásate por la tienda y arréglale el look a {petName.trim() || "Tomi"}.</div>
-                </div>
+            </div>
+            <label className="block max-w-[420px]">
+              <Label htmlFor="ot">¿Otra? Escríbela</Label>
+              <Input id="ot" value={custom} onChange={(e) => setCustom(e.target.value)} placeholder="Ej: Ajedrez, Piano, Dibujo…" className="mt-2" />
+            </label>
+            <p className="m-0 text-muted">Después puedes agregar más. Mejor una a la vez.</p>
+          </section>
+        )}
+
+        {step === 3 && (
+          <section className="flex flex-col gap-9">
+            <div>
+              <span className="label-xs mb-3.5 block">03 · Tu ritmo</span>
+              <h1 className="m-0 text-[40px] font-light leading-[0.98] tracking-tighter text-ink sm:text-[56px]">¿Cuánto vas a practicar?</h1>
+            </div>
+            <div className="flex flex-col gap-3">
+              <span className="label-xs">Tiempo por día</span>
+              <div className="flex flex-wrap gap-2.5">
+                {DAILY_OPTS.map((m) => (
+                  <Chip key={m} pressed={daily === m} onClick={() => setDaily(m)}>
+                    {hm(m)}
+                  </Chip>
+                ))}
               </div>
             </div>
-          )}
+            <div className="flex flex-col gap-3">
+              <span className="label-xs">Días por semana</span>
+              <div className="flex gap-2">
+                {[1, 2, 3, 4, 5, 6, 7].map((n) => (
+                  <Chip key={n} pressed={days === n} onClick={() => setDays(n)} aria-label={`${n} día${n > 1 ? "s" : ""} por semana`} className="w-10 justify-center px-0">
+                    {n}
+                  </Chip>
+                ))}
+              </div>
+            </div>
+            <label className="block max-w-[220px]">
+              <Label htmlFor="rt">Te aviso a las</Label>
+              <Input id="rt" type="time" value={time} onChange={(e) => setTime(e.target.value)} className="mt-2" />
+            </label>
+            <Card className="flex flex-col gap-1.5 p-6">
+              <span className="label-xs">A este ritmo</span>
+              <div className="font-mono text-[22px] tracking-tight text-ink sm:text-[26px]">
+                {hm(weeklyMin)} por semana · llegas en <span className="text-signal">{eta}</span>
+              </div>
+            </Card>
+          </section>
+        )}
 
-          <div className="mt-1 flex flex-wrap justify-between gap-4">
-            <button type="button" onClick={() => setStep((s) => Math.max(1, s - 1))} className="bx press min-h-13 bg-card px-5 text-[18px] font-bold" style={{ visibility: step === 1 ? "hidden" : "visible" }}>
-              Atrás
-            </button>
-            {step < 4 ? (
-              <button
-                type="button"
-                onClick={() => setStep((s) => Math.min(4, s + 1))}
-                className="bx press min-h-13 px-5 text-[18px] font-bold text-ink-solid"
-                style={{ background: "var(--a1)" }}
-              >
-                Siguiente
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={finish}
-                disabled={finishing}
-                className="bx press min-h-13 px-5 text-[18px] font-bold text-ink-solid disabled:opacity-60"
-                style={{ background: "var(--a2)" }}
-              >
-                {finishing ? "Un momento…" : "Entrar a mi panel →"}
-              </button>
-            )}
-          </div>
-        </section>
+        {step === 4 && (
+          <section className="flex flex-col gap-4">
+            <div className="mb-5">
+              <span className="label-xs mb-3.5 block">04 · Listo</span>
+              <h1 className="m-0 text-[40px] font-light leading-[0.98] tracking-tighter text-ink sm:text-[56px]">Todo listo.</h1>
+            </div>
+            {[
+              ["Compañero", petName.trim() || "Tomi"],
+              ["Habilidad", skillName],
+              ["Ritmo", `${hm(daily)} · ${days} días por semana`],
+              ["Aviso", `A las ${time}`],
+            ].map(([k, v]) => (
+              <div key={k} className="flex flex-wrap items-baseline justify-between gap-4 border-t border-line py-4">
+                <span className="label-xs">{k}</span>
+                <span className="font-mono text-[16px] text-ink">{v}</span>
+              </div>
+            ))}
+            <Card className="mt-2 flex items-center gap-4 p-6">
+              <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center rounded-full bg-signal text-[18px] font-medium text-ink-solid">
+                $
+              </span>
+              <div>
+                <span className="text-[18px] text-ink">+{WELCOME_COINS} monedas de bienvenida</span>
+                <div className="mt-0.5 text-[14px] text-muted">Pásate por la tienda y arréglale el look a {petName.trim() || "Tomi"}.</div>
+              </div>
+            </Card>
+          </section>
+        )}
+
+        <div className="mt-12 flex flex-wrap justify-between gap-4">
+          <Button type="button" variant="outline" onClick={() => setStep((s) => Math.max(1, s - 1))} style={{ visibility: step === 1 ? "hidden" : "visible" }}>
+            Atrás
+          </Button>
+          {step < 4 ? (
+            <Button type="button" onClick={() => setStep((s) => Math.min(4, s + 1))}>
+              Continuar
+            </Button>
+          ) : (
+            <Button type="button" onClick={finish} disabled={finishing}>
+              {finishing ? "Un momento…" : "Empezar a practicar"}
+            </Button>
+          )}
+        </div>
       </main>
-      <p className="m-0 text-center text-[13px] text-muted">
-        <Link href="/login" className="underline">
+
+      <p className="m-0 border-t border-line px-5 py-5 text-center text-[13px] sm:px-10">
+        <Link href="/login" className="text-muted underline decoration-border underline-offset-2 transition-colors hover:text-ink">
           Cerrar sesión
         </Link>
       </p>

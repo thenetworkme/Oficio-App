@@ -1,65 +1,50 @@
-import Link from "next/link";
-import { Mascot, type MascotMood } from "@/components/mascot/Mascot";
+import { DotDigits } from "@/components/ui/DotDigits";
+import { Wordmark } from "@/components/layout/TopNav";
 
-/** Shared two-pane layout for /login, /registro and /recuperar, matching
- * PegatinaLogin/PegatinaSignup.dc.html: a colored aside with Tomi + a
- * headline + stat chips, and a white card with the form. */
+/**
+ * Shared split-screen shell for /login, /registro and /recuperar — matches
+ * PuntoLogin/PuntoSignup/PuntoRecuperar.dc.html: a left panel with the
+ * wordmark, the "10000" dot-matrix hero and the tagline, and a right panel
+ * with the actual form (eyebrow label + big thin headline + children).
+ *
+ * The three screens' left panel is pixel-identical in the reference (same
+ * dots, same copy, same footer label), so it lives here once instead of
+ * being duplicated across three page files.
+ */
 export function AuthShell({
-  asideColor,
-  bubble,
-  mood = "idle",
-  headline,
+  eyebrow,
+  title,
   children,
 }: {
-  asideColor: string;
-  bubble: string;
-  mood?: MascotMood;
-  headline: string;
+  eyebrow: string;
+  title: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen flex-col gap-8 bg-paper px-5 py-7 sm:px-12 sm:py-9">
-      <main className="flex flex-1 flex-wrap items-stretch gap-9">
-        <aside
-          className="bx relative flex min-h-[420px] flex-1 basis-[440px] flex-col gap-5 overflow-hidden p-9 text-ink-solid"
-          style={{ background: asideColor }}
-        >
-          <Link href="/login" className="bx inline-flex self-start bg-card px-4 py-1 text-ink" style={{ transform: "rotate(-2deg)" }}>
-            <span className="text-[26px] font-bold tracking-tight">oficio!</span>
-          </Link>
-          <div className="relative self-center">
-            <Mascot size={220} mood={mood} hat="cap" />
-            <div className="bx absolute -right-6 -top-2 max-w-[200px] bg-card px-4 py-2 font-bold text-ink" style={{ transform: "rotate(6deg)" }}>
-              {bubble}
-            </div>
-          </div>
-          <h2 className="m-0 text-[32px] font-bold leading-[1.05] tracking-tight sm:text-[40px]">{headline}</h2>
-          <div className="mt-auto flex flex-wrap gap-3">
-            <span className="bx bg-card px-3.5 py-2 font-bold text-ink" style={{ transform: "rotate(-2deg)" }}>
-              🔥 12 días de racha
-            </span>
-            <span className="bx px-3.5 py-2 font-bold" style={{ background: "var(--a2)", transform: "rotate(1.5deg)" }}>
-              ⏱ 1.692 h registradas
-            </span>
-            <span className="bx px-3.5 py-2 font-bold" style={{ background: "var(--a3)", transform: "rotate(-1deg)" }}>
-              🏆 Meta: 10.000 h
-            </span>
-          </div>
-        </aside>
-        <section className="bx flex flex-1 basis-[480px] flex-col justify-center gap-5 p-9">{children}</section>
-      </main>
-    </div>
-  );
-}
+    <div className="flex min-h-screen flex-col lg:flex-row">
+      <aside className="hidden flex-col gap-10 border-line px-14 py-9 lg:flex lg:w-1/2 lg:border-r">
+        <Wordmark />
+        <div className="flex flex-1 flex-col justify-center gap-10">
+          <DotDigits value="10000" size={14} gap={7} ariaLabel="10.000 horas" className="max-w-[600px]" />
+          <p className="m-0 max-w-[560px] text-[40px] font-light leading-[1.1] tracking-tighter text-ink">
+            horas para dominar
+            <br />
+            cualquier habilidad.
+          </p>
+        </div>
+        <span className="label-xs">Registra tu práctica · cada hora cuenta</span>
+      </aside>
 
-export function GoogleSwatch() {
-  return (
-    <span
-      aria-hidden="true"
-      className="flex size-7.5 items-center justify-center rounded-full border-[3px] border-ink"
-      style={{ background: "conic-gradient(var(--a2) 0 25%, var(--a1) 0 50%, var(--a3) 0 75%, #7CC4FF 0)" }}
-    >
-      <span className="flex size-4.5 items-center justify-center rounded-full bg-card text-[12px] font-bold">G</span>
-    </span>
+      <section className="flex flex-1 flex-col justify-center px-5 py-10 sm:px-12 lg:px-16">
+        <div className="mx-auto w-full max-w-[440px]">
+          <div className="mb-10 lg:hidden">
+            <Wordmark />
+          </div>
+          <span className="label-xs mb-3.5 block">{eyebrow}</span>
+          <h1 className="m-0 mb-9 text-[40px] font-light leading-[1] tracking-tighter text-ink sm:text-[56px]">{title}</h1>
+          {children}
+        </div>
+      </section>
+    </div>
   );
 }
