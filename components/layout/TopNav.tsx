@@ -11,7 +11,7 @@ import { strings } from "@/lib/strings";
 
 // Every Punto reference screen shares this exact header: "oficio" wordmark +
 // signal dot (top-left, -> dashboard), a center nav with pill/underline tab
-// indicators for Hoy/Práctica/Datos/Retos/Logros/Tienda, and on the right:
+// indicators for Hoy/Práctica/Datos/Retos/Logros, and on the right:
 // today's date (Geist Mono), a bell (Avisos, with an unread signal dot) and
 // a circular avatar-initial button (-> Ajustes). See
 // design-reference/punto/html/PuntoPanel.dc.html's <header> and
@@ -28,7 +28,6 @@ const NAV = [
   { href: "/estadisticas", label: strings.nav.estadisticas },
   { href: "/retos", label: strings.nav.retos },
   { href: "/logros", label: strings.nav.logros },
-  { href: "/tienda", label: strings.nav.tienda },
 ];
 
 function isActive(pathname: string, href: string): boolean {

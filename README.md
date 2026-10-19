@@ -172,7 +172,6 @@ app/
     temporizador/    "/temporizador"  Pomodoro timer ("Tomate")
     estadisticas/    "/estadisticas"  stats ("Números")
     logros/          "/logros"        achievements timeline + celebration
-    tienda/          "/tienda"        shop: buy/equip hats/capes/acc/backgrounds
     recordatorios/   "/recordatorios" reminders + Web Push opt-in
     registrar/       "/registrar"     manual session logging
     habilidades/[id] "/habilidades/:id" skill detail

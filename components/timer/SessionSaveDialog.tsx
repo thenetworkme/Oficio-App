@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
 import { DotDigits } from "@/components/ui/DotDigits";
@@ -191,12 +190,6 @@ export function SessionSaveDialog({
               </div>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Link
-                href="/tienda"
-                className="inline-flex min-h-[52px] items-center rounded-button border border-border px-5 font-mono text-[12px] uppercase tracking-[0.12em] transition-colors hover:border-border-hover hover:bg-card"
-              >
-                Gastar monedas en la tienda →
-              </Link>
               <button
                 type="button"
                 onClick={() => handleClose(false)}

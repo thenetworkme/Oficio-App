@@ -248,7 +248,7 @@ export default function OnboardingPage() {
               </span>
               <div>
                 <span className="text-[18px] text-ink">+{WELCOME_COINS} monedas de bienvenida</span>
-                <div className="mt-0.5 text-[14px] text-muted">Pásate por la tienda y arréglale el look a {petName.trim() || "Tomi"}.</div>
+                <div className="mt-0.5 text-[14px] text-muted">Listo para empezar con {petName.trim() || "Tomi"}.</div>
               </div>
             </Card>
           </section>
