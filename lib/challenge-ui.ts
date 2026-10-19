@@ -12,18 +12,27 @@ export function sampleDayDots(states: ChallengeDayState[], max = 30): ChallengeD
   });
 }
 
-/** Shared color/label mapping for a challenge day cell, used by the detail
- * board's calendar and the gallery. "Grace" and "missed" use the mockup's
- * own fixed sky-blue/pink rather than the theme's --a1/--a2/--a3 (those are
- * already spoken for by "today"/"done" and the challenge's own color), which
- * is a deliberate simplification: these two semantic colors stay constant
- * across themes instead of flipping with the active palette. */
-export const DAY_STATE_COLOR: Record<ChallengeDayState, string> = {
-  done: "var(--a3)",
-  today: "var(--a1)",
-  grace: "#7CC4FF",
-  missed: "var(--a2)",
-  upcoming: "var(--card)",
+/**
+ * Shared per-state treatment for a challenge day dot/circle, used by the
+ * Retos list's compressed dot row and the detail board's day-circle grid.
+ *
+ * Punto redesign note: the old mapping filled every non-upcoming state with
+ * one of the deprecated --a1/--a2/--a3 aliases, which the Phase-1 token
+ * remap collapses to all-equal---signal (see app/globals.css's big comment)
+ * — that would have made "done" and "today" visually identical. Instead
+ * this follows the reference's own convention (PuntoRetoDetalle.dc.html):
+ * "done" is a solid --ink fill, "today" is the single --signal highlight,
+ * and every other state is just an outline (border only, transparent fill)
+ * so --signal stays the one accent on the screen. `fg` is the day-number
+ * text color for that state; `dot` is a flat fill for the small compressed
+ * dot row, where an outline wouldn't read at that size.
+ */
+export const DAY_STATE_STYLE: Record<ChallengeDayState, { bg: string; border: string; fg: string; dot: string }> = {
+  done: { bg: "var(--ink)", border: "var(--ink)", fg: "var(--paper)", dot: "var(--ink)" },
+  today: { bg: "var(--signal)", border: "var(--signal)", fg: "var(--ink-solid)", dot: "var(--signal)" },
+  grace: { bg: "transparent", border: "var(--border-hover)", fg: "var(--muted)", dot: "var(--border-hover)" },
+  missed: { bg: "transparent", border: "var(--danger)", fg: "var(--danger)", dot: "var(--danger)" },
+  upcoming: { bg: "transparent", border: "var(--line)", fg: "var(--muted)", dot: "var(--line)" },
 };
 
 export const DAY_STATE_LABEL: Record<ChallengeDayState, string> = {

@@ -5,7 +5,6 @@ import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
-import { ProgressBar } from "@/components/ui/progress-bar";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useAppData } from "@/lib/hooks/useAppData";
 import { useSound } from "@/lib/sound/SoundProvider";
@@ -94,9 +93,9 @@ export default function RetoDiaPage() {
   const skill = skills.find((s) => s.id === challenge?.skillId);
   const goal = challenge?.dailyGoalMin ?? 30;
   const reached = min >= goal;
-  const goalPct = Math.min(100, Math.round((min / Math.max(1, goal)) * 100));
   const coins = useMemo(() => coinsPerSession(min, mood), [min, mood]);
   const xp = useMemo(() => xpForSession(min, mood), [min, mood]);
+  const tickCount = Math.max(goal, min, 30);
 
   async function handleFiles(files: FileList | null) {
     if (!files || !user || !challenge) return;
@@ -157,144 +156,91 @@ export default function RetoDiaPage() {
 
   return (
     <>
-      <nav aria-label="Ruta" className="flex flex-wrap items-center gap-2.5">
-        <Link href="/retos" className="bx press flex min-h-11 items-center px-4 font-bold">
-          ← Retos
-        </Link>
-        <span className="label-xs">Diario del día</span>
-      </nav>
-
-      <section className="flex flex-wrap items-end justify-between gap-5">
+      <section className="flex flex-wrap items-end justify-between gap-6 border-b border-line pb-8">
         <div>
-          <span className="label-xs">
-            {challenge.name} · {formatShortDateEs(new Date(`${dayDateKey}T00:00:00`))}
-          </span>
-          <h1 className="m-0 mt-2 text-[48px] font-bold leading-[0.95] tracking-tight sm:text-[64px]">Día {dayNumber}.</h1>
+          <Link href={`/retos/${challenge.id}`} className="label-xs mb-4.5 inline-block text-muted transition-colors hover:text-ink">
+            ← {challenge.name}
+          </Link>
+          <span className="label-xs mb-3.5 block">Reto · {challenge.name}</span>
+          <h1 className="m-0 text-[48px] font-light leading-[0.95] tracking-tight sm:text-[64px]">Día {dayNumber}.</h1>
         </div>
-        <div className="flex gap-2.5">
-          <Link
-            href={dayNumber > 1 ? `/retos/${challenge.id}/dia?day=${dayNumber - 1}` : "#"}
-            aria-disabled={dayNumber <= 1}
-            className="bx press flex min-h-11 items-center px-4 font-bold"
-            style={dayNumber <= 1 ? { opacity: 0.5, pointerEvents: "none" } : undefined}
-          >
-            ← Día {dayNumber - 1}
-          </Link>
-          <Link
-            href={dayNumber < todayDayNumber ? `/retos/${challenge.id}/dia?day=${dayNumber + 1}` : "#"}
-            aria-disabled={dayNumber >= todayDayNumber}
-            className="bx press flex min-h-11 items-center px-4 font-bold"
-            style={dayNumber >= todayDayNumber ? { opacity: 0.5, pointerEvents: "none" } : undefined}
-          >
-            Día {dayNumber + 1} →
-          </Link>
+        <div className="flex items-center gap-3.5">
+          {dayNumber > 1 ? (
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/retos/${challenge.id}/dia?day=${dayNumber - 1}`}>← Día {dayNumber - 1}</Link>
+            </Button>
+          ) : (
+            <Button variant="outline" size="sm" disabled>
+              ← Día {dayNumber - 1}
+            </Button>
+          )}
+          <span className="font-num text-[12px] text-muted">{formatShortDateEs(new Date(`${dayDateKey}T00:00:00`)).toUpperCase()}</span>
+          {dayNumber < todayDayNumber ? (
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/retos/${challenge.id}/dia?day=${dayNumber + 1}`}>Día {dayNumber + 1} →</Link>
+            </Button>
+          ) : (
+            <Button variant="outline" size="sm" disabled>
+              Día {dayNumber + 1} →
+            </Button>
+          )}
         </div>
       </section>
 
-      <section className="flex flex-wrap items-start gap-8">
-        <div className="flex min-w-0 flex-[2_1_560px] flex-col gap-7">
-          <div className="bx flex flex-col gap-4 p-6.5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <span className="label-xs">1 · Tiempo invertido</span>
-              {isToday && timerMinutesAvailable > 0 && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMin(timerMinutesAvailable);
-                    setSaved(false);
-                  }}
-                  className="min-h-9 rounded-chip border-[3px] border-ink px-3.5 text-sm font-bold text-ink-solid"
-                  style={{ background: "var(--a2)" }}
-                >
-                  Traer del Tomate ({formatMinutesLong(timerMinutesAvailable)})
-                </button>
-              )}
+      <section className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-0">
+        <div className="flex min-w-0 flex-col gap-9 lg:border-r lg:border-line lg:pr-14">
+          <div>
+            <div className="label-xs flex items-center justify-between">
+              <span>Tiempo de hoy</span>
+              <span className="text-ink">{min} / {goal} min</span>
             </div>
-            <div className="flex flex-wrap items-center gap-4.5">
-              <button
-                type="button"
-                aria-label="Restar 5 minutos"
-                onClick={() => {
-                  setMin((m) => Math.max(0, m - 5));
-                  setSaved(false);
-                }}
-                className="bx press flex size-15 items-center justify-center text-[28px] font-bold"
-              >
+            <div className="my-4 flex gap-1">
+              {Array.from({ length: tickCount }, (_, i) => (
+                <span key={i} className="h-5.5 flex-1 rounded-sm" style={{ background: i < min ? (reached ? "var(--signal)" : "var(--ink)") : "var(--line)" }} />
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center gap-3.5">
+              <Stepper label="Restar 5 minutos" onClick={() => { setMin((m) => Math.max(0, m - 5)); setSaved(false); }}>
                 −
-              </button>
-              <div aria-live="polite" className="font-num min-w-[200px] text-center text-[56px] font-bold leading-none sm:text-[68px]">
-                {formatMinutesLong(min)}
-              </div>
-              <button
-                type="button"
-                aria-label="Sumar 5 minutos"
-                onClick={() => {
-                  setMin((m) => m + 5);
-                  setSaved(false);
-                }}
-                className="bx press flex size-15 items-center justify-center text-[28px] font-bold text-ink-solid"
-                style={{ background: challenge.color }}
-              >
+              </Stepper>
+              <Stepper label="Sumar 5 minutos" onClick={() => { setMin((m) => m + 5); setSaved(false); }}>
                 +
-              </button>
+              </Stepper>
               <div className="flex flex-wrap gap-2">
                 {PRESETS.map((v) => (
-                  <Chip
-                    key={v}
-                    pressed={min === v}
-                    onClick={() => {
-                      setMin(v);
-                      setSaved(false);
-                    }}
-                  >
+                  <Chip key={v} pressed={min === v} onClick={() => { setMin(v); setSaved(false); }}>
                     {v} min
                   </Chip>
                 ))}
               </div>
+              {isToday && timerMinutesAvailable > 0 && (
+                <Button type="button" variant="outline" size="sm" onClick={() => { setMin(timerMinutesAvailable); setSaved(false); }}>
+                  Traer del Tomate ({formatMinutesLong(timerMinutesAvailable)})
+                </Button>
+              )}
             </div>
-            <ProgressBar pct={goalPct} color={reached ? "var(--a3)" : "var(--a1)"} ariaLabel="Meta del día" height={22} />
-            <div className="flex items-center gap-2.5 font-bold">
-              <span
-                aria-hidden="true"
-                className="flex size-7 items-center justify-center rounded-button border-[3px] border-ink text-sm"
-                style={{ background: reached ? "var(--a3)" : "var(--a1)" }}
-              >
-                {reached ? "✓" : ""}
-              </span>
-              <span>
-                {reached
-                  ? "¡Meta del día cumplida! Hoy ya cuenta para tu racha."
-                  : `Te faltan ${goal - min} min para cumplir la meta de ${goal} min.`}
-              </span>
-            </div>
+            <p className="font-num mt-4 text-[13px]" style={{ color: reached ? "var(--ink)" : "var(--muted)" }}>
+              {reached ? "✓ Meta del día cumplida. Hoy ya cuenta para tu racha." : `Te faltan ${goal - min} min para cumplir la meta de ${goal} min.`}
+            </p>
           </div>
 
-          <div className="bx flex flex-col gap-4 p-6.5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <span className="label-xs">2 · ¿Qué aprendí hoy?</span>
-            </div>
+          <div>
+            <span className="label-xs mb-3 block">¿Qué aprendí hoy?</span>
             <textarea
               rows={5}
               value={note}
-              onChange={(e) => {
-                setNote(e.target.value);
-                setSaved(false);
-              }}
-              placeholder="Hoy practiqué…"
-              className="box-border w-full resize-y rounded-button border-[3px] border-ink bg-card px-3.5 py-3 text-lg leading-snug text-ink placeholder:text-muted"
+              onChange={(e) => { setNote(e.target.value); setSaved(false); }}
+              placeholder="Escribe lo que descubriste, lo que te costó y qué probarás mañana…"
+              className="box-border w-full resize-y rounded-card border border-line bg-transparent px-4 py-3.5 text-[16px] leading-snug text-ink placeholder:text-muted focus:border-signal focus:outline-none"
             />
-            <div className="font-num text-right text-xs text-muted">{note.length} caracteres</div>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="label-xs mr-1.5">Etiquetas</span>
+            <div className="font-num mt-1.5 text-right text-xs text-muted">{note.length} caracteres</div>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <span className="label-xs mr-1">Etiquetas</span>
               {TAG_OPTIONS.map((t) => (
                 <Chip
                   key={t}
                   pressed={tags.includes(t)}
-                  onClick={() => {
-                    setTags((prev) => (prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]));
-                    setSaved(false);
-                  }}
-                  style={tags.includes(t) ? { background: "#7CC4FF" } : undefined}
+                  onClick={() => { setTags((prev) => (prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t])); setSaved(false); }}
                 >
                   {t}
                 </Chip>
@@ -302,140 +248,130 @@ export default function RetoDiaPage() {
             </div>
           </div>
 
-          <div className="bx flex flex-col gap-4 p-6.5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <span className="label-xs">3 · Fotos del día</span>
-              <span className="font-num text-[13px] text-muted">
-                {photos.length} {photos.length === 1 ? "foto" : "fotos"} · máx. {MAX_PHOTOS_PER_DAY}
-              </span>
-            </div>
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-4">
-              {photos.map((url) => (
-                <div key={url} className="relative">
-                  {/* Firebase Storage download URLs aren't in next.config's image domains, and these
-                      are small user-uploaded thumbnails in a scrolling grid, not an LCP candidate. */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={url} alt="Foto del día" className="h-[140px] w-full rounded-button border-[3px] border-ink object-cover" />
-                  <button
-                    type="button"
-                    aria-label="Quitar foto"
-                    onClick={() => handleRemovePhoto(url)}
-                    className="bx absolute -right-2 -top-2.5 flex size-8.5 items-center justify-center rounded-full font-bold text-ink-solid"
-                    style={{ background: "var(--a2)" }}
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-              {photos.length < MAX_PHOTOS_PER_DAY && (
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={uploading}
-                  className="hov flex h-[140px] flex-col items-center justify-center gap-1.5 rounded-button border-[3px] border-dashed border-ink text-base font-bold"
-                >
-                  <span className="text-[32px] leading-none">+</span>
-                  {uploading ? "Subiendo…" : "Subir foto"}
-                  <span className="font-num text-[11px] font-normal text-muted">o arrastra aquí</span>
-                </button>
-              )}
-            </div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              multiple
-              className="hidden"
-              onChange={(e) => handleFiles(e.target.files)}
-            />
-          </div>
-
-          <div className="bx flex flex-wrap gap-9 p-6.5">
-            <div className="flex flex-col gap-2.5">
-              <span className="label-xs">4 · ¿Cómo te fue?</span>
-              <div className="flex gap-2">
+          <div className="flex flex-wrap gap-10">
+            <div className="flex flex-col gap-3">
+              <span className="label-xs">¿Cómo te fue?</span>
+              <div className="flex items-center gap-3.5">
                 {[1, 2, 3, 4, 5].map((n) => (
-                  <button
-                    key={n}
-                    type="button"
-                    aria-pressed={mood === n}
-                    aria-label={MOOD_LABELS[n]}
-                    onClick={() => {
-                      setMood(n);
-                      setSaved(false);
-                    }}
-                    className="bx press flex size-15 items-center justify-center text-[22px] font-bold"
-                    style={{ background: mood === n ? "var(--a2)" : "var(--card)", boxShadow: mood === n ? "5px 5px 0 var(--shadow)" : undefined }}
-                  >
-                    {n}
-                  </button>
+                  <RatingDot key={n} active={mood !== null && n <= mood} label={MOOD_LABELS[n]} onClick={() => { setMood(n); setSaved(false); }} />
                 ))}
               </div>
-              <span className="font-num text-[13px] font-bold">{mood ? MOOD_LABELS[mood] : "Sin elegir"}</span>
+              <span className="font-num text-[12px] text-muted">{mood ? MOOD_LABELS[mood] : "Sin elegir"}</span>
             </div>
-            <div className="flex flex-col gap-2.5">
-              <span className="label-xs">Dificultad de hoy</span>
-              <div className="flex gap-2">
+            <div className="flex flex-col gap-3">
+              <span className="label-xs">Dificultad</span>
+              <div className="flex items-center gap-3.5">
                 {[1, 2, 3, 4, 5].map((n) => (
-                  <button
-                    key={n}
-                    type="button"
-                    aria-pressed={difficulty === n}
-                    aria-label={`Dificultad ${n}`}
-                    onClick={() => {
-                      setDifficulty(n);
-                      setSaved(false);
-                    }}
-                    className="bx press flex size-15 items-center justify-center text-[22px] font-bold"
-                    style={{ background: difficulty === n ? "var(--a1)" : "var(--card)", boxShadow: difficulty === n ? "5px 5px 0 var(--shadow)" : undefined }}
-                  >
-                    {n}
-                  </button>
+                  <RatingDot key={n} active={difficulty !== null && n <= difficulty} label={`Dificultad ${n}`} onClick={() => { setDifficulty(n); setSaved(false); }} />
                 ))}
               </div>
-              <span className="font-num text-[13px] text-muted">1 = fácil · 5 = muy difícil</span>
+              <span className="font-num text-[12px] text-muted">{difficulty ? DIFF_LABELS[difficulty] : "1 = fácil · 5 = muy difícil"}</span>
             </div>
           </div>
         </div>
 
-        <aside className="sticky top-5 flex min-w-0 flex-[1_1_320px] flex-col gap-6.5">
-          <div className="bx p-6.5 text-ink-solid" style={{ background: challenge.color, transform: "rotate(1.2deg)" }}>
-            <span className="label-xs !text-ink-solid opacity-80">Resumen del día {dayNumber}</span>
-            <div className="font-num mt-1 text-[48px] font-bold leading-[1.05]">{formatMinutesLong(min)}</div>
-            <span className="font-num text-[13px]">
-              {tags.length} {tags.length === 1 ? "etiqueta" : "etiquetas"} · {skill?.name}
+        <div className="min-w-0 pt-9 lg:pt-0 lg:pl-14">
+          <div className="flex items-center justify-between">
+            <span className="label-xs">Fotos del día</span>
+            <span className="label-xs text-ink">
+              {photos.length} / {MAX_PHOTOS_PER_DAY}
             </span>
           </div>
-          <div className="bx flex flex-col gap-2.5 p-5.5">
-            <RewardRow k="Monedas" v={`+${coins}`} />
-            <RewardRow k="XP" v={`+${xp}`} />
-            <RewardRow k="Aporta a" v={`${skill?.name ?? ""} · ${formatMinutesLong(min)}`} />
-            <RewardRow k="Fotos y nota" v={`${photos.length} foto(s) + ${note.length > 0 ? "nota" : "sin nota"}`} last />
+          <div className="mt-4.5 grid grid-cols-2 gap-3.5">
+            {photos.map((url) => (
+              <div key={url} className="relative">
+                {/* Firebase Storage download URLs aren't in next.config's image domains, and these
+                    are small user-uploaded thumbnails in a scrolling grid, not an LCP candidate. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={url} alt="Foto del día" className="h-[130px] w-full rounded-card border border-line object-cover" />
+                <button
+                  type="button"
+                  aria-label="Quitar foto"
+                  onClick={() => handleRemovePhoto(url)}
+                  className="absolute -right-2 -top-2 flex size-7 items-center justify-center rounded-full border border-line bg-paper text-ink"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+            {photos.length < MAX_PHOTOS_PER_DAY && (
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="hov flex h-[130px] flex-col items-center justify-center gap-1.5 rounded-card border border-dashed border-border text-[13px] text-muted"
+              >
+                <span className="text-[28px] leading-none">+</span>
+                {uploading ? "Subiendo…" : "Añadir"}
+              </button>
+            )}
           </div>
-          <Button onClick={handleSave} disabled={saving} size="default" className="w-full" style={{ background: saved ? "var(--a3)" : challenge.color }}>
-            {saving ? "Guardando…" : saved ? "¡Día guardado!" : `Guardar día ${dayNumber}`}
-          </Button>
-          <div className="bx p-4.5" style={{ background: saved ? "var(--a3)" : "var(--paper)" }}>
-            {saved
-              ? `Guardado. Sumaste ${coins} monedas y ${xp} XP.`
-              : "Todavía sin guardar. Puedes cambiar lo que quieras hasta que pulses el botón."}
+          <p className="mt-3.5 text-[13px] text-muted">Arrastra imágenes aquí. Se guardan con la fecha del día.</p>
+          <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleFiles(e.target.files)} />
+
+          <div className="label-xs mb-1 mt-8">Resumen del día</div>
+          <Fact k="Tiempo" v={`${min} min${reached ? " · objetivo cumplido" : ` · faltan ${Math.max(0, goal - min)}`}`} highlight={reached} />
+          <Fact k="Etiquetas" v={`${tags.length} ${tags.length === 1 ? "etiqueta" : "etiquetas"}`} />
+          <Fact k="Recompensa" v={`+${coins} monedas · +${xp} XP`} />
+          <Fact k="Fotos y nota" v={`${photos.length} foto(s) + ${note.length > 0 ? "nota" : "sin nota"}`} last />
+
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Button onClick={handleSave} disabled={saving} size="default">
+              {saving ? "Guardando…" : saved ? "¡Día guardado!" : `Guardar día ${dayNumber}`}
+            </Button>
+            <Button asChild variant="outline" size="default">
+              <Link href={`/retos/${challenge.id}`}>Cancelar</Link>
+            </Button>
           </div>
           {saved && (
-            <button type="button" onClick={() => router.push(`/retos/${challenge.id}`)} className="text-sm font-bold text-muted underline">
-              Volver al tablero del reto
-            </button>
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+              <p className="font-num m-0 text-[13px] text-muted">Sumaste {coins} monedas y {xp} XP. Sigues aprendiendo {skill?.name ?? ""}.</p>
+              <button type="button" onClick={() => router.push(`/retos/${challenge.id}`)} className="label-xs shrink-0 text-ink underline underline-offset-2">
+                Volver al tablero →
+              </button>
+            </div>
           )}
-        </aside>
+        </div>
       </section>
     </>
   );
 }
 
-function RewardRow({ k, v, last }: { k: string; v: string; last?: boolean }) {
+const DIFF_LABELS = ["", "Muy fácil", "Fácil", "Justa", "Difícil", "Muy difícil"];
+
+function Stepper({ label, onClick, children }: { label: string; onClick: () => void; children: React.ReactNode }) {
   return (
-    <div className={`flex justify-between gap-3 font-bold ${last ? "" : "border-b-[3px] border-dashed border-ink pb-2"}`}>
-      <span className="font-num">{k}</span>
-      <span className="text-right">{v}</span>
+    <button
+      type="button"
+      aria-label={label}
+      onClick={onClick}
+      className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border text-[20px] leading-none transition-colors hover:border-border-hover hover:bg-card"
+    >
+      {children}
+    </button>
+  );
+}
+
+function RatingDot({ active, label, onClick }: { active: boolean; label: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      aria-pressed={active}
+      aria-label={label}
+      onClick={onClick}
+      className="size-8.5 rounded-full border transition-colors"
+      style={{ background: active ? "var(--ink)" : "transparent", borderColor: active ? "var(--ink)" : "var(--border)" }}
+    />
+  );
+}
+
+function Fact({ k, v, last, highlight }: { k: string; v: string; last?: boolean; highlight?: boolean }) {
+  return (
+    <div className={`flex justify-between gap-3 py-4 ${last ? "" : "border-b border-line"}`}>
+      <span className="label-xs">{k}</span>
+      <span className="font-num text-[15px]" style={{ color: highlight ? "var(--signal)" : "var(--ink)" }}>
+        {v}
+      </span>
     </div>
   );
 }

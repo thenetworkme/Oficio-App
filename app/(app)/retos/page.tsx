@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ProgressBar } from "@/components/ui/progress-bar";
+import { Card } from "@/components/ui/card";
 import { useChallenges } from "@/lib/hooks/useChallenges";
 import { useAppData } from "@/lib/hooks/useAppData";
 import { formatMinutesLong } from "@/lib/format";
-import { DAY_STATE_COLOR, sampleDayDots } from "@/lib/challenge-ui";
+import { DAY_STATE_STYLE, sampleDayDots } from "@/lib/challenge-ui";
 import { MAX_ACTIVE_CHALLENGES, type ChallengeStatus } from "@/lib/types";
 
 const TABS: { key: ChallengeStatus; label: string }[] = [
@@ -44,148 +44,118 @@ export default function RetosListPage() {
 
   return (
     <>
-      <section className="flex flex-wrap items-end justify-between gap-7">
+      <section className="flex flex-wrap items-end justify-between gap-8 border-b border-line pb-8">
         <div>
-          <span className="label-xs">Aprende algo en X días</span>
-          <h1 className="m-0 mt-2 text-[56px] font-bold leading-[0.95] tracking-tight sm:text-[72px]">Retos.</h1>
+          <span className="label-xs">Retos</span>
+          <h1 className="m-0 mt-3 text-[56px] font-light leading-[0.95] tracking-tight sm:text-[72px]">Práctica con meta.</h1>
         </div>
-        <Button asChild size="default" style={{ transform: "rotate(-1.5deg)" }}>
+        <Button asChild size="default">
           <Link href="/retos/nuevo">+ Nuevo reto</Link>
         </Button>
       </section>
 
-      <section className="flex flex-wrap gap-5">
-        <div className="bx flex-1 basis-[260px] p-5 text-ink-solid" style={{ background: "var(--a1)", transform: "rotate(-1deg)" }}>
-          <span className="label-xs !text-ink-solid opacity-70">Retos activos</span>
-          <div className="font-num mt-1 text-[40px] font-bold leading-none">
-            {activeCount} / {MAX_ACTIVE_CHALLENGES}
-          </div>
-          <span className="mt-1 block text-[13px]">
-            {leftToStart > 0 ? `Puedes abrir ${leftToStart === 1 ? "uno más" : `${leftToStart} más`}` : "Ya tienes el máximo abierto"}
-          </span>
-        </div>
-        <div className="bx flex-1 basis-[260px] p-5 text-ink-solid" style={{ background: "var(--a2)", transform: "rotate(1deg)" }}>
-          <span className="label-xs !text-ink-solid opacity-70">Racha de retos</span>
-          <div className="font-num mt-1 text-[40px] font-bold leading-none">{activeStreak} días</div>
-          <span className="mt-1 block text-[13px]">Récord: {bestStreak} días</span>
-        </div>
-        <div className="bx flex-1 basis-[260px] p-5 text-ink-solid" style={{ background: "var(--a3)", transform: "rotate(-0.6deg)" }}>
-          <span className="label-xs !text-ink-solid opacity-70">Retos completados</span>
-          <div className="font-num mt-1 text-[40px] font-bold leading-none">{completedStats.length}</div>
-          <span className="mt-1 block text-[13px]">{totalDaysPracticed} días de práctica</span>
-        </div>
+      <section className="grid grid-cols-1 gap-px overflow-hidden rounded-card border border-line bg-line sm:grid-cols-3">
+        <Stat label="Retos activos" value={`${activeCount} / ${MAX_ACTIVE_CHALLENGES}`} sub={leftToStart > 0 ? `Puedes abrir ${leftToStart === 1 ? "uno más" : `${leftToStart} más`}` : "Ya tienes el máximo abierto"} />
+        <Stat label="Racha de retos" value={`${activeStreak} días`} sub={`Récord: ${bestStreak} días`} />
+        <Stat label="Retos completados" value={String(completedStats.length)} sub={`${totalDaysPracticed} días de práctica`} />
       </section>
 
       <div role="tablist" aria-label="Estado" className="flex flex-wrap gap-2.5">
-        {TABS.map((t) => (
-          <button
-            key={t.key}
-            type="button"
-            role="tab"
-            aria-selected={tab === t.key}
-            onClick={() => setTab(t.key)}
-            className="press min-h-11 rounded-chip border-[3px] border-ink px-4.5 font-bold"
-            style={tab === t.key ? { background: "var(--ink)", color: "var(--paper)" } : { background: "var(--card)", color: "var(--ink)" }}
-          >
-            {t.label} · {counts[t.key]}
-          </button>
-        ))}
+        {TABS.map((t) => {
+          const selected = tab === t.key;
+          return (
+            <button
+              key={t.key}
+              type="button"
+              role="tab"
+              aria-selected={selected}
+              onClick={() => setTab(t.key)}
+              className="inline-flex min-h-10 items-center gap-2 rounded-chip border px-4.5 font-mono text-[12px] font-medium uppercase tracking-[0.1em] transition-colors"
+              style={selected ? { borderColor: "var(--ink)", background: "var(--ink)", color: "var(--paper)" } : { borderColor: "var(--border)", color: "var(--muted)" }}
+            >
+              {t.label} · {counts[t.key]}
+            </button>
+          );
+        })}
       </div>
 
-      <section className="flex flex-col gap-7">
-        {loading && <p className="text-sm text-muted">Cargando retos…</p>}
+      <section className="flex flex-col border-t border-line">
+        {loading && <p className="py-8 text-sm text-muted">Cargando retos…</p>}
         {!loading && visible.length === 0 && (
-          <p className="text-sm text-muted">No tienes retos en esta pestaña todavía.</p>
+          <p className="py-8 text-sm text-muted">No tienes retos en esta pestaña todavía.</p>
         )}
         {visible.map(({ challenge, currentDayNumber, states, streak, investedMin }) => {
-          const pct = Math.round((currentDayNumber / challenge.totalDays) * 100);
           const dots = sampleDayDots(states, 30);
           const isDoneToday = states[currentDayNumber - 1] === "done";
           const statusLabel =
-            challenge.status === "active" ? "En marcha" : challenge.status === "paused" ? "Pausado" : challenge.status === "completed" ? "Completado" : "Abandonado";
-          const todayLabel =
-            challenge.status === "paused"
-              ? "Pausado"
-              : challenge.status === "completed"
-                ? "Terminado"
-                : isDoneToday
-                  ? "Hoy: ¡hecho!"
-                  : "Hoy: pendiente";
+            challenge.status === "active" ? "en marcha" : challenge.status === "paused" ? "pausado" : challenge.status === "completed" ? "completado" : "abandonado";
           const primaryHref = challenge.status === "completed" ? `/retos/${challenge.id}/cierre` : `/retos/${challenge.id}`;
-          const primaryCta = challenge.status === "completed" ? "Ver resumen" : "Abrir reto";
           const secondaryHref = challenge.status === "completed" || challenge.status === "paused" ? `/retos/${challenge.id}/galeria` : `/retos/${challenge.id}/dia`;
           const secondaryCta = challenge.status === "completed" ? "Ver galería" : challenge.status === "paused" ? "Ver diario" : isDoneToday ? "Ver diario" : "Practicar hoy";
 
           return (
-            <article key={challenge.id} className="bx flex flex-wrap overflow-hidden bg-card">
-              <div
-                className="box-border flex flex-0 basis-[220px] flex-col justify-between gap-4 border-r-[3px] border-ink p-6 text-ink-solid"
-                style={{ background: challenge.color }}
-              >
-                <span className="label-xs !text-ink-solid opacity-80">{skillName(challenge.skillId)}</span>
-                <div>
-                  <div className="font-num text-[56px] font-bold leading-[0.95]">{Math.min(currentDayNumber, challenge.totalDays)}</div>
-                  <span className="font-num font-bold">de {challenge.totalDays} días</span>
-                </div>
-              </div>
-              <div className="flex min-w-0 flex-1 basis-[420px] flex-col gap-3.5 p-6">
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <h2 className="m-0 text-[24px] font-bold leading-tight tracking-tight">{challenge.name}</h2>
-                  <span
-                    className="whitespace-nowrap rounded-chip border-[3px] border-ink px-3.5 py-0.5 font-bold text-ink-solid"
-                    style={{ background: challenge.status === "active" ? "var(--a3)" : challenge.status === "completed" ? "var(--a1)" : "var(--card)" }}
-                  >
-                    {statusLabel}
-                  </span>
-                </div>
-                <ProgressBar pct={pct} color={challenge.color} ariaLabel={`Avance de ${challenge.name}`} height={22} />
-                <div aria-hidden="true" className="flex gap-1">
+            <article key={challenge.id} className="flex flex-wrap items-center gap-6 border-b border-line py-8">
+              <Link href={primaryHref} className="flex min-w-0 flex-1 basis-[420px] flex-wrap items-center gap-6">
+                <div
+                  aria-hidden="true"
+                  className="grid shrink-0 gap-[5px]"
+                  style={{ gridTemplateColumns: `repeat(${Math.min(15, dots.length)}, 1fr)`, width: Math.min(15, dots.length) * 13 }}
+                >
                   {dots.map((s, i) => (
-                    <span key={i} className="h-3.5 flex-1 rounded border-2 border-ink" style={{ background: DAY_STATE_COLOR[s] }} />
+                    <span
+                      key={i}
+                      className="aspect-square rounded-full"
+                      style={{
+                        background: DAY_STATE_STYLE[s].dot,
+                        boxShadow: s === "today" ? "0 0 0 3px color-mix(in srgb, var(--signal) 25%, transparent)" : "none",
+                      }}
+                    />
                   ))}
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  <span className="min-h-9 inline-flex items-center rounded-chip border-[3px] border-ink px-3.5 text-sm font-bold">
-                    Racha {streak.current} días
-                  </span>
-                  <span className="min-h-9 inline-flex items-center rounded-chip border-[3px] border-ink px-3.5 text-sm font-bold">
-                    {formatMinutesLong(investedMin)} invertidas
-                  </span>
-                  <span
-                    className="min-h-9 inline-flex items-center rounded-chip border-[3px] border-ink px-3.5 text-sm font-bold"
-                    style={isDoneToday ? { background: "var(--a3)" } : undefined}
-                  >
-                    {todayLabel}
-                  </span>
+                <div className="min-w-0 flex-1">
+                  <div className="truncate text-[28px] font-light leading-tight tracking-tight sm:text-[30px]">{challenge.name}</div>
+                  <div className="font-num mt-1.5 text-[12px] text-muted">
+                    {skillName(challenge.skillId)} · racha {streak.current} días · {formatMinutesLong(investedMin)}
+                  </div>
                 </div>
-                <div className="mt-0.5 flex flex-wrap gap-3.5">
-                  <Link href={primaryHref} className="bx press flex min-h-12.5 items-center px-7 text-[17px] font-bold text-ink-solid" style={{ background: challenge.color }}>
-                    {primaryCta}
-                  </Link>
-                  <Link href={secondaryHref} className="bx press flex min-h-12.5 items-center px-7 text-[17px] font-bold">
-                    {secondaryCta}
-                  </Link>
+              </Link>
+              <Link href={primaryHref} className="text-right">
+                <div className="font-num text-[30px] leading-none tracking-tight" style={{ color: challenge.status === "completed" ? "var(--muted)" : "var(--ink)" }}>
+                  {Math.min(currentDayNumber, challenge.totalDays)}/{challenge.totalDays}
                 </div>
-              </div>
+                <div className="label-xs mt-1.5">{statusLabel}</div>
+              </Link>
+              <Button asChild variant="outline" size="sm" className="hidden shrink-0 lg:inline-flex">
+                <Link href={secondaryHref}>{secondaryCta}</Link>
+              </Button>
+              <Link href={primaryHref} aria-label={`Abrir ${challenge.name}`} className="shrink-0 text-muted transition-colors hover:text-ink">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M9 6l6 6-6 6" />
+                </svg>
+              </Link>
             </article>
           );
         })}
 
-        <Link
-          href="/retos/nuevo"
-          className="hov flex flex-wrap items-center justify-between gap-5 rounded-card border-[3px] border-dashed border-ink p-6"
-        >
-          <div>
-            <div className="text-xl font-bold">¿Algo nuevo que aprender?</div>
-            <div className="font-num mt-1 text-[13px] text-muted">
-              {leftToStart > 0
-                ? `Puedes tener hasta ${MAX_ACTIVE_CHALLENGES} retos activos a la vez. Te queda ${leftToStart}.`
-                : `Ya tienes ${MAX_ACTIVE_CHALLENGES} retos activos a la vez. Cierra uno para abrir otro.`}
-            </div>
-          </div>
-          <span className="font-bold">Crear reto →</span>
+        <Link href="/retos/nuevo" className="flex flex-wrap items-center justify-between gap-4 border-b border-line py-7 text-muted transition-colors hover:text-ink">
+          <span className="label-xs">+ Crear un reto nuevo · por ejemplo, 21 días de dibujo</span>
+          <span className="font-num text-[13px]">
+            {leftToStart > 0
+              ? `Puedes tener hasta ${MAX_ACTIVE_CHALLENGES} retos activos. Te queda ${leftToStart}.`
+              : `Ya tienes ${MAX_ACTIVE_CHALLENGES} retos activos. Cierra uno para abrir otro.`}
+          </span>
         </Link>
       </section>
     </>
+  );
+}
+
+function Stat({ label, value, sub }: { label: string; value: string; sub: string }) {
+  return (
+    <Card className="flex flex-col gap-1.5 rounded-none border-0 p-6">
+      <span className="label-xs">{label}</span>
+      <span className="font-num text-[32px] font-normal leading-none">{value}</span>
+      <span className="font-num text-[12px] text-muted">{sub}</span>
+    </Card>
   );
 }
