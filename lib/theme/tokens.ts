@@ -1,9 +1,15 @@
-// Oficio design tokens — "Punto" system (dark, minimal, dot-matrix).
+// Oficio design tokens.
 //
-// Replaces the old 8-palette "Pegatina" system with exactly 2 palettes (dark
-// default, light) + 1 user-chosen "señal" (signal) accent color, independent
-// of light/dark mode. See design-reference/punto/README.md and
-// design-reference/punto/html/PuntoPanel.dc.html for the source values.
+// History: "Pegatina" (8 switchable palettes) -> "Punto" (2 palettes + 1
+// user-chosen "señal" accent, below) -> "Pomodoro" (current — see
+// design-reference/pomodoro/README.md). Everything in this file describes
+// the PUNTO system and is kept exactly as it shipped (see "Still alive,
+// deliberately" below) — the NEW Pomodoro mode-color system (MODE_COLORS,
+// resolveModeColor, ModeId) is appended at the bottom of this file and in
+// app/globals.css's big top comment, which also covers the full
+// architecture: --mode-bg's override contract, the invented dark-mode
+// --card-solid values, and why light/dark mode no longer touches
+// --paper/--card/--ink directly for new UI.
 //
 // "Sistema" (follow OS) is not a 3rd palette — it resolves to "dark" or
 // "light" at render time via `prefers-color-scheme` (see resolveMode below)
@@ -13,6 +19,25 @@
 // are my own invention, chosen to mirror the dark palette's structure and
 // relative-contrast relationships (same radii, same flat/hairline-border/
 // no-shadow approach, inverted luminance). See the comment on LIGHT below.
+//
+// ## Still alive, deliberately: the "señal" accent picker
+//
+// The Pomodoro reference retires the idea of a user-chosen accent color —
+// its Ajustes screen's "Color" row is a static 3-swatch DISPLAY of the
+// fixed mode colors, not a picker. But THEMES/ACCENT_SWATCHES/accentIdx/
+// resolveSignal/resolveAccents below, and useOficioTheme()'s accentIdx/
+// signal/setAccentIdx, are NOT touched in this phase and are NOT stubbed
+// into no-ops: ~15 not-yet-migrated files (components/ui/button.tsx's
+// "primary" variant, switch.tsx, input.tsx's focus ring, chip.tsx's doc
+// comment, highlighted data points in stats/challenge screens, and the
+// whole AparienciaPanel picker UI) still read --signal directly. Turning
+// it into a dead no-op now would make every one of those render with an
+// invisible/frozen accent — a worse regression than leaving a feature
+// that's merely scheduled for removal alone. A later phase that rebuilds
+// the Ajustes page should delete AparienciaPanel's picker UI (replace
+// with the reference's static display) and, once nothing reads --signal/
+// --a1/--a2/--a3 anymore, these exports can finally come out. Profile.
+// accentIdx stays in the data model untouched, as instructed.
 
 export type AccentOption = readonly [name: string, hex: string];
 
@@ -160,4 +185,36 @@ export function systemPrefersDark(): boolean {
 export function resolveMode(themeId: string): ThemeMode {
   if (isThemeMode(themeId)) return themeId;
   return systemPrefersDark() ? "dark" : "light";
+}
+
+// ============================================================================
+// "Pomodoro" mode-color system (new). The CSS source of truth lives in
+// app/globals.css (--mode-focus/--mode-short/--mode-long/--mode-bg etc,
+// documented at length there) — these are the TS-side equivalents, for any
+// logic (as opposed to styling) that needs the live mode's hex value, e.g.
+// a later phase wiring store/timer-store.ts's `mode` into a `--mode-bg`
+// inline style. Keep this file's values byte-identical to globals.css's.
+// ============================================================================
+
+/** A running Pomodoro session's phase. Matches store/timer-store.ts's own
+ * `mode` union in spelling (not imported from there — this file must stay
+ * free of any business-logic dependency, per this phase's scope). */
+export type ModeId = "focus" | "short" | "long";
+
+/** The 3 fixed, never-theme-dependent session colors (design-reference/
+ * pomodoro/README.md "Tokens"). --mode-bg in app/globals.css defaults to
+ * MODE_COLORS.focus; a page showing a live short/long break overrides
+ * --mode-bg to one of the other two (see the CSS file's contract comment). */
+export const MODE_COLORS: Record<ModeId, string> = {
+  focus: "#BA4949",
+  short: "#38858A",
+  long: "#397097",
+};
+
+export const DEFAULT_MODE_ID: ModeId = "focus";
+
+/** Resolves a (possibly invalid/unknown) mode id to its hex color, falling
+ * back to the focus/default color — mirrors resolveSignal's defensive shape. */
+export function resolveModeColor(mode: string | null | undefined): string {
+  return MODE_COLORS[(mode as ModeId) ?? DEFAULT_MODE_ID] ?? MODE_COLORS[DEFAULT_MODE_ID];
 }

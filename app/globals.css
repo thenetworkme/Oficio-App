@@ -78,6 +78,165 @@
  * Any reset-style CSS you touch or add MUST stay inside the existing
  * `@layer base { ... }` block below. Do not introduce any new unlayered CSS
  * rule.
+ *
+ * ========================================================================
+ * PHASE 3 — "Pomodoro" redesign, foundation pass (this is the 3rd visual
+ * system this project has shipped: Pegatina -> Punto -> Pomodoro). See
+ * design-reference/pomodoro/README.md + html/PomoTimer.dc.html.
+ * ========================================================================
+ *
+ * ## The new color model: mode-driven, not theme-driven
+ *
+ * The defining idea of "Pomodoro" is that the app's full-bleed background
+ * is whatever the Pomodoro timer is CURRENTLY doing — focus red by
+ * default almost everywhere, teal/blue only while a short/long break is
+ * actively running. That is a different axis from light/dark mode
+ * entirely: a page can be in "dark mode" AND showing focus-red, or
+ * "light mode" AND showing focus-red — light/dark only ever affects the
+ * WHITE CARD surfaces floating on top of that color, never the color
+ * itself (see the per-token comments below for exact values).
+ *
+ * New tokens (all additive — nothing below renames or removes a token
+ * the "Punto" system shipped; see "Backward compatibility" further down):
+ *
+ *   --mode-focus / --mode-short / --mode-long   the 3 fixed session colors
+ *   --mode-bg                                   the LIVE color (see contract below)
+ *   --mode-ink / --mode-ink-muted               text/icons directly on --mode-bg
+ *   --card-tint                                 translucent white overlay card,
+ *                                                 for sections that stay ON the
+ *                                                 colored --mode-bg (reference's `.card`)
+ *   --card-solid / --card-solid-ink /
+ *   --card-solid-muted / --card-solid-line      the actual "white card" surface
+ *                                                 (reference's `.wc`) + its text
+ *                                                 tones — THIS is the one real
+ *                                                 light/dark pair, see below
+ *   --surface-muted / --surface-muted-ink /
+ *   --surface-muted-hover                       the flat light-gray "filled"
+ *                                                 family — text inputs (`.fld`),
+ *                                                 the flat button (`.btnl`) and
+ *                                                 unselected chips (`.chp`) are
+ *                                                 all this one surface in the
+ *                                                 reference
+ *   --flat-dark / --flat-dark-ink               the dark flat button/chip
+ *                                                 (`.btnd`, #222/white) — fixed,
+ *                                                 not theme-dependent, see below
+ *   --switch-off                                 toggle track, "off" state
+ *   --go-shadow                                  the primary "go" button's
+ *                                                 6px raised-then-collapsing
+ *                                                 shadow (reference's `.go`)
+ *
+ * ## --mode-bg: the contract (read this before wiring up a live timer)
+ *
+ * `--mode-bg` defaults to `var(--mode-focus)` at :root — i.e. every page
+ * is focus-red unless something overrides it. ANY element can override it
+ * for itself and its descendants by setting it as an inline style on a
+ * wrapping element:
+ *
+ *   <div style={{ "--mode-bg": "var(--mode-short)" }}>...</div>
+ *
+ * CSS custom properties cascade normally, so this is the whole mechanism
+ * — no React context, no extra prop-drilling. This phase does NOT wire
+ * store/timer-store.ts's live `mode` into this anywhere (explicitly out
+ * of scope — no business-logic files were touched). The shared header
+ * built this phase (components/layout/TopNav.tsx) always reads
+ * `var(--mode-bg)` for its own background, so once a later phase sets
+ * `--mode-bg` higher up the tree (e.g. on the Timer page's root element,
+ * driven by the live timer mode), the header picks up the color change
+ * automatically, for free, with no header-side code change. Until that
+ * wiring lands, `--mode-bg` simply stays at its focus-red default
+ * everywhere, which is also the reference's own default/resting state.
+ *
+ * ## Why light/dark mode ONLY touches --card-solid (not --mode-bg)
+ *
+ * The reference has no dark-mode screenshot (same situation the "Punto"
+ * light palette was in). I chose to keep --mode-focus/--mode-short/
+ * --mode-long IDENTICAL in both themes rather than darkening them for a
+ * "true dark mode": all three are already mid-dark, fully saturated hues
+ * (lightness roughly 40-45%), dark enough to carry white text (see
+ * --mode-ink below) without any adjustment, and darkening long/short
+ * further risked pushing them uncomfortably close to black/losing their
+ * hue identity. --card-solid is the opposite case — nothing about "a
+ * white card" is inherently dark-safe, so it gets a real, invented
+ * dark-mode value (a near-black surface a couple of steps brighter than
+ * --paper, with light warm-gray text) — see its definition below for the
+ * exact numbers and the light-mode block for the reference's own values.
+ *
+ * ## Why --flat-dark / --switch-off don't flip for dark mode
+ *
+ * `--flat-dark` (#222/white — the `.btnd` dark flat button) and the
+ * switch-track "off" color are small, assertive, self-contained floating
+ * elements, not big surfaces — like --danger, they're kept constant
+ * across both themes rather than inventing a dark-mode-specific
+ * inversion for each. Simplest honest choice available without a
+ * reference screenshot to check against.
+ *
+ * ## The retired "señal" accent picker
+ *
+ * The "Punto" system's one user-chosen --signal accent color (5 swatches,
+ * ACCENT_SWATCHES in lib/theme/tokens.ts) no longer has a real role: the
+ * reference's own Ajustes screen shows a "Color" row, but it's a static
+ * 3-swatch DISPLAY of the fixed mode colors, not a click-able picker (no
+ * handler on those swatches in PomoAjustes.dc.html). Decision: --signal,
+ * ACCENT_SWATCHES, accentIdx, resolveSignal/resolveAccents and
+ * useOficioTheme()'s accentIdx/signal/setAccentIdx are all LEFT WORKING
+ * EXACTLY AS BEFORE (not touched, not stubbed to no-ops) — see
+ * lib/theme/tokens.ts's updated header comment for the full reasoning:
+ * in short, --signal is still read directly by ~15 not-yet-migrated
+ * files (buttons, switches, highlighted data points, the whole
+ * AparienciaPanel picker UI), so quietly turning it into a no-op would
+ * make all of those render with a dead/invisible accent — a worse
+ * regression than just leaving a soon-to-be-dead feature alone. A later
+ * phase that rebuilds the Ajustes page should drop the interactive
+ * picker UI from components/settings/AparienciaPanel.tsx (replace it
+ * with the reference's static 3-swatch display) and, once nothing reads
+ * --signal/--a1/--a2/--a3 anymore, those tokens can finally be deleted.
+ * Profile.accentIdx stays in the data model untouched, per instructions.
+ *
+ * ## Backward compatibility — READ THIS BEFORE DELETING ANYTHING
+ *
+ * Exactly like the Pegatina -> Punto transition before it, dozens of
+ * not-yet-redesigned screens still read the OLD "Punto" variable names
+ * (--paper, --card, --ink, --muted, --line, --border, --border-hover,
+ * --danger, --ink-solid, --signal, --a1/--a2/--a3) directly. This phase
+ * makes a DELIBERATE, documented choice: it leaves every one of those
+ * legacy values UNCHANGED (same hex codes, same light/dark palette
+ * blocks, below) rather than remapping them onto the new mode-color
+ * system. Why: --ink is tightly, pervasively paired with --card
+ * (`bg-card text-ink` is a extremely common combo — components/ui/
+ * button.tsx's "subtle" variant, TopNav's old mobile-link active state,
+ * components/ui/dialog.tsx, and many more) AND, separately, used
+ * directly on raw --paper backgrounds with NO card wrapping it. Those two
+ * uses need DIFFERENT contrast partners once a background can be a
+ * saturated red/teal/blue (white text reads fine directly on mode-bg,
+ * but white-on-white-card does not) — exactly the invisible-text bug
+ * this project has already shipped and had to fix twice (see the Cascade
+ * Layers section above). Remapping --paper to --mode-bg (or --ink to
+ * --mode-ink) globally would silently reintroduce that same class of bug
+ * across ~90 files using `rounded-card`/`bg-card`/`text-ink`, in LIGHT
+ * mode specifically (dark mode's near-white --ink happens to read fine
+ * on red/teal/blue, but light mode's near-black --ink would not).
+ *
+ * So: the legacy palette block is frozen as-is (zero risk, zero visual
+ * change for untouched screens' text contrast), and the new mode-color
+ * system lives ENTIRELY in the new tokens above, read only by NEW/
+ * migrated UI (the header built this phase, and whatever a later phase
+ * opts a specific page's own root element into — see the --mode-bg
+ * contract above). This matches this phase's own scope guardrails ("it's
+ * fine and expected that pages look like an unfinished mix of
+ * old-content-shape + new-colors/fonts after this phase"): the shared
+ * header is fully new and always colored; page bodies stay on the old
+ * --paper background, looking like "Punto" still, until their own
+ * redesign phase deliberately wraps them in `--mode-bg`/--card-solid/
+ * --card-tint and adapts their text contrast to match.
+ *
+ * One exception, deliberately NOT risky: --radius-card/--radius-button/
+ * --radius-chip ARE changed below (22px/999px/999px -> 8px/6px/6px, per
+ * design-reference/pomodoro/README.md's own "Tokens" list). Corner
+ * radius is pure geometry with no contrast implications, so letting it
+ * apply everywhere immediately is a safe, desired part of "the whole
+ * app's chrome recolors/reshapes live" — every button/card/chip in the
+ * app (migrated or not) picks up the new squarer corners today, same as
+ * Pegatina -> Punto's flattening of shadows/borders did last time.
  */
 
 :root {
@@ -111,6 +270,77 @@
   --a1: var(--signal);
   --a2: var(--signal);
   --a3: var(--signal);
+
+  /* --- "Pomodoro" mode-color system (new, additive) — see the long
+   * comment above for the full rationale. Values here are the DARK-mode
+   * ones, matching the convention already used for the legacy block
+   * above (:root = dark defaults, [data-theme="light"] overrides). */
+
+  /* The three fixed Pomodoro session colors — never theme-dependent, see
+   * design-reference/pomodoro/README.md "Tokens". */
+  --mode-focus: #ba4949;
+  --mode-short: #38858a;
+  --mode-long: #397097;
+
+  /* The live color — defaults to focus. See the --mode-bg contract
+   * comment above for how a page overrides this for itself. */
+  --mode-bg: var(--mode-focus);
+
+  /* Text/icons sitting DIRECTLY on --mode-bg (header wordmark+nav, and
+   * any future full-bleed page content). Always white in both themes —
+   * see "Why light/dark mode ONLY touches --card-solid" above. */
+  --mode-ink: #ffffff;
+  --mode-ink-muted: rgb(255 255 255 / 75%);
+
+  /* Translucent "tint" card — a section that stays ON the colored
+   * --mode-bg (reference's `.card`: rgba(255,255,255,.1)). Always paired
+   * with --mode-ink text, in both themes, for the same reason as above. */
+  --card-tint: rgb(255 255 255 / 10%);
+  --card-tint-border: rgb(255 255 255 / 18%);
+
+  /* Solid "white card" (reference's `.wc`) — real content surfaces (task
+   * rows, the Ajustes panel, stat tiles). Dark-mode values are my own
+   * invention (no dark screenshot exists in the reference — same
+   * situation the "Punto" light palette was in before it): a near-black
+   * surface a couple of steps brighter than --paper (so it still reads
+   * as "the raised card"), with warm-neutral light text. Mirrors the
+   * light block's card/ink/muted/line relationships 1:1, inverted. */
+  --card-solid: #202024;
+  --card-solid-ink: #e9e9e6;
+  --card-solid-muted: #96969c;
+  --card-solid-line: #34343a;
+
+  /* The flat light-gray "filled" family — text inputs (`.fld`), the flat
+   * gray button (`.btnl`) and unselected chips (`.chp`) are all the SAME
+   * surface in the reference. Flips for dark mode too (it's a
+   * card-like surface, same reasoning as --card-solid), otherwise a
+   * light-gray input/chip would float oddly bright on a dark card. */
+  --surface-muted: #34343a;
+  --surface-muted-ink: #c7c7c4;
+  --surface-muted-hover: #3e3e45;
+
+  /* Toggle track "off" state (reference's `.sw[aria-checked="false"]`).
+   * Fixed-appearance, not theme-dependent — see the comment above. */
+  --switch-off: #48484e;
+
+  /* The primary "go" button (reference's `.go`): ALWAYS a near-white
+   * surface, in BOTH themes — NOT the same as --card-solid. Its text is
+   * one of the 3 mode colors (see Button's "go" variant,
+   * `text-[var(--mode-bg)]`), and all 3 mode colors read with strong
+   * contrast against white/near-white but weak, muddy contrast against a
+   * near-black surface (confirmed by a real-Chromium screenshot during
+   * this phase's verification — pairing "go" with --card-solid in dark
+   * mode produced exactly the kind of low-contrast text this project has
+   * shipped before). So --go-bg/--go-shadow are fixed, same category as
+   * --flat-dark below, just the inverse case (a "fixed light" surface
+   * instead of a "fixed dark" one). */
+  --go-bg: #ffffff;
+  --go-shadow: #ebebeb;
+
+  /* The one fixed-appearance flat dark button/chip (`.btnd`, #222/white)
+   * — NOT theme-dependent, see the comment above. */
+  --flat-dark: #222222;
+  --flat-dark-ink: #ffffff;
 }
 
 [data-theme="light"] {
@@ -127,6 +357,20 @@
   --border-hover: #b0b0b6;
   --shadow: transparent;
   --danger: #d6431e;
+
+  /* "Pomodoro" card/surface tokens — light mode is the reference's own
+   * literal values (design-reference/pomodoro/README.md "Tokens" +
+   * PomoTimer.dc.html's `.wc`/`.fld`/`.btnl`/`.sw` rules). */
+  --card-solid: #ffffff;
+  --card-solid-ink: #555555;
+  --card-solid-muted: #aaaaaa;
+  --card-solid-line: #eeeeee;
+
+  --surface-muted: #efefef;
+  --surface-muted-ink: #666666;
+  --surface-muted-hover: #e5e5e5;
+
+  --switch-off: #d4d4d4;
 }
 
 @theme inline {
@@ -143,11 +387,37 @@
   --color-a2: var(--a2);
   --color-a3: var(--a3);
   --color-danger: var(--danger);
+
+  /* "Pomodoro" mode-color system — see the long comment above. */
+  --color-mode-bg: var(--mode-bg);
+  --color-mode-focus: var(--mode-focus);
+  --color-mode-short: var(--mode-short);
+  --color-mode-long: var(--mode-long);
+  --color-mode-ink: var(--mode-ink);
+  --color-mode-ink-muted: var(--mode-ink-muted);
+  --color-card-tint: var(--card-tint);
+  --color-card-tint-border: var(--card-tint-border);
+  --color-card-solid: var(--card-solid);
+  --color-card-solid-ink: var(--card-solid-ink);
+  --color-card-solid-muted: var(--card-solid-muted);
+  --color-card-solid-line: var(--card-solid-line);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-muted-ink: var(--surface-muted-ink);
+  --color-surface-muted-hover: var(--surface-muted-hover);
+  --color-flat-dark: var(--flat-dark);
+  --color-flat-dark-ink: var(--flat-dark-ink);
+  --color-go-bg: var(--go-bg);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --radius-card: 22px;
-  --radius-button: 999px;
-  --radius-chip: 999px;
+
+  /* Radii updated for "Pomodoro" (8px cards, 6px buttons/chips/fields —
+   * design-reference/pomodoro/README.md "Tokens"). Pure geometry, no
+   * contrast implications, so this applies everywhere immediately —
+   * see the long comment above's last paragraph. */
+  --radius-card: 8px;
+  --radius-button: 6px;
+  --radius-chip: 6px;
 }
 
 @layer base {
@@ -225,18 +495,20 @@
   }
 }
 
-/* --- Flat/hairline structural look (Punto) ---
+/* --- Flat/hairline structural look (Punto, radius updated for Pomodoro) ---
  *
  * `.bx` used to be the Pegatina "sticker" box (3px ink border + hard offset
- * shadow + rotation). Redefined here to the flat Punto look — 1px hairline
- * border, 22px radius, no shadow, no rotation — so the ~28 not-yet-redesigned
- * files still using `.bx` look passably "in the new family" instead of
- * jarringly showing the old thick-border/shadow look. Later phase-agents
+ * shadow + rotation), then the flat Punto look (1px hairline border, 22px
+ * radius, no shadow/rotation). Radius updated to 8px here to match the
+ * Pomodoro `--radius-card` token (pure geometry, see the big comment up
+ * top) — colors/border untouched, still the legacy --line/--card pair, so
+ * the ~28 not-yet-redesigned files still using `.bx` keep their existing
+ * contrast exactly as-is, just with squarer corners. Later phase-agents
  * replace `.bx` usage with the real primitive components (components/ui/*)
  * as they redesign each screen properly; don't add new `.bx` usage. */
 .bx {
   border: 1px solid var(--line);
-  border-radius: 22px;
+  border-radius: 8px;
   background: var(--card);
 }
 
