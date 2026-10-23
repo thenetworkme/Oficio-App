@@ -28,6 +28,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     );
   }
 
+  // Phase-1 "Pomodoro" note: <TopNav> paints its own full-bleed --mode-bg
+  // background (defaults to focus-red) regardless of what's below it — see
+  // its own file comment + app/globals.css's --mode-bg contract. This
+  // wrapper's `bg-paper` is left as-is on purpose: forcing every
+  // not-yet-redesigned page onto a colored background now would strand
+  // their text/card contrast (built for the old near-black/white --paper),
+  // see globals.css's "Backward compatibility" section. A page that wants
+  // the full reference look sets `--mode-bg`/uses --card-solid/--card-tint
+  // on its OWN root as it gets redesigned.
   return (
     <div className="flex min-h-screen flex-col bg-paper">
       <TopNav />

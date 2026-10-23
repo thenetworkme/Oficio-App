@@ -5,13 +5,18 @@
 export const strings = {
   app: { name: "Oficio" },
   nav: {
-    // Matches design-reference/punto's top nav: Hoy · Práctica · Datos ·
-    // Retos · Logros (center tabs), Avisos (bell icon) and Ajustes (avatar)
-    // live in the header's right-hand cluster instead of the tab row — see
-    // components/layout/TopNav.tsx.
+    // "Pomodoro" header (components/layout/TopNav.tsx) nav items: Informe ·
+    // Retos · Logros + a gear-only Ajustes button — matches design-
+    // reference/pomodoro/html/PomoTimer.dc.html's <header> exactly (no
+    // Tienda entry, confirmed removed and staying removed). `panel`/
+    // `temporizador`/`recordatorios` are no longer header nav labels (the
+    // reference's header has no "Hoy"/"Práctica" tabs or bell icon) but are
+    // kept here — their routes ("/", "/temporizador", "/recordatorios")
+    // still exist and are still reachable by direct link/other UI, just not
+    // from this header.
     panel: "Hoy",
     temporizador: "Práctica",
-    estadisticas: "Datos",
+    estadisticas: "Informe",
     retos: "Retos",
     logros: "Logros",
     recordatorios: "Avisos",
