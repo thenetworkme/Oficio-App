@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Oficio — Sesión completada</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit;color:inherit}
+button{cursor:pointer}
+*{box-sizing:border-box}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.hb{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 12px;border-radius:4px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.2);color:#fff;font-size:14px;font-weight:500;transition:background .15s}
+.hb:hover{background:rgba(255,255,255,.3)}
+.card{background:rgba(255,255,255,.1);border-radius:8px}
+.wc{background:#fff;border-radius:8px;color:#555}
+.tabw{border:0;background:transparent;color:#fff;font-size:16px;font-weight:400;padding:3px 12px;border-radius:4px;transition:background .15s;opacity:.95}
+.tabw:hover{background:rgba(255,255,255,.08)}
+.tabw[aria-selected="true"]{background:rgba(0,0,0,.15);font-weight:600}
+.go{border:0;background:#fff;border-radius:8px;height:55px;width:200px;font-size:22px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;box-shadow:rgb(235,235,235) 0 6px 0;transition:transform .08s,box-shadow .08s;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.go.on{transform:translateY(6px);box-shadow:none}
+.sk{border:0;background:transparent;color:#fff;opacity:.9;width:44px;height:55px;display:grid;place-items:center;border-radius:8px;transition:background .15s}
+.sk:hover{background:rgba(255,255,255,.12)}
+.task{background:#fff;color:#555;border-radius:8px;padding:16px 18px;display:flex;align-items:center;gap:14px;border-left:6px solid transparent;box-shadow:rgba(0,0,0,.1) 0 1px 1px;cursor:pointer;margin-bottom:8px;transition:border-color .15s;width:100%;text-align:left;font-size:16px;font-weight:600;border-top:0;border-right:0;border-bottom:0}
+.task:hover{border-left-color:#e5e5e5}
+.task.sel,.task.sel:hover{border-left-color:#222}
+.ck{width:22px;height:22px;border-radius:50%;flex:none;display:grid;place-items:center;color:#fff;background:#dfdfdf;border:0;transition:background .15s}
+.add{width:100%;height:68px;border-radius:8px;border:2px dashed rgba(255,255,255,.4);background:rgba(0,0,0,.1);color:rgba(255,255,255,.9);font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s}
+.add:hover{background:rgba(0,0,0,.16)}
+.fld{width:100%;height:44px;border:0;background:#efefef;border-radius:6px;padding:0 12px;font-size:16px;color:#333;font-family:inherit}
+textarea.fld{height:auto;padding:12px;resize:vertical;line-height:1.5}
+.sw{width:42px;height:24px;border-radius:99px;border:0;position:relative;transition:background .2s;flex:none;cursor:pointer}
+.sw::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.sw[aria-checked="true"]{background:var(--bg)}.sw[aria-checked="true"]::after{transform:translateX(18px)}
+.sw[aria-checked="false"]{background:#d4d4d4}
+.btnw{background:#fff;color:var(--bg);border:0;border-radius:6px;height:44px;padding:0 22px;font-size:15px;font-weight:700;box-shadow:rgb(235,235,235) 0 4px 0;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .08s,box-shadow .08s}
+.btnw:active{transform:translateY(4px);box-shadow:none}
+.btnd{background:#222;color:#fff;border:0;border-radius:6px;height:44px;padding:0 22px;font-size:15px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;cursor:pointer}
+.btnd:hover{opacity:.85}
+.btnl{background:#efefef;color:#666;border:0;border-radius:6px;height:44px;padding:0 20px;font-size:15px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:background .15s;cursor:pointer}
+.btnl:hover{background:#e5e5e5}
+.btng{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:6px;height:44px;padding:0 20px;font-size:15px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:background .15s}
+.btng:hover{background:rgba(255,255,255,.3)}
+.lbl{display:block;font-size:14px;font-weight:700;color:#aaa;margin-bottom:6px}
+.chp{border:0;background:#efefef;color:#777;border-radius:6px;padding:8px 14px;font-size:14px;font-weight:600;transition:background .15s,color .15s;cursor:pointer}
+.chp:hover{background:#e5e5e5}
+.chp[aria-pressed="true"]{background:#222;color:#fff}
+.sep{border-top:1px solid #eee}
+.h1w{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1.15;margin:0}
+.k{color:var(--bg)}
+.num{font-variant-numeric:tabular-nums}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[role=button]:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.wc button:focus-visible,.wc input:focus-visible,.wc select:focus-visible,.wc textarea:focus-visible,.wc a:focus-visible{outline-color:#222}
+
+</style>
+</helmet>
+<div style="min-height:900px;--bg:#38858A;background:#38858A;color:#fff;font-family:'Geist',system-ui,sans-serif;font-size:15px;line-height:1.5;transition:background .4s">
+<div style="background:#38858A;--bg:#38858A;min-height:900px;padding:0 20px 80px"><header style="display:flex;align-items:center;justify-content:space-between;max-width:620px;margin:0 auto;height:60px"><a href="PomoTimer.dc.html" style="display:flex;align-items:center;gap:8px;color:#fff;font-size:22px;font-weight:700;letter-spacing:-.02em"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg>Oficio</a><nav style="display:flex;gap:8px" aria-label="Principal"><a href="PomoInforme.dc.html" class="hb" style=""><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Informe</a><a href="PomoRetos.dc.html" class="hb" style=""><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg>Retos</a><a href="PomoLogros.dc.html" class="hb" style=""><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v6a4 4 0 01-8 0zM8 6H4v1a4 4 0 004 4M16 6h4v1a4 4 0 01-4 4M12 14v4M8 21h8"/></svg>Logros</a><a href="PomoTienda.dc.html" class="hb" style=""><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Tienda</a><a href="PomoAjustes.dc.html" class="hb" aria-label="Ajustes" style="padding:0 9px;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></a></nav></header><main style="max-width:620px;margin:24px auto 0"><div style="text-align:center;margin:12px 0 22px"><div style="width:64px;height:64px;border-radius:50%;background:#fff;color:#38858A;display:grid;place-items:center;margin:0 auto 14px"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></div><h1 class="h1w" style="font-size:32px">Sesión completada</h1><div style="opacity:.9;margin-top:6px;font-size:16px">25 minutos de Programación. Buen trabajo, Kobox.</div></div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px"><div class="card" style="padding:16px;text-align:center"><div class="num" style="font-size:30px;font-weight:800;line-height:1.1">+25</div><div style="font-size:13px;opacity:.85">XP ganados</div></div><div class="card" style="padding:16px;text-align:center"><div class="num" style="font-size:30px;font-weight:800;line-height:1.1">12</div><div style="font-size:13px;opacity:.85">días de racha</div></div><div class="card" style="padding:16px;text-align:center"><div class="num" style="font-size:30px;font-weight:800;line-height:1.1">1.284</div><div style="font-size:13px;opacity:.85">horas · Programación</div></div></div>
+<section class="wc" style="padding:22px 26px"><div style="display:flex;justify-content:space-between;font-weight:700;color:#444;margin-bottom:10px"><span>Meta de hoy</span><span class="num k">2 h 15 / 2 h</span></div><div style="height:10px;border-radius:99px;background:#eee"><div style="height:10px;border-radius:99px;background:#38858A;width:100%"></div></div><div style="margin-top:10px;font-size:14px;color:#38858A;font-weight:700">¡Meta cumplida! Todo lo extra suma al camino.</div>
+<div class="sep" style="margin:20px 0"></div><span class="lbl">¿Cómo te fue?</span><div style="display:flex;gap:8px;margin-bottom:16px"><sc-for list="{{moods}}" as="m" hint-placeholder-count="4"><button type="button" class="chp" aria-pressed="{{m.on}}" onClick="{{m.pick}}">{{m.l}}</button></sc-for></div>
+<label style="display:block"><span class="lbl">Nota rápida (opcional)</span><textarea class="fld" rows="2" placeholder="Una línea sobre lo que avanzaste…" value="{{note}}" onChange="{{noteSet}}" aria-label="Nota"></textarea></label>
+<div style="display:flex;gap:10px;margin-top:20px"><a href="PomoTimer.dc.html" class="btnd" style="flex:1"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg>Otra sesión</a><a href="PomoInforme.dc.html" class="btnl">Terminar el día</a></div></section></main></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {}; const g = (k, d) => s[k] ?? d; const set = (k) => (e) => this.setState({ [k]: e.target.value }); const fm = (n) => n >= 1000 ? Math.floor(n / 1000) + "." + String(n % 1000).padStart(3, "0") : String(n);
+const m = g('m', 2);
+    return { moods: ['Difícil', 'Normal', 'Fluido', 'Excelente'].map((l, i) => ({ l, on: m === i, pick: () => this.setState({ m: i }) })), note: g('note', ''), noteSet: set('note') };
+  }
+}
+</script>
+</body>
+</html>

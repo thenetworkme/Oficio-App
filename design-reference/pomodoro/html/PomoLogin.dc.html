@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Oficio — Entrar</title>
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit;color:inherit}
+button{cursor:pointer}
+*{box-sizing:border-box}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.hb{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 12px;border-radius:4px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.2);color:#fff;font-size:14px;font-weight:500;transition:background .15s}
+.hb:hover{background:rgba(255,255,255,.3)}
+.card{background:rgba(255,255,255,.1);border-radius:8px}
+.wc{background:#fff;border-radius:8px;color:#555}
+.tabw{border:0;background:transparent;color:#fff;font-size:16px;font-weight:400;padding:3px 12px;border-radius:4px;transition:background .15s;opacity:.95}
+.tabw:hover{background:rgba(255,255,255,.08)}
+.tabw[aria-selected="true"]{background:rgba(0,0,0,.15);font-weight:600}
+.go{border:0;background:#fff;border-radius:8px;height:55px;width:200px;font-size:22px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;box-shadow:rgb(235,235,235) 0 6px 0;transition:transform .08s,box-shadow .08s;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.go.on{transform:translateY(6px);box-shadow:none}
+.sk{border:0;background:transparent;color:#fff;opacity:.9;width:44px;height:55px;display:grid;place-items:center;border-radius:8px;transition:background .15s}
+.sk:hover{background:rgba(255,255,255,.12)}
+.task{background:#fff;color:#555;border-radius:8px;padding:16px 18px;display:flex;align-items:center;gap:14px;border-left:6px solid transparent;box-shadow:rgba(0,0,0,.1) 0 1px 1px;cursor:pointer;margin-bottom:8px;transition:border-color .15s;width:100%;text-align:left;font-size:16px;font-weight:600;border-top:0;border-right:0;border-bottom:0}
+.task:hover{border-left-color:#e5e5e5}
+.task.sel,.task.sel:hover{border-left-color:#222}
+.ck{width:22px;height:22px;border-radius:50%;flex:none;display:grid;place-items:center;color:#fff;background:#dfdfdf;border:0;transition:background .15s}
+.add{width:100%;height:68px;border-radius:8px;border:2px dashed rgba(255,255,255,.4);background:rgba(0,0,0,.1);color:rgba(255,255,255,.9);font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s}
+.add:hover{background:rgba(0,0,0,.16)}
+.fld{width:100%;height:44px;border:0;background:#efefef;border-radius:6px;padding:0 12px;font-size:16px;color:#333;font-family:inherit}
+textarea.fld{height:auto;padding:12px;resize:vertical;line-height:1.5}
+.sw{width:42px;height:24px;border-radius:99px;border:0;position:relative;transition:background .2s;flex:none;cursor:pointer}
+.sw::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.sw[aria-checked="true"]{background:var(--bg)}.sw[aria-checked="true"]::after{transform:translateX(18px)}
+.sw[aria-checked="false"]{background:#d4d4d4}
+.btnw{background:#fff;color:var(--bg);border:0;border-radius:6px;height:44px;padding:0 22px;font-size:15px;font-weight:700;box-shadow:rgb(235,235,235) 0 4px 0;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .08s,box-shadow .08s}
+.btnw:active{transform:translateY(4px);box-shadow:none}
+.btnd{background:#222;color:#fff;border:0;border-radius:6px;height:44px;padding:0 22px;font-size:15px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;cursor:pointer}
+.btnd:hover{opacity:.85}
+.btnl{background:#efefef;color:#666;border:0;border-radius:6px;height:44px;padding:0 20px;font-size:15px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:background .15s;cursor:pointer}
+.btnl:hover{background:#e5e5e5}
+.btng{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:6px;height:44px;padding:0 20px;font-size:15px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:background .15s}
+.btng:hover{background:rgba(255,255,255,.3)}
+.lbl{display:block;font-size:14px;font-weight:700;color:#aaa;margin-bottom:6px}
+.chp{border:0;background:#efefef;color:#777;border-radius:6px;padding:8px 14px;font-size:14px;font-weight:600;transition:background .15s,color .15s;cursor:pointer}
+.chp:hover{background:#e5e5e5}
+.chp[aria-pressed="true"]{background:#222;color:#fff}
+.sep{border-top:1px solid #eee}
+.h1w{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1.15;margin:0}
+.k{color:var(--bg)}
+.num{font-variant-numeric:tabular-nums}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[role=button]:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.wc button:focus-visible,.wc input:focus-visible,.wc select:focus-visible,.wc textarea:focus-visible,.wc a:focus-visible{outline-color:#222}
+
+</style>
+</helmet>
+<div style="min-height:900px;--bg:#BA4949;background:#BA4949;color:#fff;font-family:'Geist',system-ui,sans-serif;font-size:15px;line-height:1.5;transition:background .4s">
+<div style="background:#BA4949;--bg:#BA4949;min-height:900px;padding:0 20px 80px"><header style="display:flex;align-items:center;justify-content:space-between;max-width:620px;margin:0 auto;height:60px"><a href="PomoTimer.dc.html" style="display:flex;align-items:center;gap:8px;color:#fff;font-size:22px;font-weight:700;letter-spacing:-.02em"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg>Oficio</a></header><main style="max-width:620px;margin:24px auto 0"><div style="text-align:center;margin:36px 0 24px"><h1 style="margin:0;font-size:32px;font-weight:700;letter-spacing:-.025em">Entra a tu oficio</h1><div style="opacity:.85;margin-top:6px;font-size:16px">10.000 horas, una sesión a la vez.</div></div><div class="wc" style="max-width:420px;margin:0 auto;padding:28px"><button type="button" class="btnl" style="width:100%;background:#fff;border:2px solid #e5e5e5;height:46px"><b style="width:20px;height:20px;border-radius:50%;background:#555;color:#fff;font-size:12px;display:grid;place-items:center">G</b>Continuar con Google</button><div style="display:flex;align-items:center;gap:12px;margin:20px 0;color:#bbb;font-size:13px"><i style="flex:1;border-top:1px solid #eee"></i>o con tu correo<i style="flex:1;border-top:1px solid #eee"></i></div><label style="display:block;margin-bottom:16px"><span class="lbl">Correo</span><input class="fld" type="email" placeholder="tu@correo.com" value="{{email}}" onChange="{{emailSet}}" aria-label="Correo"></label><label style="display:block;margin-bottom:16px"><span class="lbl">Contraseña</span><div style="position:relative"><input class="fld" type="{{passType}}" placeholder="Tu contraseña" value="{{pass}}" onChange="{{passSet}}" aria-label="Contraseña" style="padding-right:64px"><button type="button" onClick="{{showT}}" style="position:absolute;right:6px;top:6px;height:32px;border:0;background:transparent;color:#999;font-size:13px;font-weight:700">{{showL}}</button></div></label><div style="display:flex;justify-content:flex-end;margin:-6px 0 20px"><a href="PomoRecuperar.dc.html" style="font-size:13.5px;color:#999;text-decoration:underline">¿Olvidaste tu contraseña?</a></div>
+<a href="PomoTimer.dc.html" class="btnd" style="width:100%;height:48px">Entrar</a></div>
+<div style="text-align:center;margin-top:22px;font-size:15px;opacity:.9">¿Aún no tienes cuenta? <a href="PomoSignup.dc.html" style="font-weight:700;text-decoration:underline">Créala gratis</a></div></main></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {}; const g = (k, d) => s[k] ?? d; const set = (k) => (e) => this.setState({ [k]: e.target.value }); const fm = (n) => n >= 1000 ? Math.floor(n / 1000) + "." + String(n % 1000).padStart(3, "0") : String(n);
+const show = !!g('show', false);
+    return { email: g('email', ''), emailSet: set('email'), pass: g('pass', ''), passSet: set('pass'), passType: show ? 'text' : 'password', showL: show ? 'Ocultar' : 'Mostrar', showT: () => this.setState({ show: !show }) };
+  }
+}
+</script>
+</body>
+</html>
