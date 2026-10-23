@@ -6,26 +6,21 @@ interface ChipProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   dotColor?: string;
 }
 
-// Punto chip: pill, 1px hairline border, Geist Mono uppercase label.
-// Selected state is a plain inverted ink/ink-solid fill — NOT the signal
-// color, which is reserved for primary actions and single highlighted data
-// points (see design-reference/punto README + the `.chip` rule in
-// PuntoPanel.dc.html).
+// "Pomodoro" chip — reference's `.chp`: unselected = the flat light-gray
+// --surface-muted surface, selected = the flat dark --flat-dark surface
+// (#222/white), both fixed-contrast pairs that don't depend on light/dark
+// mode (see app/globals.css's big comment), so this is a safe sitewide
+// restyle with no contrast risk, unlike the old ink/paper-inverted look.
 export function Chip({ pressed, dotColor, className, children, ...props }: ChipProps) {
   return (
     <button
       type="button"
       aria-pressed={pressed}
       className={cn(
-        "inline-flex min-h-10 items-center gap-2 rounded-chip border px-4.5 font-mono text-[12px] font-medium uppercase tracking-[0.1em] transition-colors",
-        // Inverted selected state: bg = this theme's own ink, text = this
-        // theme's own paper. NOT `text-ink-solid` — ink-solid is for text on
-        // a --signal-colored background (always near-black, both palettes);
-        // --ink flips per palette (near-white in dark, near-black in light),
-        // so pairing it with ink-solid text would render invisible
-        // black-on-black in light mode. ink/paper are always each other's
-        // max-contrast pair within a palette, so this combo is safe in both.
-        pressed ? "border-ink bg-ink text-paper" : "border-border text-muted hover:border-border-hover hover:text-ink",
+        "inline-flex min-h-10 items-center gap-2 rounded-chip border border-transparent px-4.5 text-[14px] font-semibold transition-colors",
+        pressed
+          ? "bg-flat-dark text-flat-dark-ink"
+          : "bg-surface-muted text-surface-muted-ink hover:bg-surface-muted-hover",
         className,
       )}
       {...props}

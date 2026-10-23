@@ -1,14 +1,18 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
 
-// Punto input: no box at all — transparent background, just a 1px bottom
-// border that turns signal-colored on focus. Matches the reference's `.inp`.
+// "Pomodoro" input — reference's `.fld`: a FILLED light-gray rounded box
+// (NOT the old underline style), dark text — matches the --surface-muted
+// family used by the flat light button/unselected chip. A self-contained
+// background+text pair, so it reads fine regardless of what's behind it
+// (unlike the old underline input, which relied on the surrounding page's
+// --paper/--card contrast).
 export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
   ({ className, ...props }, ref) => (
     <input
       ref={ref}
       className={cn(
-        "w-full min-h-10 rounded-none border-0 border-b border-border bg-transparent px-0 pb-3 pt-2 text-[16px] text-ink placeholder:text-muted transition-colors focus:border-signal focus:outline-none",
+        "w-full min-h-11 rounded-button border-0 bg-surface-muted px-3.5 py-2 text-[16px] text-surface-muted-ink placeholder:text-surface-muted-ink placeholder:opacity-60 transition-colors outline-none focus:ring-2 focus:ring-[var(--mode-bg)]",
         className,
       )}
       {...props}
