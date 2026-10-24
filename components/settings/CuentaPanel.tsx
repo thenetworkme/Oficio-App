@@ -12,8 +12,8 @@ import { exportUserDataToCsv } from "@/lib/csv-export";
 // design-reference/punto/html/PuntoAjustes.dc.html's own split. Real logic
 // (password change, CSV export, sign-out, delete-account) is carried over
 // unchanged — only the layout/skin is new: flat hairline rows, now living
-// inside the "Pomodoro" white `tone="solid"` Ajustes panel (see
-// app/(app)/ajustes/page.tsx), so the divider color below reads
+// inside the "Pomodoro" white `tone="solid"` Ajustes panel (now a modal,
+// see components/settings/AjustesModal.tsx), so the divider color below reads
 // `--card-solid-line` (the token that surface's own hairlines use) rather
 // than the legacy `--line`, which sits almost exactly on top of
 // `--card-solid`'s dark-mode value and was effectively invisible there.

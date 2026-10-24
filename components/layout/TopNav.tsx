@@ -25,12 +25,13 @@ import { strings } from "@/lib/strings";
 // every untouched page onto a colored background now would be unsafe.
 //
 // Nav items, per the confirmed scope: Informe (bar-chart, /estadisticas),
-// Retos (flag, /retos), Logros (trophy, /logros), and a gear-only Ajustes
-// (/ajustes) button. NO Tienda entry — the shop feature stays removed, as
-// re-confirmed. The gear links to the real /ajustes ROUTE (not a JS modal)
-// — see AGENTS report for the full "modal vs. page" architecture decision;
-// that page's own content is a later phase's job, this one only makes the
-// gear point at it looking like a header nav item, matching the reference.
+// Retos (flag, /retos) are real routes; Logros and the gear-only Ajustes
+// are MODALS (components/achievements/LogrosModal.tsx,
+// components/settings/AjustesModal.tsx — owned/rendered by AppShell, one
+// level up), per explicit user direction ("debe ser estilo modal no una
+// pagina aparte") overriding the earlier phase-1 "keep it a routed page"
+// decision. NO Tienda entry — the shop feature stays removed, as
+// re-confirmed.
 //
 // Responsive: same hamburger-dropdown pattern the "Punto" header used for
 // narrow widths (adapted to the new translucent-pill look), rather than
@@ -38,7 +39,6 @@ import { strings } from "@/lib/strings";
 const NAV = [
   { href: "/estadisticas", label: strings.nav.estadisticas, icon: InformeIcon },
   { href: "/retos", label: strings.nav.retos, icon: RetosIcon },
-  { href: "/logros", label: strings.nav.logros, icon: LogrosIcon },
 ] as const;
 
 function isActive(pathname: string, href: string): boolean {
@@ -133,19 +133,25 @@ function NavPill({ href, label, icon: Icon, active }: { href: string; label: str
   );
 }
 
-function AjustesPill({ active }: { active: boolean }) {
+/** Same `.hb` pill treatment as NavPill/AjustesPill, but a <button> that
+ * opens a modal instead of navigating — used for Logros (desktop) and
+ * Ajustes (both desktop and mobile). No active/current state: a modal
+ * overlay isn't "the current page," so these never show the pressed-pill
+ * look the way a real route does. */
+function NavButton({ label, icon: Icon, onClick, iconOnly, ariaLabel }: { label: string; icon: () => React.ReactElement; onClick: () => void; iconOnly?: boolean; ariaLabel?: string }) {
   return (
-    <Link
-      href="/ajustes"
-      aria-label={strings.nav.ajustes}
-      aria-current={active ? "page" : undefined}
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={iconOnly ? ariaLabel : undefined}
       className={cn(
-        "inline-flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-[4px] border border-white/20 text-white transition-colors",
-        active ? "bg-white/35" : "bg-white/20 hover:bg-white/30",
+        "inline-flex h-[34px] shrink-0 items-center gap-2 rounded-[4px] border border-white/20 bg-white/20 text-[14px] font-medium text-white transition-colors hover:bg-white/30",
+        iconOnly ? "w-[34px] justify-center" : "px-3",
       )}
     >
-      <AjustesIcon />
-    </Link>
+      <Icon />
+      {!iconOnly && label}
+    </button>
   );
 }
 
@@ -165,7 +171,20 @@ function MobileNavLink({ href, label, icon: Icon, active }: { href: string; labe
   );
 }
 
-export function TopNav() {
+function MobileNavButton({ label, icon: Icon, onClick }: { label: string; icon: () => React.ReactElement; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex items-center gap-2.5 rounded-[4px] bg-white/15 px-3.5 py-3 text-[14px] font-medium text-white transition-colors hover:bg-white/25"
+    >
+      <Icon />
+      {label}
+    </button>
+  );
+}
+
+export function TopNav({ onOpenLogros, onOpenAjustes }: { onOpenLogros: () => void; onOpenAjustes: () => void }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -185,7 +204,8 @@ export function TopNav() {
           {NAV.map((item) => (
             <NavPill key={item.href} {...item} active={isActive(pathname, item.href)} />
           ))}
-          <AjustesPill active={isActive(pathname, "/ajustes")} />
+          <NavButton label={strings.nav.logros} icon={LogrosIcon} onClick={onOpenLogros} />
+          <NavButton label={strings.nav.ajustes} icon={AjustesIcon} onClick={onOpenAjustes} iconOnly ariaLabel={strings.nav.ajustes} />
         </nav>
         <div className="flex items-center gap-2 lg:hidden">
           <button
@@ -204,7 +224,8 @@ export function TopNav() {
           {NAV.map((item) => (
             <MobileNavLink key={item.href} {...item} active={isActive(pathname, item.href)} />
           ))}
-          <MobileNavLink href="/ajustes" label={strings.nav.ajustes} icon={AjustesIcon} active={isActive(pathname, "/ajustes")} />
+          <MobileNavButton label={strings.nav.logros} icon={LogrosIcon} onClick={onOpenLogros} />
+          <MobileNavButton label={strings.nav.ajustes} icon={AjustesIcon} onClick={onOpenAjustes} />
         </nav>
       )}
     </header>

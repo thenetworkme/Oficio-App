@@ -1,13 +1,20 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { AjustesModal } from "@/components/settings/AjustesModal";
+import { LogrosModal } from "@/components/achievements/LogrosModal";
 import { TopNav } from "./TopNav";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { user, profile, loading: authLoading } = useAuth();
   const router = useRouter();
+  // Logros/Ajustes are modals, not routes (see TopNav's own comment) —
+  // owned here, one level above TopNav, so they stay mounted/openable
+  // from every (app) route rather than being tied to one page.
+  const [logrosOpen, setLogrosOpen] = useState(false);
+  const [ajustesOpen, setAjustesOpen] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) router.replace("/login");
@@ -39,7 +46,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // on its OWN root as it gets redesigned.
   return (
     <div className="flex min-h-screen flex-col bg-paper">
-      <TopNav />
+      <TopNav onOpenLogros={() => setLogrosOpen(true)} onOpenAjustes={() => setAjustesOpen(true)} />
       {/* `isolate` gives <main> its own stacking context, which is what
           actually makes the ModeBackdrop escape hatch (see its own file
           comment) work: without it, ModeBackdrop's `fixed -z-10` layer
@@ -52,6 +59,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           directly. Caught via a real-Chromium render of AppShell + a page
           (not a page rendered in isolation, which hides this entirely). */}
       <main className="isolate mx-auto flex w-full max-w-[1360px] flex-1 flex-col gap-7 px-5 py-9 sm:px-10">{children}</main>
+      <LogrosModal open={logrosOpen} onOpenChange={setLogrosOpen} />
+      <AjustesModal open={ajustesOpen} onOpenChange={setAjustesOpen} />
     </div>
   );
 }
