@@ -4,13 +4,29 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { DotDigits } from "@/components/ui/DotDigits";
+import { Card } from "@/components/ui/card";
+import { ModeBackdrop } from "@/components/layout/ModeBackdrop";
 import { useAppData } from "@/lib/hooks/useAppData";
 import { closeChallenge, watchChallenge, watchChallengeDays } from "@/lib/firestore/challenges";
 import { computeChallengeStreak, computeDayStates, totalInvestedMin } from "@/lib/challenge";
 import { coinsPerSession } from "@/lib/economy";
 import { formatMinutesLong } from "@/lib/format";
 import type { Challenge, ChallengeDay } from "@/lib/types";
+
+function TrophyIcon() {
+  return (
+    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M8 4h8v6a4 4 0 01-8 0zM8 6H4v1a4 4 0 004 4M16 6h4v1a4 4 0 01-4 4M12 14v4M8 21h8" />
+    </svg>
+  );
+}
+function FlagIcon() {
+  return (
+    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M5 21V4M5 4h11l-2 4 2 4H5" />
+    </svg>
+  );
+}
 
 export default function RetoCierrePage() {
   const { id } = useParams<{ id: string }>();
@@ -46,14 +62,23 @@ export default function RetoCierrePage() {
   }, [challenge, days]);
   const streak = useMemo(() => computeChallengeStreak(states), [states]);
 
-  if (!challenge) return <p className="text-sm text-muted">Cargando cierre…</p>;
+  if (!challenge) {
+    return (
+      <>
+        <ModeBackdrop />
+        <div className="flex flex-1 items-center justify-center py-20">
+          <span className="text-[15px] text-mode-ink-muted">Cargando cierre…</span>
+        </div>
+      </>
+    );
+  }
 
   const skill = skills.find((s) => s.id === challenge.skillId);
   const win = challenge.status === "completed" && completedDays >= challenge.totalDays;
   const plannedMin = challenge.totalDays * challenge.dailyGoalMin;
-  const pctConstancy = Math.round((completedDays / challenge.totalDays) * 100);
+  const pctConstancy = challenge.totalDays > 0 ? Math.round((completedDays / challenge.totalDays) * 100) : 0;
   const avgMin = challenge.totalDays > 0 ? Math.round(investedMin / challenge.totalDays) : 0;
-  const dotRowCount = Math.min(challenge.totalDays, 30);
+  const cells = Math.min(challenge.totalDays, 30);
 
   async function handleClose(outcome: "completed" | "abandoned") {
     if (!challenge) return;
@@ -67,126 +92,118 @@ export default function RetoCierrePage() {
 
   return (
     <>
-      <section className="border-b border-line pb-8">
-        <Link href="/retos" className="label-xs mb-4.5 inline-block text-muted transition-colors hover:text-ink">
-          ← Retos
-        </Link>
-        <span className="label-xs mb-3.5 block">
-          {win ? "Reto completado" : "Tiempo cumplido"} · {skill?.name ?? "Habilidad"}
-        </span>
-        <h1 className="m-0 text-[52px] font-light leading-[0.95] tracking-tight sm:text-[72px]">{win ? "Lo lograste." : "Buen intento."}</h1>
-      </section>
-
-      <section className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-0">
-        <div className="min-w-0 lg:border-r lg:border-line lg:pr-14">
-          <p className="max-w-[560px] text-[17px] text-muted">
-            {win
-              ? `Tocas, dibujas o avanzas en ${skill?.name ?? "tu habilidad"} de verdad. Hace ${challenge.totalDays} días ni habías empezado. Eso es lo que hace la constancia.`
-              : `Eso también cuenta: ${completedDays} días más de práctica que el que nunca empezó. No lo cerramos como fallo; elige cómo seguir.`}
+      <ModeBackdrop />
+      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6 text-mode-ink">
+        <div className="mt-2 flex flex-col items-center text-center">
+          <span className="mb-4 flex size-[72px] items-center justify-center rounded-full bg-go-bg text-[var(--mode-bg)]">
+            <TrophyIcon />
+          </span>
+          <h1 className="m-0 text-[32px] font-bold leading-[1.15] tracking-tight">{win ? "¡Reto completado!" : "Buen intento."}</h1>
+          <p className="m-0 mt-1.5 text-[16px] text-mode-ink-muted">
+            {challenge.name} · {Math.min(completedDays, challenge.totalDays)} de {challenge.totalDays}
           </p>
+        </div>
 
-          <div className="label-xs mb-4 mt-8">{challenge.name}</div>
-          <div className="mb-8 flex items-center gap-4" aria-label={`${completedDays} de ${challenge.totalDays} días`}>
-            <DotDigits value={String(completedDays)} size={15} gap={6} ariaLabel={`${completedDays} días completados`} />
-            <span className="font-num text-[22px] text-muted">/</span>
-            <DotDigits value={String(challenge.totalDays)} size={15} gap={6} offColor="var(--line)" ariaLabel={`de ${challenge.totalDays} días`} />
-          </div>
-
-          <div aria-hidden="true" className="mb-8 grid gap-2" style={{ gridTemplateColumns: `repeat(${dotRowCount}, 1fr)` }}>
-            {Array.from({ length: dotRowCount }, (_, i) => (
-              <span key={i} className="aspect-square rounded-full" style={{ background: i < completedDays ? "var(--ink)" : "var(--line)" }} />
+        <Card tone="solid" className="p-6 sm:p-7">
+          <div className="grid gap-1.5" style={{ gridTemplateColumns: `repeat(${Math.min(15, cells)}, 1fr)` }} role="img" aria-label={`${completedDays} de ${challenge.totalDays} días`}>
+            {Array.from({ length: cells }, (_, i) => (
+              <span key={i} className="aspect-square rounded-[4px]" style={{ background: i < completedDays ? "var(--mode-bg)" : "var(--surface-muted)" }} />
             ))}
           </div>
 
+          <div className="mt-6 grid grid-cols-3 gap-2.5 text-center">
+            <StatTile value={formatMinutesLong(investedMin)} label="practicadas" />
+            <StatTile value={String(streak.best)} label="días seguidos" />
+            <StatTile value={`+${totalCoins}`} label="monedas" />
+          </div>
+
           {win && (
-            <div className="flex items-center gap-6 rounded-card border border-line p-7">
-              <Badge />
+            <div className="mt-5 flex items-center gap-3.5 rounded-card p-4" style={{ boxShadow: "inset 0 0 0 2px var(--card-solid-line)" }}>
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-[10px] text-white" style={{ background: "var(--mode-bg)" }}>
+                <FlagIcon />
+              </span>
               <div>
-                <div className="label-xs text-signal">Logro desbloqueado</div>
-                <div className="mt-0.5 text-[22px] tracking-tight">Primer reto completo</div>
-                <div className="font-num mt-1 text-[13px] text-muted">Completa un reto de principio a fin · +300 XP</div>
+                <div className="text-[13px] font-bold uppercase tracking-wide" style={{ color: "var(--mode-bg)" }}>
+                  Logro desbloqueado
+                </div>
+                <div className="text-[16px] font-bold" style={{ color: "var(--card-solid-ink)" }}>
+                  Reto de {challenge.totalDays} días completo
+                </div>
               </div>
             </div>
           )}
-        </div>
 
-        <div className="min-w-0 pt-9 lg:pt-0 lg:pl-14">
-          <div className="label-xs mb-1">Resumen</div>
-          <Fact k="Duración" v={`${challenge.totalDays} días`} />
-          <Fact k="Tiempo total" v={formatMinutesLong(investedMin)} />
-          <Fact k="Meta prevista" v={formatMinutesLong(plannedMin)} />
-          <Fact k="Promedio diario" v={`${avgMin} min`} />
-          <Fact k="Constancia" v={`${pctConstancy}%`} />
-          <Fact k="Racha máxima" v={`${streak.best} días`} />
-          <Fact k="Notas escritas" v={String(notesCount)} />
-          <Fact k="Fotos subidas" v={String(photosCount)} />
-          <Fact k="Monedas ganadas" v={`+${totalCoins}`} last />
+          <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-2 border-t pt-5 text-[13px] sm:grid-cols-3" style={{ borderColor: "var(--card-solid-line)" }}>
+            <Fact k="Duración" v={`${challenge.totalDays} días`} />
+            <Fact k="Meta prevista" v={formatMinutesLong(plannedMin)} />
+            <Fact k="Promedio diario" v={`${avgMin} min`} />
+            <Fact k="Constancia" v={`${pctConstancy}%`} />
+            <Fact k="Notas escritas" v={String(notesCount)} />
+            <Fact k="Fotos subidas" v={String(photosCount)} />
+          </div>
 
-          <div className="mt-9 flex flex-col gap-3">
+          <div className="mt-6 flex flex-col gap-2.5">
             {win ? (
               <>
-                <Button asChild size="default">
+                <Button asChild variant="dark" size="md">
                   <Link href="/retos/nuevo">Crear un reto nuevo</Link>
                 </Button>
-                <Button asChild variant="outline" size="default">
-                  <Link href={`/retos/${challenge.id}/galeria`}>Ver galería y diario</Link>
-                </Button>
-                <Button asChild variant="outline" size="default">
-                  <Link href="/retos">Volver a retos</Link>
-                </Button>
+                <div className="flex gap-2.5">
+                  <Button asChild variant="light" size="md" className="flex-1">
+                    <Link href={`/retos/${challenge.id}/galeria`}>Ver galería y diario</Link>
+                  </Button>
+                  <Button asChild variant="light" size="md" className="flex-1">
+                    <Link href="/retos">Volver a retos</Link>
+                  </Button>
+                </div>
               </>
             ) : (
               <>
-                <Button size="default" disabled={closing} onClick={() => router.push(`/retos/${challenge.id}`)}>
+                <Button variant="dark" size="md" disabled={closing} onClick={() => router.push(`/retos/${challenge.id}`)}>
                   Retomar el reto
                 </Button>
-                <Button asChild variant="outline" size="default">
-                  <Link href={`/retos/${challenge.id}`}>Ajustar la meta</Link>
-                </Button>
-                <Button variant="outline" size="default" disabled={closing} onClick={() => handleClose("abandoned")}>
-                  {closing ? "Cerrando…" : "Cerrar y guardar"}
-                </Button>
+                <div className="flex gap-2.5">
+                  <Button asChild variant="light" size="md" className="flex-1">
+                    <Link href={`/retos/${challenge.id}`}>Ajustar la meta</Link>
+                  </Button>
+                  <Button variant="light" size="md" className="flex-1" disabled={closing} onClick={() => handleClose("abandoned")}>
+                    {closing ? "Cerrando…" : "Cerrar y guardar"}
+                  </Button>
+                </div>
               </>
             )}
           </div>
-        </div>
-      </section>
+        </Card>
+        {skill && (
+          <p className="m-0 text-center text-[13px] text-mode-ink-muted">
+            Sigues aprendiendo {skill.name}. {win ? "Un reto más no te vendría mal." : "Vuelve cuando quieras retomarlo."}
+          </p>
+        )}
+      </div>
     </>
   );
 }
 
-/** Small dot-built badge glyph for the achievement box — kept in the same
- * hand-drawn-with-dots idiom as DotDigits/HourRuler rather than an emoji or
- * icon font, since the reference's own achievement icon is dot-matrix art
- * too (see design-reference/punto/png/PuntoRetoCierre.png). A simple filled
- * ring rather than reproducing that exact bespoke glyph bitmap, which isn't
- * part of lib/dotmatrix.ts's shared glyph table. */
-function Badge() {
-  const ring = [
-    "00111000",
-    "01000100",
-    "10000010",
-    "10000010",
-    "10000010",
-    "01000100",
-    "00111000",
-  ];
+function StatTile({ value, label }: { value: string; label: string }) {
   return (
-    <div className="grid shrink-0 gap-[3px]" style={{ gridTemplateColumns: "repeat(8, 7px)" }} aria-hidden="true">
-      {ring.flatMap((row, r) =>
-        row.split("").map((cell, c) => (
-          <span key={`${r}-${c}`} className="size-[7px] rounded-full" style={{ background: cell === "1" ? "var(--signal)" : "transparent" }} />
-        )),
-      )}
+    <div className="rounded-card p-3.5" style={{ background: "var(--surface-muted)" }}>
+      <div className="font-num text-[20px] font-extrabold leading-tight" style={{ color: "var(--card-solid-ink)" }}>
+        {value}
+      </div>
+      <div className="mt-0.5 text-[11.5px]" style={{ color: "var(--card-solid-muted)" }}>
+        {label}
+      </div>
     </div>
   );
 }
 
-function Fact({ k, v, last }: { k: string; v: string; last?: boolean }) {
+function Fact({ k, v }: { k: string; v: string }) {
   return (
-    <div className={`flex justify-between gap-3 py-3.5 ${last ? "" : "border-b border-line"}`}>
-      <span className="label-xs">{k}</span>
-      <span className="font-num text-[15px]">{v}</span>
+    <div className="flex items-baseline gap-1.5">
+      <span style={{ color: "var(--card-solid-muted)" }}>{k}:</span>
+      <span className="font-num font-semibold" style={{ color: "var(--card-solid-ink)" }}>
+        {v}
+      </span>
     </div>
   );
 }

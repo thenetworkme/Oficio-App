@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Chip } from "@/components/ui/chip";
+import { ModeBackdrop } from "@/components/layout/ModeBackdrop";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useAppData } from "@/lib/hooks/useAppData";
 import { useSound } from "@/lib/sound/SoundProvider";
@@ -19,7 +21,38 @@ import type { Challenge } from "@/lib/types";
 
 const TAG_OPTIONS = ["Técnica", "Teoría", "Repaso", "Proyecto", "Error", "Avance"];
 const MOOD_LABELS = ["", "Mal día", "Regular", "Bien", "Muy bien", "¡Genial!"];
+const DIFF_LABELS = ["", "Muy fácil", "Fácil", "Justa", "Difícil", "Muy difícil"];
 const PRESETS = [15, 30, 45, 60];
+
+function ChevronLeft() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M15 6l-6 6 6 6" />
+    </svg>
+  );
+}
+function ChevronRight() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M9 6l6 6-6 6" />
+    </svg>
+  );
+}
+function PlusIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="mb-2.5 block text-[13px] font-bold uppercase tracking-wide" style={{ color: "var(--card-solid-muted)" }}>
+      {children}
+    </span>
+  );
+}
 
 export default function RetoDiaPage() {
   const { id } = useParams<{ id: string }>();
@@ -151,96 +184,158 @@ export default function RetoDiaPage() {
   }
 
   if (!challenge || !loaded) {
-    return <p className="text-sm text-muted">Cargando día…</p>;
+    return (
+      <>
+        <ModeBackdrop />
+        <div className="flex flex-1 items-center justify-center py-20">
+          <span className="text-[15px] text-mode-ink-muted">Cargando día…</span>
+        </div>
+      </>
+    );
   }
 
   return (
     <>
-      <section className="flex flex-wrap items-end justify-between gap-6 border-b border-line pb-8">
+      <ModeBackdrop />
+      <div className="mx-auto flex w-full max-w-[680px] flex-col gap-5 text-mode-ink">
         <div>
-          <Link href={`/retos/${challenge.id}`} className="label-xs mb-4.5 inline-block text-muted transition-colors hover:text-ink">
-            ← {challenge.name}
+          <Link href={`/retos/${challenge.id}`} className="mb-2 inline-flex items-center gap-1 text-[14px]" style={{ color: "var(--mode-ink-muted)" }}>
+            <ChevronLeft />
+            {challenge.name}
           </Link>
-          <span className="label-xs mb-3.5 block">Reto · {challenge.name}</span>
-          <h1 className="m-0 text-[48px] font-light leading-[0.95] tracking-tight sm:text-[64px]">Día {dayNumber}.</h1>
-        </div>
-        <div className="flex items-center gap-3.5">
-          {dayNumber > 1 ? (
-            <Button asChild variant="outline" size="sm">
-              <Link href={`/retos/${challenge.id}/dia?day=${dayNumber - 1}`}>← Día {dayNumber - 1}</Link>
-            </Button>
-          ) : (
-            <Button variant="outline" size="sm" disabled>
-              ← Día {dayNumber - 1}
-            </Button>
-          )}
-          <span className="font-num text-[12px] text-muted">{formatShortDateEs(new Date(`${dayDateKey}T00:00:00`)).toUpperCase()}</span>
-          {dayNumber < todayDayNumber ? (
-            <Button asChild variant="outline" size="sm">
-              <Link href={`/retos/${challenge.id}/dia?day=${dayNumber + 1}`}>Día {dayNumber + 1} →</Link>
-            </Button>
-          ) : (
-            <Button variant="outline" size="sm" disabled>
-              Día {dayNumber + 1} →
-            </Button>
-          )}
-        </div>
-      </section>
-
-      <section className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-0">
-        <div className="flex min-w-0 flex-col gap-9 lg:border-r lg:border-line lg:pr-14">
-          <div>
-            <div className="label-xs flex items-center justify-between">
-              <span>Tiempo de hoy</span>
-              <span className="text-ink">{min} / {goal} min</span>
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h1 className="m-0 text-[30px] font-bold leading-[1.15] tracking-tight">Día {dayNumber}</h1>
+              <p className="m-0 mt-1 text-[15px]" style={{ color: "var(--mode-ink-muted)" }}>
+                {formatShortDateEs(new Date(`${dayDateKey}T00:00:00`))} · mínimo {goal} minutos
+              </p>
             </div>
-            <div className="my-4 flex gap-1">
+            <div className="flex items-center gap-2">
+              {dayNumber > 1 ? (
+                <Button asChild variant="onColor" size="iconSm">
+                  <Link href={`/retos/${challenge.id}/dia?day=${dayNumber - 1}`} aria-label={`Día ${dayNumber - 1}`}>
+                    <ChevronLeft />
+                  </Link>
+                </Button>
+              ) : (
+                <Button variant="onColor" size="iconSm" disabled aria-label="No hay día anterior">
+                  <ChevronLeft />
+                </Button>
+              )}
+              {dayNumber < todayDayNumber ? (
+                <Button asChild variant="onColor" size="iconSm">
+                  <Link href={`/retos/${challenge.id}/dia?day=${dayNumber + 1}`} aria-label={`Día ${dayNumber + 1}`}>
+                    <ChevronRight />
+                  </Link>
+                </Button>
+              ) : (
+                <Button variant="onColor" size="iconSm" disabled aria-label="No hay día siguiente">
+                  <ChevronRight />
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <Card tone="solid" className="flex flex-col gap-6 p-6">
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <SectionLabel>Tiempo de hoy</SectionLabel>
+              <span className="font-num text-[14px] font-bold" style={{ color: "var(--card-solid-ink)" }}>
+                {min} / {goal} min
+              </span>
+            </div>
+            <div className="mb-4 flex gap-1">
               {Array.from({ length: tickCount }, (_, i) => (
-                <span key={i} className="h-5.5 flex-1 rounded-sm" style={{ background: i < min ? (reached ? "var(--signal)" : "var(--ink)") : "var(--line)" }} />
+                <span
+                  key={i}
+                  className="h-5 flex-1 rounded-sm"
+                  style={{ background: i < min ? "var(--mode-bg)" : "var(--surface-muted)" }}
+                />
               ))}
             </div>
-            <div className="flex flex-wrap items-center gap-3.5">
-              <Stepper label="Restar 5 minutos" onClick={() => { setMin((m) => Math.max(0, m - 5)); setSaved(false); }}>
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                aria-label="Restar 5 minutos"
+                onClick={() => {
+                  setMin((m) => Math.max(0, m - 5));
+                  setSaved(false);
+                }}
+                className="flex size-9 shrink-0 items-center justify-center rounded-full text-[18px] font-bold leading-none"
+                style={{ background: "var(--surface-muted)", color: "var(--surface-muted-ink)" }}
+              >
                 −
-              </Stepper>
-              <Stepper label="Sumar 5 minutos" onClick={() => { setMin((m) => m + 5); setSaved(false); }}>
+              </button>
+              <button
+                type="button"
+                aria-label="Sumar 5 minutos"
+                onClick={() => {
+                  setMin((m) => m + 5);
+                  setSaved(false);
+                }}
+                className="flex size-9 shrink-0 items-center justify-center rounded-full text-[18px] font-bold leading-none"
+                style={{ background: "var(--surface-muted)", color: "var(--surface-muted-ink)" }}
+              >
                 +
-              </Stepper>
+              </button>
               <div className="flex flex-wrap gap-2">
                 {PRESETS.map((v) => (
-                  <Chip key={v} pressed={min === v} onClick={() => { setMin(v); setSaved(false); }}>
+                  <Chip
+                    key={v}
+                    pressed={min === v}
+                    onClick={() => {
+                      setMin(v);
+                      setSaved(false);
+                    }}
+                  >
                     {v} min
                   </Chip>
                 ))}
               </div>
               {isToday && timerMinutesAvailable > 0 && (
-                <Button type="button" variant="outline" size="sm" onClick={() => { setMin(timerMinutesAvailable); setSaved(false); }}>
+                <Button
+                  type="button"
+                  variant="light"
+                  size="sm"
+                  onClick={() => {
+                    setMin(timerMinutesAvailable);
+                    setSaved(false);
+                  }}
+                >
                   Traer del Tomate ({formatMinutesLong(timerMinutesAvailable)})
                 </Button>
               )}
             </div>
-            <p className="font-num mt-4 text-[13px]" style={{ color: reached ? "var(--ink)" : "var(--muted)" }}>
+            <p className="font-num mt-3 text-[13px] font-semibold" style={{ color: reached ? "var(--mode-bg)" : "var(--card-solid-muted)" }}>
               {reached ? "✓ Meta del día cumplida. Hoy ya cuenta para tu racha." : `Te faltan ${goal - min} min para cumplir la meta de ${goal} min.`}
             </p>
           </div>
 
-          <div>
-            <span className="label-xs mb-3 block">¿Qué aprendí hoy?</span>
+          <div className="border-t pt-6" style={{ borderColor: "var(--card-solid-line)" }}>
+            <SectionLabel>¿Qué aprendí hoy?</SectionLabel>
             <textarea
-              rows={5}
+              rows={4}
               value={note}
-              onChange={(e) => { setNote(e.target.value); setSaved(false); }}
+              onChange={(e) => {
+                setNote(e.target.value);
+                setSaved(false);
+              }}
               placeholder="Escribe lo que descubriste, lo que te costó y qué probarás mañana…"
-              className="box-border w-full resize-y rounded-card border border-line bg-transparent px-4 py-3.5 text-[16px] leading-snug text-ink placeholder:text-muted focus:border-signal focus:outline-none"
+              className="w-full resize-y rounded-button border-0 bg-surface-muted px-3.5 py-2.5 text-[15px] leading-snug text-surface-muted-ink outline-none placeholder:text-surface-muted-ink placeholder:opacity-60 focus:ring-2 focus:ring-[var(--mode-bg)]"
             />
-            <div className="font-num mt-1.5 text-right text-xs text-muted">{note.length} caracteres</div>
-            <div className="mt-2 flex flex-wrap items-center gap-2">
-              <span className="label-xs mr-1">Etiquetas</span>
+            <div className="mt-1 text-right text-[12px]" style={{ color: "var(--card-solid-muted)" }}>
+              {note.length} caracteres
+            </div>
+            <div className="mt-2 flex flex-wrap gap-2">
               {TAG_OPTIONS.map((t) => (
                 <Chip
                   key={t}
                   pressed={tags.includes(t)}
-                  onClick={() => { setTags((prev) => (prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t])); setSaved(false); }}
+                  onClick={() => {
+                    setTags((prev) => (prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]));
+                    setSaved(false);
+                  }}
                 >
                   {t}
                 </Chip>
@@ -248,107 +343,123 @@ export default function RetoDiaPage() {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-10">
-            <div className="flex flex-col gap-3">
-              <span className="label-xs">¿Cómo te fue?</span>
-              <div className="flex items-center gap-3.5">
+          <div className="flex flex-wrap gap-8 border-t pt-6" style={{ borderColor: "var(--card-solid-line)" }}>
+            <div className="flex flex-col gap-2">
+              <SectionLabel>¿Cómo te fue?</SectionLabel>
+              <div className="flex items-center gap-2.5">
                 {[1, 2, 3, 4, 5].map((n) => (
-                  <RatingDot key={n} active={mood !== null && n <= mood} label={MOOD_LABELS[n]} onClick={() => { setMood(n); setSaved(false); }} />
+                  <RatingDot
+                    key={n}
+                    active={mood !== null && n <= mood}
+                    label={MOOD_LABELS[n]}
+                    onClick={() => {
+                      setMood(n);
+                      setSaved(false);
+                    }}
+                  />
                 ))}
               </div>
-              <span className="font-num text-[12px] text-muted">{mood ? MOOD_LABELS[mood] : "Sin elegir"}</span>
+              <span className="text-[12px]" style={{ color: "var(--card-solid-muted)" }}>
+                {mood ? MOOD_LABELS[mood] : "Sin elegir"}
+              </span>
             </div>
-            <div className="flex flex-col gap-3">
-              <span className="label-xs">Dificultad</span>
-              <div className="flex items-center gap-3.5">
+            <div className="flex flex-col gap-2">
+              <SectionLabel>Dificultad</SectionLabel>
+              <div className="flex items-center gap-2.5">
                 {[1, 2, 3, 4, 5].map((n) => (
-                  <RatingDot key={n} active={difficulty !== null && n <= difficulty} label={`Dificultad ${n}`} onClick={() => { setDifficulty(n); setSaved(false); }} />
+                  <RatingDot
+                    key={n}
+                    active={difficulty !== null && n <= difficulty}
+                    label={`Dificultad ${n}`}
+                    onClick={() => {
+                      setDifficulty(n);
+                      setSaved(false);
+                    }}
+                  />
                 ))}
               </div>
-              <span className="font-num text-[12px] text-muted">{difficulty ? DIFF_LABELS[difficulty] : "1 = fácil · 5 = muy difícil"}</span>
+              <span className="text-[12px]" style={{ color: "var(--card-solid-muted)" }}>
+                {difficulty ? DIFF_LABELS[difficulty] : "1 = fácil · 5 = muy difícil"}
+              </span>
             </div>
           </div>
-        </div>
 
-        <div className="min-w-0 pt-9 lg:pt-0 lg:pl-14">
-          <div className="flex items-center justify-between">
-            <span className="label-xs">Fotos del día</span>
-            <span className="label-xs text-ink">
-              {photos.length} / {MAX_PHOTOS_PER_DAY}
-            </span>
-          </div>
-          <div className="mt-4.5 grid grid-cols-2 gap-3.5">
-            {photos.map((url) => (
-              <div key={url} className="relative">
-                {/* Firebase Storage download URLs aren't in next.config's image domains, and these
-                    are small user-uploaded thumbnails in a scrolling grid, not an LCP candidate. */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={url} alt="Foto del día" className="h-[130px] w-full rounded-card border border-line object-cover" />
+          <div className="border-t pt-6" style={{ borderColor: "var(--card-solid-line)" }}>
+            <div className="mb-2.5 flex items-center justify-between">
+              <SectionLabel>Foto o audio</SectionLabel>
+              <span className="text-[13px] font-semibold" style={{ color: "var(--card-solid-ink)" }}>
+                {photos.length} / {MAX_PHOTOS_PER_DAY}
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {photos.map((url) => (
+                <div key={url} className="relative">
+                  {/* Firebase Storage download URLs aren't in next.config's image domains, and these
+                      are small user-uploaded thumbnails in a scrolling grid, not an LCP candidate. */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={url} alt="Foto del día" className="size-[92px] rounded-card object-cover" />
+                  <button
+                    type="button"
+                    aria-label="Quitar foto"
+                    onClick={() => handleRemovePhoto(url)}
+                    className="absolute -right-2 -top-2 flex size-6 items-center justify-center rounded-full text-[13px]"
+                    style={{ background: "var(--card-solid)", color: "var(--card-solid-ink)", boxShadow: "0 0 0 1px var(--card-solid-line)" }}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+              {photos.length < MAX_PHOTOS_PER_DAY && (
                 <button
                   type="button"
-                  aria-label="Quitar foto"
-                  onClick={() => handleRemovePhoto(url)}
-                  className="absolute -right-2 -top-2 flex size-7 items-center justify-center rounded-full border border-line bg-paper text-ink"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  aria-label="Añadir foto"
+                  className="flex size-[92px] flex-col items-center justify-center gap-1 rounded-card border-2 border-dashed text-[11px]"
+                  style={{ borderColor: "var(--card-solid-line)", color: "var(--card-solid-muted)" }}
                 >
-                  ×
+                  <PlusIcon />
+                  {uploading ? "Subiendo…" : "Añadir"}
                 </button>
-              </div>
-            ))}
-            {photos.length < MAX_PHOTOS_PER_DAY && (
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={uploading}
-                className="hov flex h-[130px] flex-col items-center justify-center gap-1.5 rounded-card border border-dashed border-border text-[13px] text-muted"
-              >
-                <span className="text-[28px] leading-none">+</span>
-                {uploading ? "Subiendo…" : "Añadir"}
-              </button>
-            )}
+              )}
+            </div>
+            <p className="mt-3 text-[13px]" style={{ color: "var(--card-solid-muted)" }}>
+              Arrastra imágenes aquí. Se guardan con la fecha del día.
+            </p>
+            <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleFiles(e.target.files)} />
           </div>
-          <p className="mt-3.5 text-[13px] text-muted">Arrastra imágenes aquí. Se guardan con la fecha del día.</p>
-          <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleFiles(e.target.files)} />
 
-          <div className="label-xs mb-1 mt-8">Resumen del día</div>
-          <Fact k="Tiempo" v={`${min} min${reached ? " · objetivo cumplido" : ` · faltan ${Math.max(0, goal - min)}`}`} highlight={reached} />
-          <Fact k="Etiquetas" v={`${tags.length} ${tags.length === 1 ? "etiqueta" : "etiquetas"}`} />
-          <Fact k="Recompensa" v={`+${coins} monedas · +${xp} XP`} />
-          <Fact k="Fotos y nota" v={`${photos.length} foto(s) + ${note.length > 0 ? "nota" : "sin nota"}`} last />
-
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button onClick={handleSave} disabled={saving} size="default">
-              {saving ? "Guardando…" : saved ? "¡Día guardado!" : `Guardar día ${dayNumber}`}
-            </Button>
-            <Button asChild variant="outline" size="default">
-              <Link href={`/retos/${challenge.id}`}>Cancelar</Link>
-            </Button>
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t pt-6" style={{ borderColor: "var(--card-solid-line)" }}>
+            <span className="text-[13px]" style={{ color: "var(--card-solid-muted)" }}>
+              Recompensa: +{coins} monedas · +{xp} XP
+            </span>
+            <div className="flex gap-2.5">
+              <Button asChild variant="light" size="md">
+                <Link href={`/retos/${challenge.id}`}>Cancelar</Link>
+              </Button>
+              <Button variant="dark" size="md" onClick={handleSave} disabled={saving}>
+                {saving ? "Guardando…" : saved ? "¡Día guardado!" : `Guardar día ${dayNumber}`}
+              </Button>
+            </div>
           </div>
           {saved && (
-            <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-              <p className="font-num m-0 text-[13px] text-muted">Sumaste {coins} monedas y {xp} XP. Sigues aprendiendo {skill?.name ?? ""}.</p>
-              <button type="button" onClick={() => router.push(`/retos/${challenge.id}`)} className="label-xs shrink-0 text-ink underline underline-offset-2">
+            <div className="-mt-3 flex flex-wrap items-center justify-between gap-3">
+              <p className="m-0 text-[13px]" style={{ color: "var(--card-solid-muted)" }}>
+                Sumaste {coins} monedas y {xp} XP. Sigues aprendiendo {skill?.name ?? ""}.
+              </p>
+              <button
+                type="button"
+                onClick={() => router.push(`/retos/${challenge.id}`)}
+                className="shrink-0 text-[13px] font-semibold underline underline-offset-2"
+                style={{ color: "var(--mode-bg)" }}
+              >
                 Volver al tablero →
               </button>
             </div>
           )}
-        </div>
-      </section>
+        </Card>
+      </div>
     </>
-  );
-}
-
-const DIFF_LABELS = ["", "Muy fácil", "Fácil", "Justa", "Difícil", "Muy difícil"];
-
-function Stepper({ label, onClick, children }: { label: string; onClick: () => void; children: React.ReactNode }) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      onClick={onClick}
-      className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border text-[20px] leading-none transition-colors hover:border-border-hover hover:bg-card"
-    >
-      {children}
-    </button>
   );
 }
 
@@ -359,19 +470,8 @@ function RatingDot({ active, label, onClick }: { active: boolean; label: string;
       aria-pressed={active}
       aria-label={label}
       onClick={onClick}
-      className="size-8.5 rounded-full border transition-colors"
-      style={{ background: active ? "var(--ink)" : "transparent", borderColor: active ? "var(--ink)" : "var(--border)" }}
+      className="size-7 rounded-full transition-colors"
+      style={{ background: active ? "var(--mode-bg)" : "var(--surface-muted)" }}
     />
-  );
-}
-
-function Fact({ k, v, last, highlight }: { k: string; v: string; last?: boolean; highlight?: boolean }) {
-  return (
-    <div className={`flex justify-between gap-3 py-4 ${last ? "" : "border-b border-line"}`}>
-      <span className="label-xs">{k}</span>
-      <span className="font-num text-[15px]" style={{ color: highlight ? "var(--signal)" : "var(--ink)" }}>
-        {v}
-      </span>
-    </div>
   );
 }
