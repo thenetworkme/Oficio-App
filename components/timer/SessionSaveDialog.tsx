@@ -1,23 +1,22 @@
 "use client";
 
+import { Check } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
-import { DotDigits } from "@/components/ui/DotDigits";
+import { ProgressBar } from "@/components/ui/progress-bar";
 import { Mascot } from "@/components/mascot/Mascot";
 import { usePet } from "@/lib/hooks/usePet";
 import { useSound } from "@/lib/sound/SoundProvider";
 import { formatMinutesLong } from "@/lib/format";
 
+// Reference's `.chp` mood pills (PomoCierre.dc.html: Difícil/Normal/Fluido/
+// Excelente, 4 options) — this app's quality scale is 1-5, so these 5
+// labels are the closest honest mapping onto that same pill-button
+// treatment rather than dropping a rating level to match the reference's
+// count exactly.
 const QUALITY_LABELS = ["Disperso", "Costó enfocarse", "Normal", "Buen enfoque", "En flow"];
-
-/** "H:MM" for DotDigits (which only accepts digits/':'/'.'). */
-function formatHM(totalMinutes: number): string {
-  const m = Math.max(0, Math.round(totalMinutes));
-  const h = Math.floor(m / 60);
-  const r = m % 60;
-  return `${h}:${String(r).padStart(2, "0")}`;
-}
 
 /**
  * "Cierre de sesión de práctica" (PuntoCierre.dc.html): merges the quality
@@ -94,41 +93,58 @@ export function SessionSaveDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent showClose={!gains} aria-describedby={undefined} className="max-w-[560px]">
+      {/* DialogContent's own frame (components/ui/dialog.tsx) stays the
+          default neutral --card/--line surface — it's a shared Phase-1-
+          adjacent primitive this phase doesn't touch, and its close button's
+          colors are fixed to that neutral surface. The reference's full-bleed
+          colored page is instead evoked by an INSET solid --mode-focus block
+          (every pendingSave here is a completed FOCUS period, see
+          store/timer-store.ts's completeFocusPeriod — mode is never
+          short/long when this dialog opens), so the close "×" always sits on
+          a safe, already-correct-contrast neutral corner.
+
+          NOTE: this is a plain SOLID var(--mode-focus) fill, not
+          Card tone="tint" — tone="tint" is a translucent white OVERLAY
+          (rgba(255,255,255,.1)) meant to sit on an ancestor that already
+          paints --mode-bg solid (like the Temporizador page's own root).
+          Nothing here paints that solid red underneath, so tone="tint" was
+          first tried and rendered as a near-invisible white-on-white block
+          with unreadable white text in light mode — caught via a real-
+          Chromium screenshot during this phase's verification. */}
+      <DialogContent showClose={!gains} aria-describedby={undefined} className="max-w-[560px] p-5 sm:p-6">
         {!gains ? (
-          <div className="flex flex-col gap-6">
-            <div>
-              <span className="label-xs">Sesión terminada · {skillLabel}</span>
-              <DialogTitle className="m-0 mt-2 text-[32px] font-light tracking-tight">Buen trabajo</DialogTitle>
-            </div>
-
-            <div>
-              <span className="label-xs mb-3 block">Tiempo registrado</span>
-              <div className="overflow-x-auto">
-                <DotDigits value={formatHM(durationMin)} size={14} gap={6} ariaLabel={formatMinutesLong(durationMin)} />
+          <div className="flex flex-col gap-5">
+            <div
+              style={{ background: "var(--mode-focus)", color: "var(--mode-ink)" } as React.CSSProperties}
+              className="flex flex-col items-center gap-1 rounded-card px-6 py-7 text-center"
+            >
+              <div className="mb-2 flex size-12 items-center justify-center rounded-full bg-mode-ink text-[var(--mode-focus)]">
+                <Check size={24} aria-hidden="true" strokeWidth={3} />
               </div>
+              <DialogTitle className="m-0 text-[26px] font-bold tracking-tight text-mode-ink">Sesión completada</DialogTitle>
+              <p className="m-0 text-[15px] text-mode-ink-muted">
+                {formatMinutesLong(durationMin)} de {skillLabel}. Buen trabajo.
+              </p>
             </div>
 
             <div>
-              <span className="label-xs mb-3 block">¿Cómo fue tu enfoque?</span>
-              <div role="group" aria-label="¿Qué tan enfocado estuviste?" className="flex flex-wrap items-center gap-3">
+              <span className="label-xs mb-3 block">¿Cómo te fue?</span>
+              <div role="group" aria-label="¿Qué tan enfocado estuviste?" className="flex flex-wrap gap-2">
                 {[1, 2, 3, 4, 5].map((q) => (
                   <button
                     key={q}
                     type="button"
                     aria-pressed={quality === q}
-                    aria-label={QUALITY_LABELS[q - 1]}
                     onClick={() => setQuality(q)}
-                    className="size-9 rounded-full border transition-colors"
+                    className="rounded-chip px-3.5 py-2 text-[13px] font-semibold transition-colors"
                     style={{
-                      background: quality === q ? "var(--signal)" : "transparent",
-                      borderColor: quality === q ? "var(--signal)" : "var(--border)",
+                      background: quality === q ? "var(--flat-dark)" : "var(--surface-muted)",
+                      color: quality === q ? "var(--flat-dark-ink)" : "var(--surface-muted-ink)",
                     }}
-                  />
+                  >
+                    {QUALITY_LABELS[q - 1]}
+                  </button>
                 ))}
-                <span className="font-num ml-2 text-[12px] text-muted">
-                  {QUALITY_LABELS[quality - 1]} · {quality} de 5
-                </span>
               </div>
             </div>
 
@@ -137,67 +153,53 @@ export function SessionSaveDialog({
               <Input id="note" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Ej: autenticación con JWT" />
             </div>
 
-            <div className="flex flex-wrap justify-end gap-3">
-              <button
-                type="button"
-                onClick={onDiscard}
-                className="inline-flex min-h-[52px] items-center rounded-button border border-border px-5 font-mono text-[12px] uppercase tracking-[0.12em] transition-colors hover:border-border-hover hover:bg-card"
-              >
-                Descartar
-              </button>
-              <button
-                type="button"
-                disabled={saving}
-                onClick={handleSave}
-                className="inline-flex min-h-[52px] items-center rounded-button border border-signal bg-signal px-6 font-mono text-[12px] font-medium uppercase tracking-[0.12em] text-ink-solid transition-colors hover:brightness-110 disabled:pointer-events-none disabled:opacity-60"
-              >
+            <div className="flex flex-wrap gap-2.5">
+              <Button variant="dark" size="md" disabled={saving} onClick={handleSave} className="flex-1">
                 {saving ? "Guardando…" : "Guardar sesión"}
-              </button>
+              </Button>
+              <Button variant="light" size="md" onClick={onDiscard}>
+                Descartar
+              </Button>
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-start gap-5">
-            <span className="label-xs">Tomate completado</span>
-            <DialogTitle className="m-0 text-[36px] font-light leading-[1] tracking-tight">
-              ¡Eso es
-              <br />
-              oficio!
-            </DialogTitle>
-            <Mascot size={140} mood="celebrate" hat={equipped.hat} cape={equipped.cape} acc={equipped.acc} bg={equipped.bg} className="self-center" />
-            <div className="flex flex-wrap gap-3">
-              <div className="rounded-card border border-line bg-card px-4 py-2.5">
-                <div className="font-num text-[24px] font-medium leading-none">+{formatMinutesLong(durationMin)}</div>
-                <span className="label-xs">a {skillLabel}</span>
-              </div>
-              <div className="rounded-card border border-signal px-4 py-2.5 text-ink">
-                <div className="font-num text-[24px] font-medium leading-none text-signal">+{gains.coins} $</div>
-                <span className="label-xs">monedas</span>
-              </div>
-              <div className="rounded-card border border-line bg-card px-4 py-2.5">
-                <div className="font-num text-[24px] font-medium leading-none">+{gains.xp} XP</div>
-                <span className="label-xs">nivel {level}</span>
+          <div className="flex flex-col gap-5">
+            <div
+              style={{ background: "var(--mode-focus)", color: "var(--mode-ink)" } as React.CSSProperties}
+              className="flex flex-col items-center gap-3 rounded-card px-6 py-7 text-center"
+            >
+              <span className="text-[14px] font-semibold text-mode-ink-muted">Tomate completado</span>
+              <DialogTitle className="m-0 text-[28px] font-bold leading-[1.1] tracking-tight text-mode-ink">¡Eso es oficio!</DialogTitle>
+              <Mascot size={120} mood="celebrate" hat={equipped.hat} cape={equipped.cape} acc={equipped.acc} bg={equipped.bg} />
+              <div className="grid w-full grid-cols-3 gap-2.5">
+                <div className="rounded-card bg-black/15 px-3 py-3 text-center">
+                  <div className="font-num text-[22px] font-extrabold leading-none text-mode-ink">+{gains.xp}</div>
+                  <span className="text-[12px] text-mode-ink-muted">XP ganados</span>
+                </div>
+                <div className="rounded-card bg-black/15 px-3 py-3 text-center">
+                  <div className="font-num text-[22px] font-extrabold leading-none text-mode-ink">+{gains.coins}</div>
+                  <span className="text-[12px] text-mode-ink-muted">monedas</span>
+                </div>
+                <div className="rounded-card bg-black/15 px-3 py-3 text-center">
+                  <div className="font-num text-[22px] font-extrabold leading-none text-mode-ink">{formatMinutesLong(durationMin)}</div>
+                  <span className="text-[12px] text-mode-ink-muted">a {skillLabel}</span>
+                </div>
               </div>
             </div>
-            <div className="flex w-full flex-col gap-1.5">
-              <div className="flex justify-between">
-                <span className="text-[14px]">Nv. {level}</span>
-                <span className="font-num text-[14px] text-muted">
+
+            <div className="flex flex-col gap-1.5">
+              <div className="flex justify-between text-[14px]">
+                <span className="font-semibold text-card-solid-ink">Nv. {level}</span>
+                <span className="font-num text-card-solid-muted">
                   {xpIntoLevel} / {xpForNext} XP
                 </span>
               </div>
-              <div className="h-2 w-full overflow-hidden rounded-chip bg-line">
-                <div className="h-full rounded-chip bg-signal transition-[width]" style={{ width: `${xpPct}%` }} />
-              </div>
+              <ProgressBar pct={xpPct} color="var(--flat-dark)" trackColor="var(--surface-muted)" height={8} ariaLabel={`Nivel ${level}: ${xpIntoLevel} de ${xpForNext} XP`} />
             </div>
-            <div className="flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={() => handleClose(false)}
-                className="inline-flex min-h-[52px] items-center rounded-button border border-signal bg-signal px-5 font-mono text-[12px] font-medium uppercase tracking-[0.12em] text-ink-solid transition-colors hover:brightness-110"
-              >
-                Cerrar
-              </button>
-            </div>
+
+            <Button variant="dark" size="md" onClick={() => handleClose(false)}>
+              Cerrar
+            </Button>
           </div>
         )}
       </DialogContent>

@@ -5,7 +5,8 @@ import { Coffee } from "lucide-react";
 import { useState } from "react";
 import { formatStopwatchClock, MIN_STOPWATCH_MS } from "@/lib/stopwatch";
 import { BreakNotifyInline } from "@/components/notifications/BreakNotifyInline";
-import { DotDigits } from "@/components/ui/DotDigits";
+import { Button } from "@/components/ui/button";
+import { Input, Label } from "@/components/ui/input";
 import { ExitChip, SoundControl } from "@/components/timer/FullscreenTimer";
 
 /**
@@ -22,11 +23,11 @@ import { ExitChip, SoundControl } from "@/components/timer/FullscreenTimer";
  * Focus/Break/Zen from `mode`/`zen` — so this follows the shared store
  * automatically, with no view-state duplicated here.
  *
- * There's no direct Punto reference screen for "Sesión libre" (every
- * PuntoFoco/PuntoFocoZen/PuntoPausa mockup is Pomodoro-only) — this
- * extrapolates the same visual language (centered DotDigits count-up clock,
- * same pill button/chip treatment, same flat chrome) rather than inventing
- * a new one.
+ * There's no direct Pomodoro reference screen for "Sesión libre" either
+ * (every PomoFoco/PomoFocoZen/PomoPausa mockup is Pomodoro-only) — this
+ * extrapolates the same visual language (giant plain count-up number
+ * directly on --mode-bg, same "go"/onColor button treatment) rather than
+ * inventing a new one. See the final report for this judgment call.
  */
 
 const LIBRE_BREAK_TIPS = ["Estira las piernas y los hombros", "Hidrátate", "Aléjate de la pantalla un momento"];
@@ -62,19 +63,18 @@ export function BreakSettingsControl({
         aria-expanded={open}
         aria-label="Recordatorio de descanso"
         title="Recordatorio de descanso"
-        className="flex size-9 items-center justify-center rounded-chip border border-border text-ink transition-colors"
+        className="flex size-9 items-center justify-center rounded-chip border transition-colors"
+        style={{ background: "var(--card-tint)", color: "var(--mode-ink)", borderColor: "var(--card-tint-border)" }}
       >
         <Coffee size={17} aria-hidden="true" />
       </button>
       {open && (
-        <div className="absolute right-0 top-[calc(100%+10px)] z-10 flex w-[280px] flex-col gap-3.5 rounded-card border border-line bg-card p-4.5 text-ink">
+        <div className="absolute right-0 top-[calc(100%+10px)] z-10 flex w-[280px] flex-col gap-3.5 rounded-card border-0 bg-card-solid p-4.5 text-card-solid-ink shadow-[0_8px_24px_rgb(0_0_0_/_25%)]">
           <span className="label-xs">Recordatorio de descanso</span>
           <BreakNotifyInline />
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="fs-break-min" className="text-[13px] text-muted">
-              Avisar cada (min, 0 = desactivado)
-            </label>
-            <input
+            <Label htmlFor="fs-break-min">Avisar cada (min, 0 = desactivado)</Label>
+            <Input
               id="fs-break-min"
               type="number"
               min={0}
@@ -85,14 +85,11 @@ export function BreakSettingsControl({
                 const v = Math.max(0, Math.round(Number(e.target.value) || 0));
                 onChange(v > 0 ? v : null, breakLengthMin);
               }}
-              className="w-full min-h-10 border-0 border-b border-border bg-transparent px-0 pb-2 pt-1 text-[15px] text-ink focus:border-signal focus:outline-none"
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="fs-break-length" className="text-[13px] text-muted">
-              Duración del descanso (min)
-            </label>
-            <input
+            <Label htmlFor="fs-break-length">Duración del descanso (min)</Label>
+            <Input
               id="fs-break-length"
               type="number"
               min={1}
@@ -104,7 +101,6 @@ export function BreakSettingsControl({
                 const v = Math.max(1, Math.round(Number(e.target.value) || 1));
                 onChange(breakReminderMin, v);
               }}
-              className="w-full min-h-10 border-0 border-b border-border bg-transparent px-0 pb-2 pt-1 text-[15px] text-ink focus:border-signal focus:outline-none disabled:opacity-50"
             />
           </div>
         </div>
@@ -164,56 +160,53 @@ export function FullscreenStopwatch({
             document.getElementById("fs-timer-exit")?.focus();
           }}
           aria-label={onBreak ? "Pantalla completa de descanso de sesión libre" : "Pantalla completa de sesión libre"}
-          className="fixed inset-0 z-50 flex flex-col gap-8 overflow-y-auto px-6 py-7 text-ink outline-none sm:px-12"
-          style={{ background: "var(--paper)" }}
+          className="fixed inset-0 z-50 flex flex-col gap-8 overflow-y-auto px-6 py-7 text-mode-ink outline-none sm:px-12"
+          // Same portal-breaks-CSS-inheritance fix as FullscreenTimer (see
+          // its own comment): --mode-bg must be redeclared here rather than
+          // only read, since Radix portals this content to document.body,
+          // outside the colored page root. "Sesión libre" has no modes of
+          // its own, so this is always the resting focus-red, matching the
+          // Temporizador page's own choice for the Libre tab.
+          style={{ "--mode-bg": "var(--mode-focus)", background: "var(--mode-bg)" } as React.CSSProperties}
         >
           {onBreak ? (
             <LibreBreakView remainingMs={breakRemainingMs} onEndBreakNow={onEndBreakNow} onStop={onStop} onExit={onExit} />
           ) : (
             <>
               <div className="flex flex-wrap items-center gap-5">
-                <span className="label-xs">Sesión libre</span>
+                <span className="text-[14px] font-semibold text-mode-ink">Sesión libre</span>
                 <span className="flex-1" />
                 <BreakSettingsControl breakReminderMin={breakReminderMin} breakLengthMin={breakLengthMin} onChange={onChangeBreakSettings} />
                 <SoundControl />
-                <ExitChip onClick={onExit}>Salir ✕</ExitChip>
+                <ExitChip onClick={onExit}>Salir de pantalla completa</ExitChip>
               </div>
 
-              <main className="flex flex-1 flex-col items-center justify-center gap-7">
-                <span className="label-xs rounded-chip px-4.5 py-1.5 text-[13px]" style={{ background: "var(--ink)", color: "var(--paper)" }}>
+              <main className="flex flex-1 flex-col items-center justify-center gap-5">
+                {intention && <p className="m-0 max-w-[900px] text-center text-[18px] font-semibold sm:text-[20px]">{intention}</p>}
+                <div
+                  role="timer"
+                  aria-label="Tiempo transcurrido"
+                  className="font-sans text-[88px] font-bold leading-none tracking-tight tabular-nums sm:text-[150px] md:text-[220px]"
+                >
+                  {formatStopwatchClock(elapsedMs)}
+                </div>
+                <span className="text-[14px] text-mode-ink-muted">
                   {running ? "En práctica" : hasTime ? "En pausa" : "Lista para empezar"}
                 </span>
-                <div className="overflow-x-auto">
-                  <DotDigits value={formatStopwatchClock(elapsedMs)} size={38} gap={9} running={running} ariaLabel="Tiempo transcurrido" />
-                </div>
-                {intention && (
-                  <div className="max-w-[900px] rounded-card border border-signal px-6 py-3 text-center text-[18px] font-medium text-ink sm:text-[22px]">
-                    {intention}
-                  </div>
-                )}
                 {tooShortNotice && (
-                  <div className="max-w-[560px] rounded-card border border-line bg-card px-5 py-3 text-center text-[14px] text-muted">
+                  <div className="max-w-[560px] rounded-card bg-black/15 px-5 py-3 text-center text-[14px] text-mode-ink">
                     Practica al menos {MIN_STOPWATCH_MS / 60_000} minuto para poder guardar la sesión. Tu tiempo sigue contando.
                   </div>
                 )}
               </main>
 
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                <button
-                  type="button"
-                  onClick={onToggleRunning}
-                  className="inline-flex min-h-[64px] min-w-[220px] items-center justify-center rounded-button border border-signal bg-signal text-[16px] font-medium uppercase tracking-[0.1em] text-ink-solid transition-colors hover:brightness-110"
-                >
-                  {running ? "Pausa" : hasTime ? "Reanudar" : "Empezar"}
-                </button>
-                <button
-                  type="button"
-                  onClick={onStop}
-                  disabled={!hasTime}
-                  className="inline-flex min-h-[64px] items-center rounded-button border border-border px-6 font-mono text-[13px] uppercase tracking-[0.1em] transition-colors hover:border-border-hover hover:bg-card disabled:pointer-events-none disabled:opacity-50"
-                >
+              <div className="flex flex-wrap items-center justify-center gap-2.5">
+                <Button variant="go" size="lg" pressed={running} onClick={onToggleRunning}>
+                  {running ? "Pausar" : hasTime ? "Reanudar" : "Empezar"}
+                </Button>
+                <Button variant="onColor" size="md" onClick={onStop} disabled={!hasTime}>
                   Detener
-                </button>
+                </Button>
               </div>
             </>
           )}
@@ -246,21 +239,25 @@ function LibreBreakView({
   return (
     <>
       <div className="flex flex-wrap items-center gap-5">
-        <span className="label-xs rounded-chip border px-3.5 py-1.5" style={{ borderColor: "var(--border)" }}>
+        <span className="inline-flex items-center rounded-chip border border-card-tint-border bg-card-tint px-3.5 py-1.5 text-[13px] font-semibold text-mode-ink">
           Descanso de sesión libre
         </span>
         <span className="flex-1" />
         <SoundControl />
-        <ExitChip onClick={onExit}>Salir ✕</ExitChip>
+        <ExitChip onClick={onExit}>Salir de pantalla completa</ExitChip>
       </div>
 
       <main className="flex flex-1 flex-wrap items-center justify-center gap-12">
-        <div className="flex max-w-[600px] flex-1 flex-col items-start gap-6">
-          <span className="label-xs">Tómate un momento</span>
-          <div className="overflow-x-auto">
-            <DotDigits value={formatStopwatchClock(remainingMs)} size={26} gap={9} ariaLabel="Tiempo de descanso restante" />
+        <div className="flex max-w-[600px] flex-1 flex-col items-center gap-5 text-center">
+          <span className="text-[20px] font-semibold text-mode-ink">Tómate un momento</span>
+          <div
+            role="timer"
+            aria-label="Tiempo de descanso restante"
+            className="font-sans text-[72px] font-bold leading-none tracking-tight tabular-nums text-mode-ink sm:text-[110px]"
+          >
+            {formatStopwatchClock(remainingMs)}
           </div>
-          <div className="flex w-full max-w-[560px] flex-col">
+          <div className="mt-3 flex w-full max-w-[420px] flex-col rounded-card bg-card-solid text-card-solid-ink">
             {LIBRE_BREAK_TIPS.map((label, i) => {
               const on = checked.includes(i);
               return (
@@ -269,10 +266,14 @@ function LibreBreakView({
                   type="button"
                   aria-pressed={on}
                   onClick={() => setChecked((c) => (on ? c.filter((x) => x !== i) : c.concat(i)))}
-                  className="flex min-h-[52px] items-center gap-3.5 border-t border-line text-left text-[16px] transition-colors"
-                  style={{ color: on ? "var(--ink)" : "var(--muted)" }}
+                  className="flex min-h-[52px] items-center gap-3.5 border-t border-card-solid-line px-4 text-left text-[15px] font-medium transition-colors first:border-t-0"
+                  style={{ color: on ? "var(--mode-bg)" : "var(--card-solid-ink)" }}
                 >
-                  <i aria-hidden="true" className="block size-4 shrink-0 rounded-full border" style={{ background: on ? "var(--signal)" : "transparent", borderColor: on ? "var(--signal)" : "var(--border)" }} />
+                  <i
+                    aria-hidden="true"
+                    className="block size-4 shrink-0 rounded-full border"
+                    style={{ background: on ? "var(--mode-bg)" : "transparent", borderColor: on ? "var(--mode-bg)" : "var(--card-solid-line)" }}
+                  />
                   {label}
                 </button>
               );
@@ -281,17 +282,13 @@ function LibreBreakView({
         </div>
       </main>
 
-      <div className="flex flex-wrap items-center justify-end gap-3">
-        <button type="button" onClick={onStop} className="inline-flex min-h-[56px] items-center rounded-button border border-border px-5 font-mono text-[13px] uppercase tracking-[0.1em] transition-colors hover:border-border-hover hover:bg-card">
+      <div className="flex flex-wrap items-center justify-end gap-2.5">
+        <Button variant="onColor" size="md" onClick={onStop}>
           Detener sesión
-        </button>
-        <button
-          type="button"
-          onClick={onEndBreakNow}
-          className="inline-flex min-h-[56px] min-w-[220px] items-center justify-center rounded-button border border-signal bg-signal px-5 text-[14px] font-medium uppercase tracking-[0.1em] text-ink-solid transition-colors hover:brightness-110"
-        >
+        </Button>
+        <Button variant="go" size="md" onClick={onEndBreakNow}>
           Terminar descanso ahora
-        </button>
+        </Button>
       </div>
     </>
   );
