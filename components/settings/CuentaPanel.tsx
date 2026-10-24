@@ -11,13 +11,17 @@ import { exportUserDataToCsv } from "@/lib/csv-export";
 // Ajustes tabs (Perfil / Apariencia / Cuenta) match
 // design-reference/punto/html/PuntoAjustes.dc.html's own split. Real logic
 // (password change, CSV export, sign-out, delete-account) is carried over
-// unchanged from the previous PerfilPanel aside — only the layout/skin is
-// new, styled as flat hairline rows (`.row` in the reference) instead of
-// the old neo-brutalist sidebar cards.
+// unchanged — only the layout/skin is new: flat hairline rows, now living
+// inside the "Pomodoro" white `tone="solid"` Ajustes panel (see
+// app/(app)/ajustes/page.tsx), so the divider color below reads
+// `--card-solid-line` (the token that surface's own hairlines use) rather
+// than the legacy `--line`, which sits almost exactly on top of
+// `--card-solid`'s dark-mode value and was effectively invisible there.
 //
-// The reference also lists a "Conectar calendario" row — there is no real
-// calendar-integration logic anywhere in this codebase, so it's
-// intentionally left out rather than faked.
+// Neither this reference ("Punto") nor the current "Pomodoro" one has a
+// calendar-integration feature with real logic behind it in this
+// codebase, so, same as before, no "Conectar calendario" row is faked
+// here.
 
 function ChangePasswordDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
   const { changePassword } = useAuth();
@@ -145,11 +149,11 @@ function Row({
   return (
     <div
       className="grid grid-cols-[1fr_auto] items-center gap-6 border-t py-6 first:border-t-0"
-      style={{ borderColor: danger ? "color-mix(in srgb, var(--danger) 35%, transparent)" : "var(--line)" }}
+      style={{ borderColor: danger ? "color-mix(in srgb, var(--danger) 35%, transparent)" : "var(--card-solid-line)" }}
     >
       <div className="flex flex-col gap-1">
-        <span className={danger ? "text-[20px] font-medium text-danger" : "text-[20px] font-medium"}>{title}</span>
-        <span className="text-sm text-muted">{description}</span>
+        <span className={danger ? "text-[18px] font-medium text-danger" : "text-[18px] font-medium"}>{title}</span>
+        <span className="text-sm text-card-solid-muted">{description}</span>
       </div>
       {children}
     </div>
@@ -174,7 +178,7 @@ export function CuentaPanel() {
   if (!user) return null;
 
   return (
-    <div className="max-w-[820px]">
+    <div className="flex flex-col">
       {hasPasswordProvider() ? (
         <Row title="Contraseña" description="Cambia la contraseña de tu cuenta">
           <Button variant="outline" size="sm" onClick={() => setPasswordDialogOpen(true)}>
