@@ -4,13 +4,18 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AuthShell } from "@/components/auth/AuthShell";
+import { GoogleMark } from "@/components/auth/GoogleMark";
 import { Button } from "@/components/ui/button";
-import { Input, Label } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/auth/AuthProvider";
 
-const STRENGTH_COLORS = ["var(--danger)", "var(--danger)", "var(--ink)", "var(--ink)"];
-const STRENGTH_LABELS = ["", "Débil", "Regular", "Buena", "Fuerte"];
+// Fixed semantic strength colors, matching
+// design-reference/pomodoro/html/PomoSignup.dc.html's own literal palette
+// (`cols` in its inline script) — not theme tokens, same category as
+// --go-bg/--flat-dark: a small weak/ok/strong signal that should read the
+// same regardless of light/dark mode.
+const STRENGTH_COLORS = ["#e5e5e5", "#d9534f", "#e8a33d", "#6aa84f", "#2e8b57"];
+const STRENGTH_LABELS = ["Escribe una contraseña", "Débil", "Media", "Fuerte", "Muy fuerte"];
 
 function passwordStrength(p: string): number {
   if (p.length === 0) return 0;
@@ -75,11 +80,40 @@ export default function RegistroPage() {
   }
 
   return (
-    <AuthShell eyebrow="Crear cuenta" title={<>Empieza<br />tu cuenta</>}>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-7">
+    <AuthShell
+      title="Crea tu cuenta"
+      tagline="Empieza a contar tus horas hoy mismo."
+      footer={
+        <>
+          ¿Ya tienes cuenta?{" "}
+          <Link href="/login" className="font-bold underline underline-offset-2">
+            Entrar
+          </Link>
+        </>
+      }
+    >
+      <Button
+        type="button"
+        variant="outline"
+        size="md"
+        onClick={handleGoogle}
+        disabled={submitting}
+        className="w-full gap-2.5 border-2 border-card-solid-line bg-transparent font-sans text-[15px] font-semibold normal-case tracking-normal text-card-solid-ink hover:bg-surface-muted"
+      >
+        <GoogleMark />
+        {submitting ? "Conectando…" : "Registrarme con Google"}
+      </Button>
+
+      <div className="my-5 flex items-center gap-3 text-[13px] text-card-solid-muted" aria-hidden="true">
+        <span className="h-px flex-1 bg-card-solid-line" />
+        o con tu correo
+        <span className="h-px flex-1 bg-card-solid-line" />
+      </div>
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <label className="block">
-          <Label htmlFor="name">Nombre</Label>
-          <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Cómo te llamas" className="mt-2" />
+          <span className="mb-1.5 block text-[14px] font-bold text-card-solid-muted">Nombre</span>
+          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="¿Cómo te llamas?" />
           {nameErr && (
             <span role="alert" className="mt-1.5 block text-[13px] font-medium text-danger">
               {nameErr}
@@ -88,8 +122,8 @@ export default function RegistroPage() {
         </label>
 
         <label className="block">
-          <Label htmlFor="email">Correo</Label>
-          <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@correo.com" className="mt-2" />
+          <span className="mb-1.5 block text-[14px] font-bold text-card-solid-muted">Correo</span>
+          <Input type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@correo.com" />
           {emailErr && (
             <span role="alert" className="mt-1.5 block text-[13px] font-medium text-danger">
               {emailErr}
@@ -98,25 +132,37 @@ export default function RegistroPage() {
         </label>
 
         <label className="block">
-          <Label htmlFor="password">Contraseña</Label>
-          <Input
-            id="password"
-            type={show ? "text" : "password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Mínimo 8 caracteres"
-            className="mt-2"
-          />
-          <div className="mt-3 flex items-center gap-1.5">
-            {[1, 2, 3, 4].map((n) => (
-              <span key={n} className="h-[5px] flex-1 rounded-chip" style={{ background: n <= strength ? STRENGTH_COLORS[strength - 1] : "var(--line)" }} />
-            ))}
-            <span className="label-xs min-w-[76px] text-right">{STRENGTH_LABELS[strength]}</span>
-          </div>
-          <div className="mt-2 flex items-center justify-between gap-3">
-            <button type="button" onClick={() => setShow((s) => !s)} aria-pressed={show} className="label-xs normal-case tracking-normal text-muted underline decoration-border underline-offset-2 transition-colors hover:text-ink">
-              {show ? "Ocultar contraseña" : "Mostrar contraseña"}
+          <span className="mb-1.5 block text-[14px] font-bold text-card-solid-muted">Contraseña</span>
+          <div className="relative">
+            <Input
+              type={show ? "text" : "password"}
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Mínimo 8 caracteres"
+              className="pr-[68px]"
+            />
+            <button
+              type="button"
+              onClick={() => setShow((s) => !s)}
+              aria-pressed={show}
+              className="absolute right-1.5 top-1.5 h-8 rounded-button bg-transparent px-2 text-[13px] font-bold text-card-solid-muted transition-colors hover:text-card-solid-ink"
+            >
+              {show ? "Ocultar" : "Mostrar"}
             </button>
+          </div>
+          <div className="mt-2 flex items-center gap-1.5" role="img" aria-label={`Fortaleza ${STRENGTH_LABELS[strength]}`}>
+            {[1, 2, 3, 4].map((n) => (
+              <span
+                key={n}
+                aria-hidden="true"
+                className="h-[5px] flex-1 rounded-chip transition-colors"
+                style={{ background: n <= strength ? STRENGTH_COLORS[strength] : "var(--card-solid-line)" }}
+              />
+            ))}
+          </div>
+          <div className="mt-1.5 text-[13px] text-card-solid-muted">
+            Seguridad: <b className="text-card-solid-ink">{STRENGTH_LABELS[strength]}</b>
           </div>
           {passErr && (
             <span role="alert" className="mt-1.5 block text-[13px] font-medium text-danger">
@@ -125,12 +171,31 @@ export default function RegistroPage() {
           )}
         </label>
 
-        <div className="flex items-start gap-3.5">
-          <Switch checked={terms} onCheckedChange={setTerms} label="Aceptar términos" className="mt-0.5" />
-          <span className="text-[14px] text-muted">Acepto los términos y la política de privacidad.</span>
-        </div>
+        <button
+          type="button"
+          role="checkbox"
+          aria-checked={terms}
+          onClick={() => setTerms((t) => !t)}
+          className="flex items-start gap-2.5 border-0 bg-transparent p-0 text-left text-[14px] text-card-solid-muted"
+        >
+          <span
+            aria-hidden="true"
+            className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-[4px] border-2 text-white transition-colors"
+            style={{
+              background: terms ? "var(--flat-dark)" : "transparent",
+              borderColor: terms ? "var(--flat-dark)" : "var(--card-solid-line)",
+            }}
+          >
+            {terms && (
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12l5 5 9-10" />
+              </svg>
+            )}
+          </span>
+          Acepto los términos y la política de privacidad.
+        </button>
         {termsErr && (
-          <span role="alert" className="-mt-4 block text-[13px] font-medium text-danger">
+          <span role="alert" className="-mt-2 block text-[13px] font-medium text-danger">
             {termsErr}
           </span>
         )}
@@ -141,26 +206,16 @@ export default function RegistroPage() {
           </p>
         )}
 
-        <Button type="submit" disabled={submitting} className="w-full">
+        <Button
+          type="submit"
+          variant="dark"
+          size="md"
+          disabled={submitting}
+          className="mt-1 w-full font-sans text-[15px] font-semibold normal-case tracking-normal"
+        >
           {submitting ? "Creando cuenta…" : "Crear cuenta"}
         </Button>
-
-        <div className="flex items-center gap-4" aria-hidden="true">
-          <span className="h-px flex-1 bg-line" />
-          <span className="label-xs">o con correo</span>
-          <span className="h-px flex-1 bg-line" />
-        </div>
-        <Button type="button" variant="outline" onClick={handleGoogle} disabled={submitting} className="w-full">
-          {submitting ? "Conectando…" : "Registrarme con Google"}
-        </Button>
       </form>
-
-      <p className="m-0 mt-9 text-muted">
-        ¿Ya tienes cuenta?{" "}
-        <Link href="/login" className="text-ink underline decoration-border underline-offset-2 hover:decoration-ink">
-          Iniciar sesión
-        </Link>
-      </p>
     </AuthShell>
   );
 }

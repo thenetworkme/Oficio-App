@@ -4,8 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input, Label } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/auth/AuthProvider";
 
 type Status = "form" | "sending" | "sent" | "error";
@@ -47,14 +46,20 @@ export default function RecuperarPage() {
   }
 
   return (
-    <AuthShell eyebrow="Recuperar acceso" title="Restablece tu contraseña">
+    <AuthShell
+      title="Recupera tu acceso"
+      tagline="Te enviamos un enlace para crear una contraseña nueva."
+      footer={
+        <Link href="/login" className="font-bold underline underline-offset-2">
+          Volver a entrar
+        </Link>
+      }
+    >
       {(status === "form" || status === "sending" || status === "error") && (
-        <form onSubmit={handleSend} className="flex flex-col gap-7">
-          <p className="m-0 text-muted">Escribe el correo de tu cuenta y te enviaremos un enlace para crear una contraseña nueva.</p>
-
+        <form onSubmit={handleSend} className="flex flex-col gap-4">
           <label className="block">
-            <Label htmlFor="email">Correo</Label>
-            <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@correo.com" className="mt-2" />
+            <span className="mb-1.5 block text-[14px] font-bold text-card-solid-muted">Correo</span>
+            <Input type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@correo.com" />
             {emailErr && (
               <span role="alert" className="mt-1.5 block text-[13px] font-medium text-danger">
                 {emailErr}
@@ -68,38 +73,44 @@ export default function RecuperarPage() {
             </p>
           )}
 
-          <Button type="submit" disabled={status === "sending"} className="w-full">
+          <Button
+            type="submit"
+            variant="dark"
+            size="md"
+            disabled={status === "sending"}
+            className="w-full font-sans text-[15px] font-semibold normal-case tracking-normal"
+          >
             {status === "sending" ? "Enviando…" : "Enviar enlace"}
           </Button>
         </form>
       )}
 
       {status === "sent" && (
-        <div className="flex flex-col gap-6">
-          <Card className="flex items-center gap-4.5 p-7">
-            <span
-              aria-hidden="true"
-              className="size-3.5 shrink-0 rounded-full bg-signal"
-              style={{ boxShadow: "0 0 0 6px color-mix(in srgb, var(--signal) 20%, transparent)" }}
-            />
-            <div>
-              <div className="text-[18px] text-ink">Revisa tu correo</div>
-              <div className="mt-0.5 text-[14px] text-muted">
-                Enviamos el enlace a <span className="text-ink">{email}</span>. Vence en 30 minutos.
-              </div>
-            </div>
-          </Card>
-          <Button type="button" variant="outline" onClick={handleResend} className="w-full">
+        <div className="flex flex-col items-center py-1 text-center">
+          <span
+            aria-hidden="true"
+            className="flex size-14 items-center justify-center rounded-full"
+            style={{ background: "var(--flat-dark)", color: "var(--flat-dark-ink)" }}
+          >
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12l5 5 9-10" />
+            </svg>
+          </span>
+          <div className="mt-4 text-[20px] font-bold text-card-solid-ink">Revisa tu correo</div>
+          <p className="m-0 mt-2 text-[14px] text-card-solid-muted">
+            Enviamos el enlace a <b className="text-card-solid-ink">{email}</b>. Puede tardar un minuto.
+          </p>
+          <Button
+            type="button"
+            variant="light"
+            size="md"
+            onClick={handleResend}
+            className="mt-5 font-sans text-[15px] font-semibold normal-case tracking-normal"
+          >
             Reenviar correo
           </Button>
         </div>
       )}
-
-      <p className="m-0 mt-9">
-        <Link href="/login" className="text-muted underline decoration-border underline-offset-2 transition-colors hover:text-ink">
-          ← Volver a iniciar sesión
-        </Link>
-      </p>
     </AuthShell>
   );
 }

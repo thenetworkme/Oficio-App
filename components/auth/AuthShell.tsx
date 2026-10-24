@@ -1,50 +1,48 @@
-import { DotDigits } from "@/components/ui/DotDigits";
+import { Card } from "@/components/ui/card";
 import { Wordmark } from "@/components/layout/TopNav";
 
 /**
- * Shared split-screen shell for /login, /registro and /recuperar — matches
- * PuntoLogin/PuntoSignup/PuntoRecuperar.dc.html: a left panel with the
- * wordmark, the "10000" dot-matrix hero and the tagline, and a right panel
- * with the actual form (eyebrow label + big thin headline + children).
+ * Shared centered shell for /login, /registro and /recuperar — matches
+ * design-reference/pomodoro/html/PomoLogin.dc.html (and PomoSignup/
+ * PomoRecuperar, which share the exact same chrome): full-bleed
+ * `--mode-bg` page, a small centered wordmark, a centered white headline +
+ * muted tagline sitting directly on the colored background, then a
+ * centered `tone="solid"` card (the reference's `.wc`) holding the actual
+ * form, with an optional link row below the card.
  *
- * The three screens' left panel is pixel-identical in the reference (same
- * dots, same copy, same footer label), so it lives here once instead of
- * being duplicated across three page files.
+ * Replaces the old "Punto" split-screen left/right layout entirely — this
+ * is a structural change (Pomodoro has no split panel, no dot-matrix hero),
+ * not a reskin, so the previous DotDigits-based left panel is gone.
  */
 export function AuthShell({
-  eyebrow,
   title,
+  tagline,
   children,
+  footer,
 }: {
-  eyebrow: string;
   title: React.ReactNode;
+  tagline?: React.ReactNode;
   children: React.ReactNode;
+  footer?: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen flex-col lg:flex-row">
-      <aside className="hidden flex-col gap-10 border-line px-14 py-9 lg:flex lg:w-1/2 lg:border-r">
-        <Wordmark />
-        <div className="flex flex-1 flex-col justify-center gap-10">
-          <DotDigits value="10000" size={14} gap={7} ariaLabel="10.000 horas" className="max-w-[600px]" />
-          <p className="m-0 max-w-[560px] text-[40px] font-light leading-[1.1] tracking-tighter text-ink">
-            horas para dominar
-            <br />
-            cualquier habilidad.
-          </p>
-        </div>
-        <span className="label-xs">Registra tu práctica · cada hora cuenta</span>
-      </aside>
+    <div className="flex min-h-screen flex-col bg-mode-bg text-mode-ink">
+      <header className="mx-auto flex h-[60px] w-full max-w-[620px] items-center px-5">
+        <Wordmark className="text-mode-ink" />
+      </header>
 
-      <section className="flex flex-1 flex-col justify-center px-5 py-10 sm:px-12 lg:px-16">
-        <div className="mx-auto w-full max-w-[440px]">
-          <div className="mb-10 lg:hidden">
-            <Wordmark />
-          </div>
-          <span className="label-xs mb-3.5 block">{eyebrow}</span>
-          <h1 className="m-0 mb-9 text-[40px] font-light leading-[1] tracking-tighter text-ink sm:text-[56px]">{title}</h1>
-          {children}
+      <main className="mx-auto w-full max-w-[620px] flex-1 px-5 pb-20">
+        <div className="mb-6 mt-9 text-center sm:mt-10">
+          <h1 className="m-0 text-[28px] font-bold leading-[1.15] tracking-tight sm:text-[32px]">{title}</h1>
+          {tagline && <p className="m-0 mt-1.5 text-[15px] text-mode-ink-muted sm:text-[16px]">{tagline}</p>}
         </div>
-      </section>
+
+        <Card tone="solid" className="mx-auto w-full max-w-[420px] p-6 sm:p-7">
+          {children}
+        </Card>
+
+        {footer && <div className="mt-5 text-center text-[15px] text-mode-ink-muted">{footer}</div>}
+      </main>
     </div>
   );
 }

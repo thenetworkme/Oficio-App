@@ -4,9 +4,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AuthShell } from "@/components/auth/AuthShell";
+import { GoogleMark } from "@/components/auth/GoogleMark";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
 import { useAuth } from "@/lib/auth/AuthProvider";
 
 export default function LoginPage() {
@@ -15,12 +15,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
-  // Presentational only — mirrors PuntoLogin.dc.html's "Mantener la sesión
-  // iniciada" toggle, which is likewise local UI state with no backend
-  // effect in the reference mockup. Wiring real Firebase Auth session
-  // persistence to it would be an auth *behavior* change, out of scope for
-  // this visual-only rebuild.
-  const [remember, setRemember] = useState(true);
   const [tried, setTried] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -63,10 +57,39 @@ export default function LoginPage() {
   }
 
   return (
-    <AuthShell eyebrow="Acceso" title={<>Bienvenido<br />de nuevo</>}>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-7">
+    <AuthShell
+      title="Entra a tu oficio"
+      tagline="10.000 horas, una sesión a la vez."
+      footer={
+        <>
+          ¿Aún no tienes cuenta?{" "}
+          <Link href="/registro" className="font-bold underline underline-offset-2">
+            Créala gratis
+          </Link>
+        </>
+      }
+    >
+      <Button
+        type="button"
+        variant="outline"
+        size="md"
+        onClick={handleGoogle}
+        disabled={submitting}
+        className="w-full gap-2.5 border-2 border-card-solid-line bg-transparent font-sans text-[15px] font-semibold normal-case tracking-normal text-card-solid-ink hover:bg-surface-muted"
+      >
+        <GoogleMark />
+        {submitting ? "Conectando…" : "Continuar con Google"}
+      </Button>
+
+      <div className="my-5 flex items-center gap-3 text-[13px] text-card-solid-muted" aria-hidden="true">
+        <span className="h-px flex-1 bg-card-solid-line" />
+        o con tu correo
+        <span className="h-px flex-1 bg-card-solid-line" />
+      </div>
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <label className="block">
-          <span className="label-xs mb-2 block">Correo</span>
+          <span className="mb-1.5 block text-[14px] font-bold text-card-solid-muted">Correo</span>
           <Input type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@correo.com" />
           {emailErr && (
             <span role="alert" className="mt-1.5 block text-[13px] font-medium text-danger">
@@ -76,18 +99,25 @@ export default function LoginPage() {
         </label>
 
         <label className="block">
-          <span className="label-xs mb-2 flex items-center justify-between gap-3">
-            <span>Contraseña</span>
-            <span className="flex items-center gap-3 normal-case tracking-normal">
-              <button type="button" onClick={() => setShow((s) => !s)} aria-pressed={show} className="text-muted underline decoration-border underline-offset-2 transition-colors hover:text-ink">
-                {show ? "Ocultar" : "Mostrar"}
-              </button>
-              <Link href="/recuperar" className="text-muted underline decoration-border underline-offset-2 transition-colors hover:text-ink">
-                ¿Olvidaste tu contraseña?
-              </Link>
-            </span>
-          </span>
-          <Input type={show ? "text" : "password"} autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
+          <span className="mb-1.5 block text-[14px] font-bold text-card-solid-muted">Contraseña</span>
+          <div className="relative">
+            <Input
+              type={show ? "text" : "password"}
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Tu contraseña"
+              className="pr-[68px]"
+            />
+            <button
+              type="button"
+              onClick={() => setShow((s) => !s)}
+              aria-pressed={show}
+              className="absolute right-1.5 top-1.5 h-8 rounded-button bg-transparent px-2 text-[13px] font-bold text-card-solid-muted transition-colors hover:text-card-solid-ink"
+            >
+              {show ? "Ocultar" : "Mostrar"}
+            </button>
+          </div>
           {passErr && (
             <span role="alert" className="mt-1.5 block text-[13px] font-medium text-danger">
               {passErr}
@@ -95,9 +125,10 @@ export default function LoginPage() {
           )}
         </label>
 
-        <div className="flex items-center gap-3.5">
-          <Switch checked={remember} onCheckedChange={setRemember} label="Mantener la sesión iniciada" />
-          <span className="text-muted">Mantener la sesión iniciada</span>
+        <div className="-mt-1 flex justify-end">
+          <Link href="/recuperar" className="text-[13.5px] text-card-solid-muted underline underline-offset-2 hover:text-card-solid-ink">
+            ¿Olvidaste tu contraseña?
+          </Link>
         </div>
 
         {error && (
@@ -106,20 +137,16 @@ export default function LoginPage() {
           </p>
         )}
 
-        <Button type="submit" disabled={submitting} className="w-full">
+        <Button
+          type="submit"
+          variant="dark"
+          size="md"
+          disabled={submitting}
+          className="mt-1 w-full font-sans text-[15px] font-semibold normal-case tracking-normal"
+        >
           {submitting ? "Entrando…" : "Entrar"}
         </Button>
-        <Button type="button" variant="outline" onClick={handleGoogle} disabled={submitting} className="w-full">
-          {submitting ? "Conectando…" : "Continuar con Google"}
-        </Button>
       </form>
-
-      <p className="m-0 mt-9 text-muted">
-        ¿Aún no tienes cuenta?{" "}
-        <Link href="/registro" className="text-ink underline decoration-border underline-offset-2 hover:decoration-ink">
-          Crear cuenta
-        </Link>
-      </p>
     </AuthShell>
   );
 }
