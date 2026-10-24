@@ -108,8 +108,8 @@
  *   --card-solid / --card-solid-ink /
  *   --card-solid-muted / --card-solid-line      the actual "white card" surface
  *                                                 (reference's `.wc`) + its text
- *                                                 tones — THIS is the one real
- *                                                 light/dark pair, see below
+ *                                                 tones — fixed in both themes,
+ *                                                 see below
  *   --surface-muted / --surface-muted-ink /
  *   --surface-muted-hover                       the flat light-gray "filled"
  *                                                 family — text inputs (`.fld`),
@@ -146,20 +146,27 @@
  * wiring lands, `--mode-bg` simply stays at its focus-red default
  * everywhere, which is also the reference's own default/resting state.
  *
- * ## Why light/dark mode ONLY touches --card-solid (not --mode-bg)
+ * ## Why NONE of the Pomodoro tokens flip for dark mode (not even --card-solid)
  *
- * The reference has no dark-mode screenshot (same situation the "Punto"
- * light palette was in). I chose to keep --mode-focus/--mode-short/
- * --mode-long IDENTICAL in both themes rather than darkening them for a
- * "true dark mode": all three are already mid-dark, fully saturated hues
- * (lightness roughly 40-45%), dark enough to carry white text (see
- * --mode-ink below) without any adjustment, and darkening long/short
- * further risked pushing them uncomfortably close to black/losing their
- * hue identity. --card-solid is the opposite case — nothing about "a
- * white card" is inherently dark-safe, so it gets a real, invented
- * dark-mode value (a near-black surface a couple of steps brighter than
- * --paper, with light warm-gray text) — see its definition below for the
- * exact numbers and the light-mode block for the reference's own values.
+ * The reference has no dark-mode screenshot at all — every one of its 24
+ * screens is the one light palette (confirmed: no `prefers-color-scheme`,
+ * no dark variant, anywhere in design-reference/pomodoro/html/). An
+ * earlier pass of this redesign invented a dark-mode variant for
+ * --card-solid/--surface-muted/--switch-off anyway (a near-black "white
+ * card" surface, reasoning it the same way a normal app's surface would
+ * flip) — but that produced cards that read as flatly wrong against the
+ * reference (confirmed directly: screens that should look like the
+ * reference's white-card-on-red instead rendered as a near-black card on
+ * red once dark mode was active). The Pomodoro look IS the reference's
+ * look, in every theme state — exactly like --mode-focus/--mode-short/
+ * --mode-long are already pinned identical in both themes below. So
+ * --card-solid/--card-solid-ink/--card-solid-muted/--card-solid-line,
+ * --surface-muted/--surface-muted-ink/--surface-muted-hover, and
+ * --switch-off are now declared ONCE, in :root only, at the reference's
+ * literal values, and are NOT redeclared under [data-theme="light"] —
+ * the dark/light/system toggle still exists and still fully works for
+ * every legacy (--paper/--card/--ink/--muted/--line/--border) surface,
+ * it just no longer touches these Pomodoro-specific tokens at all.
  *
  * ## Why --flat-dark / --switch-off don't flip for dark mode
  *
@@ -299,29 +306,25 @@
   --card-tint-border: rgb(255 255 255 / 18%);
 
   /* Solid "white card" (reference's `.wc`) — real content surfaces (task
-   * rows, the Ajustes panel, stat tiles). Dark-mode values are my own
-   * invention (no dark screenshot exists in the reference — same
-   * situation the "Punto" light palette was in before it): a near-black
-   * surface a couple of steps brighter than --paper (so it still reads
-   * as "the raised card"), with warm-neutral light text. Mirrors the
-   * light block's card/ink/muted/line relationships 1:1, inverted. */
-  --card-solid: #202024;
-  --card-solid-ink: #e9e9e6;
-  --card-solid-muted: #96969c;
-  --card-solid-line: #34343a;
+   * rows, the Ajustes panel, stat tiles). The reference's own literal
+   * values, fixed in both themes — see "Why NONE of the Pomodoro tokens
+   * flip for dark mode" above. */
+  --card-solid: #ffffff;
+  --card-solid-ink: #555555;
+  --card-solid-muted: #aaaaaa;
+  --card-solid-line: #eeeeee;
 
   /* The flat light-gray "filled" family — text inputs (`.fld`), the flat
    * gray button (`.btnl`) and unselected chips (`.chp`) are all the SAME
-   * surface in the reference. Flips for dark mode too (it's a
-   * card-like surface, same reasoning as --card-solid), otherwise a
-   * light-gray input/chip would float oddly bright on a dark card. */
-  --surface-muted: #34343a;
-  --surface-muted-ink: #c7c7c4;
-  --surface-muted-hover: #3e3e45;
+   * surface in the reference. Fixed in both themes, same reasoning as
+   * --card-solid above. */
+  --surface-muted: #efefef;
+  --surface-muted-ink: #666666;
+  --surface-muted-hover: #e5e5e5;
 
   /* Toggle track "off" state (reference's `.sw[aria-checked="false"]`).
    * Fixed-appearance, not theme-dependent — see the comment above. */
-  --switch-off: #48484e;
+  --switch-off: #d4d4d4;
 
   /* The primary "go" button (reference's `.go`): ALWAYS a near-white
    * surface, in BOTH themes — NOT the same as --card-solid. Its text is
@@ -357,20 +360,6 @@
   --border-hover: #b0b0b6;
   --shadow: transparent;
   --danger: #d6431e;
-
-  /* "Pomodoro" card/surface tokens — light mode is the reference's own
-   * literal values (design-reference/pomodoro/README.md "Tokens" +
-   * PomoTimer.dc.html's `.wc`/`.fld`/`.btnl`/`.sw` rules). */
-  --card-solid: #ffffff;
-  --card-solid-ink: #555555;
-  --card-solid-muted: #aaaaaa;
-  --card-solid-line: #eeeeee;
-
-  --surface-muted: #efefef;
-  --surface-muted-ink: #666666;
-  --surface-muted-hover: #e5e5e5;
-
-  --switch-off: #d4d4d4;
 }
 
 @theme inline {
@@ -478,18 +467,27 @@
     color-scheme: light;
   }
 
+  /* Tabular-figure numeric display. Used to be Geist Mono (cheap way to
+   * get tabular digits for the "Punto" dot-matrix-adjacent look) — the
+   * Pomodoro reference uses Geist Sans everywhere, including every
+   * number on every screen (confirmed: no monospace font anywhere in
+   * design-reference/pomodoro/html/), so this now stays on the body's
+   * own --font-sans and gets tabular figures via font-variant-numeric
+   * instead of switching typeface. */
   .font-num {
-    font-family: var(--font-mono), monospace;
+    font-family: var(--font-sans), system-ui, sans-serif;
+    font-variant-numeric: tabular-nums;
   }
 
-  /* Geist Mono, uppercase, wide-tracked label — matches
-   * design-reference/punto's `.lab` convention (used for section labels,
-   * nav tabs, chip/button text, data captions). */
+  /* Small uppercase section-eyebrow label (section headings, nav tabs,
+   * data captions) — used to be Geist Mono, matching "Punto"'s `.lab`
+   * convention; switched to Geist Sans for the same reason as .font-num
+   * above (the Pomodoro reference has no monospace anywhere). */
   .label-xs {
-    font-family: var(--font-mono), monospace;
-    font-weight: 500;
+    font-family: var(--font-sans), system-ui, sans-serif;
+    font-weight: 600;
     font-size: 11px;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--muted);
   }
