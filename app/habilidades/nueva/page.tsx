@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Chip } from "@/components/ui/chip";
 import { Input, Label } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Wordmark } from "@/components/layout/TopNav";
@@ -24,7 +26,10 @@ import { createReminder } from "@/lib/firestore/reminders";
 // shape) but presenting them as one disabled-look swatch would be confusing,
 // so this picker is temporarily reduced to confirming the skill's single
 // signal-colored dot — a known, called-out regression until skill color
-// gets its own proper multi-hue treatment in a later phase.
+// gets its own proper multi-hue treatment in a later phase. "Pomodoro" pass:
+// still true (still out of this phase's scope — lib/skill-color.ts is
+// business logic, not touched), just restyled to sit in the reference's
+// 5-swatch-row slot as a single swatch button instead of a plain dot.
 const COLOR_OPTIONS = [{ id: "accent", name: "Acento", hex: "var(--signal)" }];
 const GOAL_OPTIONS = [1000, 5000, 10000];
 const DAILY_OPTIONS = [30, 60, 90, 120, 180, 240];
@@ -92,68 +97,77 @@ export default function NewSkillPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-6 py-6 sm:px-10">
-        <Wordmark />
-        <Link href="/" className="label-xs min-h-11 inline-flex items-center">
+    <div className="flex min-h-screen flex-col" style={{ background: "var(--mode-bg)" }}>
+      <header className="flex flex-wrap items-center justify-between gap-3 px-6 py-6 sm:px-10">
+        <Wordmark className="text-mode-ink" />
+        <Link
+          href="/"
+          className="label-xs inline-flex min-h-9 items-center rounded-[4px] border border-card-tint-border bg-card-tint px-3 text-mode-ink transition-colors hover:bg-white/30"
+        >
           Cancelar y volver al panel
         </Link>
       </header>
 
-      <main className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-8 px-6 py-10 sm:px-10">
+      <main className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-8 px-6 py-6 sm:px-10">
         <ol aria-label="Pasos" className="m-0 grid list-none grid-cols-4 gap-3 p-0">
           {STEP_LABELS.map((label, i) => (
             <li key={label} className="flex flex-col gap-2">
-              <div className="h-1.5 rounded-chip" style={{ background: i + 1 <= step ? colorHex : "var(--line)" }} />
-              <span className="text-[13px]" style={{ color: i + 1 === step ? "var(--ink)" : "var(--muted)", fontWeight: i + 1 === step ? 600 : 400 }}>
+              <div className="h-1.5 rounded-chip" style={{ background: i + 1 <= step ? "var(--mode-ink)" : "rgba(255,255,255,.25)" }} />
+              <span className="text-[13px]" style={{ color: i + 1 === step ? "var(--mode-ink)" : "var(--mode-ink-muted)", fontWeight: i + 1 === step ? 600 : 400 }}>
                 {i + 1}. {label}
               </span>
             </li>
           ))}
         </ol>
 
-        <div className="flex flex-wrap items-start gap-6">
-          <section className="flex min-w-0 flex-[3_1_480px] flex-col gap-7 rounded-card border border-line bg-card p-8">
-            <h1 className="m-0 text-[36px] font-light leading-tight tracking-tight">{STEP_TITLES[step - 1]}</h1>
+        <div className="flex flex-wrap items-start gap-5">
+          <Card tone="solid" className="flex min-w-0 flex-[3_1_480px] flex-col gap-7 p-6 sm:p-7">
+            <h1 className="m-0 text-[32px] font-bold leading-tight tracking-tight">{STEP_TITLES[step - 1]}</h1>
 
             {step === 1 && (
               <div className="flex flex-col gap-6.5">
                 <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="n-name">Nombre de la habilidad</Label>
+                  <Label htmlFor="n-name" className="text-card-solid-muted">
+                    Nombre de la habilidad
+                  </Label>
                   <Input
                     id="n-name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Ej. Piano, Dibujo, Ajedrez"
-                    className="min-h-[52px] text-lg"
+                    className="min-h-[52px] text-lg font-semibold"
                   />
                 </div>
-                <div className="flex items-center gap-2.5">
-                  <span className="size-3 shrink-0 rounded-full" style={{ background: colorHex }} aria-hidden="true" />
-                  <span className="text-[13px] text-muted">Color de acento de la habilidad</span>
-                </div>
-                <div role="group" aria-label="Meta de horas" className="flex flex-col gap-2.5">
-                  <span className="label-xs">Meta de horas</span>
-                  <div className="flex flex-wrap gap-2">
-                    {GOAL_OPTIONS.map((g) => (
-                      <button
-                        key={g}
-                        type="button"
-                        aria-pressed={goal === g}
-                        onClick={() => setGoal(g)}
-                        className="font-num min-h-12 rounded-button border px-5 transition-colors"
-                        style={{ borderColor: goal === g ? colorHex : "var(--border)", background: goal === g ? "var(--card)" : "transparent" }}
-                      >
-                        {formatInt(g)} h
-                      </button>
+                <div className="flex flex-col gap-2">
+                  <Label className="text-card-solid-muted">Color</Label>
+                  <div className="flex gap-2.5">
+                    {COLOR_OPTIONS.map((c) => (
+                      <span
+                        key={c.id}
+                        aria-hidden="true"
+                        className="size-9 rounded-card"
+                        style={{ background: c.hex, boxShadow: "0 0 0 3px var(--card-solid), 0 0 0 5px var(--flat-dark)" }}
+                      />
                     ))}
                   </div>
-                  <span className="text-[13px] text-muted">
+                </div>
+                <div role="group" aria-label="Meta de horas" className="flex flex-col gap-2.5">
+                  <Label className="text-card-solid-muted">Meta de horas</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {GOAL_OPTIONS.map((g) => (
+                      <Chip key={g} pressed={goal === g} onClick={() => setGoal(g)} className="font-num">
+                        {formatInt(g)} h
+                      </Chip>
+                    ))}
+                  </div>
+                  <span className="text-[13px] text-card-solid-muted">
                     10.000 h es la cifra clásica de la maestría. Puedes elegir una meta más corta para empezar.
                   </span>
                 </div>
                 <div className="flex max-w-80 flex-col gap-1.5">
-                  <Label htmlFor="n-init">¿Cuántas horas llevas ya? (opcional)</Label>
+                  <Label htmlFor="n-init" className="text-card-solid-muted">
+                    ¿Cuántas horas llevas ya? (opcional)
+                  </Label>
                   <Input id="n-init" type="number" min={0} value={initial} onChange={(e) => setInitial(e.target.value)} className="font-num" />
                 </div>
               </div>
@@ -162,39 +176,25 @@ export default function NewSkillPage() {
             {step === 2 && (
               <div className="flex flex-col gap-6.5">
                 <div role="group" aria-label="Meta diaria" className="flex flex-col gap-2.5">
-                  <span className="label-xs">Tiempo por día de práctica</span>
+                  <Label className="text-card-solid-muted">Tiempo por día de práctica</Label>
                   <div className="flex flex-wrap gap-2">
                     {DAILY_OPTIONS.map((m) => (
-                      <button
-                        key={m}
-                        type="button"
-                        aria-pressed={daily === m}
-                        onClick={() => setDaily(m)}
-                        className="font-num min-h-12 rounded-button border px-4.5 transition-colors"
-                        style={{ borderColor: daily === m ? colorHex : "var(--border)", background: daily === m ? "var(--card)" : "transparent" }}
-                      >
+                      <Chip key={m} pressed={daily === m} onClick={() => setDaily(m)} className="font-num">
                         {formatMinutesLong(m)}
-                      </button>
+                      </Chip>
                     ))}
                   </div>
                 </div>
                 <div role="group" aria-label="Días por semana" className="flex flex-col gap-2.5">
-                  <span className="label-xs">Días por semana</span>
+                  <Label className="text-card-solid-muted">Días por semana</Label>
                   <div className="flex flex-wrap gap-2">
                     {DAY_OPTIONS.map((d) => (
-                      <button
-                        key={d}
-                        type="button"
-                        aria-pressed={days === d}
-                        onClick={() => setDays(d)}
-                        className="font-num flex size-13 items-center justify-center rounded-full border transition-colors"
-                        style={{ borderColor: days === d ? colorHex : "var(--border)", background: days === d ? "var(--card)" : "transparent" }}
-                      >
+                      <Chip key={d} pressed={days === d} onClick={() => setDays(d)} className="font-num w-11 justify-center px-0">
                         {d}
-                      </button>
+                      </Chip>
                     ))}
                   </div>
-                  <span className="text-[13px] text-muted">
+                  <span className="text-[13px] text-card-solid-muted">
                     Con este ritmo practicas {formatDecimal(perWeek)} h por semana. Elige algo que puedas sostener incluso en una mala semana.
                   </span>
                 </div>
@@ -203,10 +203,10 @@ export default function NewSkillPage() {
 
             {step === 3 && (
               <div className="flex flex-col gap-6.5">
-                <div className="flex flex-wrap items-center justify-between gap-4 rounded-card border border-line px-4.5 py-4">
+                <div className="flex flex-wrap items-center justify-between gap-4 rounded-card bg-surface-muted px-4.5 py-4">
                   <div className="flex flex-col gap-0.5">
-                    <span className="font-semibold">Recordarme todos los días</span>
-                    <span className="text-[13px] text-muted">Aviso push a la hora que elijas</span>
+                    <span className="font-semibold text-surface-muted-ink">Recordarme todos los días</span>
+                    <span className="text-[13px] text-surface-muted-ink opacity-80">Aviso push a la hora que elijas</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Input
@@ -214,7 +214,7 @@ export default function NewSkillPage() {
                       aria-label="Hora del recordatorio"
                       value={remindTime}
                       onChange={(e) => setRemindTime(e.target.value)}
-                      className="font-num min-h-11 w-auto"
+                      className="font-num min-h-11 w-auto bg-card-solid text-card-solid-ink"
                     />
                     <Switch checked={remind} onCheckedChange={setRemind} label="Activar recordatorio diario" />
                   </div>
@@ -225,58 +225,68 @@ export default function NewSkillPage() {
             {step === 4 && (
               <div className="flex flex-col gap-4">
                 <dl className="m-0 grid grid-cols-[auto_1fr] items-baseline gap-x-6 gap-y-3">
-                  <dt className="text-sm text-muted">Habilidad</dt>
+                  <dt className="text-sm text-card-solid-muted">Habilidad</dt>
                   <dd className="m-0 font-bold">{displayName}</dd>
-                  <dt className="text-sm text-muted">Meta</dt>
+                  <dt className="text-sm text-card-solid-muted">Meta</dt>
                   <dd className="font-num m-0">
                     {formatInt(goal)} h{initNum > 0 ? ` (ya llevas ${formatDecimal(initNum)} h)` : ""}
                   </dd>
-                  <dt className="text-sm text-muted">Ritmo</dt>
+                  <dt className="text-sm text-card-solid-muted">Ritmo</dt>
                   <dd className="font-num m-0">
                     {formatMinutesLong(daily)} · {days} días por semana
                   </dd>
-                  <dt className="text-sm text-muted">Recordatorio</dt>
+                  <dt className="text-sm text-card-solid-muted">Recordatorio</dt>
                   <dd className="font-num m-0">{remind ? `Todos los días a las ${remindTime}` : "Sin recordatorio"}</dd>
                 </dl>
               </div>
             )}
 
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>{step > 1 && <Button variant="outline" onClick={() => setStep((s) => s - 1)}>Atrás</Button>}</div>
               <div>
-                {step < 4 && <Button onClick={() => setStep((s) => s + 1)}>{step === 3 ? "Ver resumen" : "Siguiente"}</Button>}
+                {step > 1 && (
+                  <Button variant="light" onClick={() => setStep((s) => s - 1)}>
+                    Atrás
+                  </Button>
+                )}
+              </div>
+              <div>
+                {step < 4 && (
+                  <Button variant="dark" onClick={() => setStep((s) => s + 1)}>
+                    {step === 3 ? "Ver resumen" : "Siguiente"}
+                  </Button>
+                )}
                 {step === 4 && (
-                  <Button onClick={handleCreate} disabled={creating}>
+                  <Button variant="dark" onClick={handleCreate} disabled={creating}>
                     {creating ? "Creando…" : "Crear habilidad"}
                   </Button>
                 )}
               </div>
             </div>
-          </section>
+          </Card>
 
-          <aside aria-label="Tu camino" className="flex min-w-0 flex-[2_1_320px] flex-col gap-5.5 rounded-card border border-line bg-card p-7">
+          <Card tone="solid" aria-label="Tu camino" className="flex min-w-0 flex-[2_1_320px] flex-col gap-5.5 p-6 sm:p-7">
             <div className="flex items-center gap-3">
               <span className="size-3.5 rounded-full" style={{ background: colorHex }} />
               <h2 className="m-0 text-xl font-medium">{displayName}</h2>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="label-xs">A este ritmo llegas a la meta en</span>
-              <span className="font-num text-[44px] font-light leading-tight" style={{ color: colorHex }}>
+              <span className="label-xs text-card-solid-muted">A este ritmo llegas a la meta en</span>
+              <span className="font-num text-[40px] font-extrabold leading-tight" style={{ color: colorHex }}>
                 {etaFor(goal)}
               </span>
-              <span className="text-[13px] text-muted">
+              <span className="text-[13px] text-card-solid-muted">
                 {formatDecimal(perWeek)} h por semana · {formatInt(goal)} h de meta
               </span>
             </div>
             <div className="flex flex-col">
               {marks.map((h) => (
-                <div key={h} className="flex items-baseline justify-between gap-3 border-t border-line py-3">
+                <div key={h} className="flex items-baseline justify-between gap-3 border-t border-card-solid-line py-3">
                   <span className="font-num text-[15px]">{formatInt(h)} h</span>
-                  <span className="text-sm text-muted">{etaFor(h)}</span>
+                  <span className="text-sm text-card-solid-muted">{etaFor(h)}</span>
                 </div>
               ))}
             </div>
-          </aside>
+          </Card>
         </div>
       </main>
     </div>

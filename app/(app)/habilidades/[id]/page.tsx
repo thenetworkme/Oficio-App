@@ -4,13 +4,10 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowLeft, Pencil, Play } from "lucide-react";
 import { useEffect, useState } from "react";
-import { format as dfFormat } from "date-fns";
-import { es } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeading } from "@/components/ui/card";
-import { DotDigits } from "@/components/ui/DotDigits";
-import { HourRuler } from "@/components/ui/HourRuler";
 import { ProgressBar } from "@/components/ui/progress-bar";
+import { ModeBackdrop } from "@/components/layout/ModeBackdrop";
 import { ConsistencyHeatmap } from "@/components/dashboard/ConsistencyHeatmap";
 import { useAppData } from "@/lib/hooks/useAppData";
 import { listSessionsForSkill } from "@/lib/firestore/sessions";
@@ -22,6 +19,7 @@ import { projectTimeRemaining, formatProjection } from "@/lib/projection";
 import { buildSkillDailyMinutes } from "@/lib/heatmap";
 import { computeCurrentStreak } from "@/lib/streak";
 import { dateKeyInTz } from "@/lib/tz";
+import { cn } from "@/lib/cn";
 import type { Achievement, PracticeSession } from "@/lib/types";
 
 export default function SkillDetailPage() {
@@ -38,7 +36,14 @@ export default function SkillDetailPage() {
   }, [id]);
 
   if (!skill) {
-    return <Card className="p-8 text-center text-muted">Habilidad no encontrada.</Card>;
+    return (
+      <>
+        <ModeBackdrop />
+        <Card tone="solid" className="p-8 text-center text-card-solid-muted">
+          Habilidad no encontrada.
+        </Card>
+      </>
+    );
   }
 
   const color = resolveSkillColor(skill.color);
@@ -63,73 +68,145 @@ export default function SkillDetailPage() {
     .reduce((acc, s) => acc + s.durationMin, 0);
   const skillSessionsWeek = weekMinutesForSkill(allSessions, skill.id);
 
+  const milestoneMarks = MILESTONES.filter((m) => m < skill.goalHours);
+
+  const last14Days = buildLast14DayBars(skillDailyMinutes, timezone);
+
   return (
     <>
-      <Link href="/" className="label-xs inline-flex min-h-11 items-center gap-2 self-start">
-        <ArrowLeft size={14} aria-hidden="true" />
-        Panel
-      </Link>
+      <ModeBackdrop />
 
-      <header className="flex flex-wrap items-end justify-between gap-5">
-        <div className="flex flex-col gap-2.5">
-          <span className="label-xs">
-            Desde {formatDateEs(new Date(skill.createdAt))} · {recent.length} sesiones
-          </span>
-          <div className="flex items-center gap-3.5">
-            <span className="size-4 shrink-0 rounded-full" style={{ background: color }} />
-            <h1 className="m-0 text-[44px] font-light leading-[0.95] tracking-tight sm:text-[56px]">{skill.name}</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Link href="/" className="label-xs inline-flex min-h-11 items-center gap-2 self-start text-mode-ink-muted hover:text-mode-ink">
+          <ArrowLeft size={14} aria-hidden="true" />
+          Panel
+        </Link>
+        <Button variant="onColor" size="iconSm" aria-label="Editar habilidad">
+          <Pencil size={16} aria-hidden="true" />
+        </Button>
+      </div>
+
+      <div role="tablist" aria-label="Habilidad" className="flex flex-wrap gap-1">
+        {skills.map((s) => (
+          <Link
+            key={s.id}
+            href={`/habilidades/${s.id}`}
+            role="tab"
+            aria-selected={s.id === skill.id}
+            className={cn(
+              "rounded-[4px] px-3 py-1 text-[16px] transition-colors",
+              s.id === skill.id ? "bg-black/15 font-semibold text-mode-ink" : "font-normal text-mode-ink/90 hover:bg-white/10",
+            )}
+          >
+            {s.name}
+          </Link>
+        ))}
+      </div>
+
+      <Card tone="solid" className="flex flex-col gap-6 p-6 sm:p-7">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <span className="label-xs text-card-solid-muted">{skill.name}</span>
+            <div className="font-num mt-1.5 text-[52px] font-extrabold leading-none tracking-tight sm:text-[64px]" style={{ color }}>
+              {formatInt(hours)}
+              <span className="text-[20px] font-semibold text-card-solid-muted"> / {formatInt(skill.goalHours)} h</span>
+            </div>
+          </div>
+          <div className="text-right">
+            <span className="label-xs text-card-solid-muted">Proyección</span>
+            <div className="mt-1 text-xl font-bold">{goalProjection.reached ? "Meta alcanzada" : formatProjection(goalProjection)}</div>
           </div>
         </div>
+
+        <div className="flex flex-col gap-1.5">
+          <ProgressBar
+            pct={(hours / skill.goalHours) * 100}
+            color={color}
+            trackColor="var(--card-solid-line)"
+            height={10}
+            marks={milestoneMarks.map((m) => (m / skill.goalHours) * 100)}
+            ariaLabel={`${skill.name}: ${formatInt(hours)} de ${formatInt(skill.goalHours)} horas`}
+          />
+          <div className="flex justify-between text-[12px] text-card-solid-muted">
+            <span>0</span>
+            {milestoneMarks.map((m) => <span key={m}>{formatInt(m)}</span>)}
+            <span>{formatInt(skill.goalHours)}</span>
+          </div>
+        </div>
+
         <div className="flex flex-wrap gap-2.5">
-          <Button asChild variant="outline">
-            <Link href="/registrar">Registrar horas</Link>
-          </Button>
-          <Button variant="outline" size="icon" aria-label="Editar habilidad">
-            <Pencil size={18} aria-hidden="true" />
-          </Button>
-          <Button asChild variant="primary">
+          <Button asChild variant="dark" size="md" className="flex-1 sm:flex-none">
             <Link href="/temporizador">
-              <Play size={16} fill="currentColor" aria-hidden="true" />
+              <Play size={14} fill="currentColor" aria-hidden="true" />
               Practicar ahora
             </Link>
           </Button>
-        </div>
-      </header>
-
-      <Card className="grid grid-cols-[repeat(auto-fit,minmax(min(420px,100%),1fr))] gap-8 p-7">
-        <div className="flex flex-col gap-5">
-          <div className="flex items-end gap-3">
-            <DotDigits value={formatInt(hours)} size={15} onColor={color} ariaLabel={`${formatInt(hours)} horas`} />
-            <span className="font-num pb-1.5 text-lg text-muted">/ {formatInt(skill.goalHours)} h</span>
-          </div>
-          <HourRuler
-            currentHours={hours}
-            goalHours={skill.goalHours}
-            onColor={color}
-            ariaLabel={`${skill.name}: ${formatInt(hours)} de ${formatInt(skill.goalHours)} horas`}
-          />
-        </div>
-
-        <div className="flex flex-col sm:border-l sm:border-line sm:pl-8">
-          <StatRow label="Racha" value={`${skillStreak} días`} />
-          <StatRow label="Ritmo últimos 30 d" value={`${formatMinutes(dailyMinPace)} / día`} />
-          {nextH && nextMilestoneProjection && (
-            <StatRow label="Siguiente hito" value={`${formatInt(nextH)} h · ${formatProjection(nextMilestoneProjection)}`} />
-          )}
-          <StatRow
-            label={`Proyección a ${formatInt(skill.goalHours)} h`}
-            value={goalProjection.reached ? "Meta alcanzada" : formatProjection(goalProjection)}
-          />
-          {!goalProjection.reached && Number.isFinite(goalProjection.weeksRemaining) && (
-            <StatRow label="Fecha estimada" value={estimatedDateLabel(goalProjection.weeksRemaining)} last />
-          )}
+          <Button asChild variant="light" size="md">
+            <Link href="/registrar">Registrar horas</Link>
+          </Button>
         </div>
       </Card>
 
-      <Card className="flex flex-col gap-4 p-5.5">
+      <div className="grid grid-cols-3 gap-2.5">
+        <Card tone="tint" className="p-4.5">
+          <div className="font-num text-[28px] font-bold leading-[1.1]">{formatMinutes(skillSessionsWeek)}</div>
+          <div className="mt-0.5 text-[13px] opacity-85">esta semana</div>
+        </Card>
+        <Card tone="tint" className="p-4.5">
+          <div className="font-num text-[28px] font-bold leading-[1.1]">{skillStreak}</div>
+          <div className="mt-0.5 text-[13px] opacity-85">de racha</div>
+        </Card>
+        <Card tone="tint" className="p-4.5">
+          <div className="font-num text-[28px] font-bold leading-[1.1]">{formatMinutes(dailyMinPace)}</div>
+          <div className="mt-0.5 text-[13px] opacity-85">por día</div>
+        </Card>
+      </div>
+
+      <Card tone="solid" className="flex flex-col gap-3.5 p-6 sm:p-7">
+        <CardHeading className="text-[14px] font-bold uppercase tracking-tight text-card-solid-muted">Últimos 14 días</CardHeading>
+        <div className="flex h-[110px] items-end gap-1.5 border-b border-card-solid-line">
+          {last14Days.map((d, i) => (
+            <div
+              key={i}
+              title={formatMinutes(d.minutes)}
+              className="flex-1 rounded-t-[3px]"
+              style={{
+                height: `${Math.max(2, (d.minutes / Math.max(1, last14Days.reduce((m, x) => Math.max(m, x.minutes), 0) * 1.1)) * 100)}%`,
+                background: d.isToday ? color : `color-mix(in srgb, ${color} 32%, var(--card-solid-line))`,
+              }}
+            />
+          ))}
+        </div>
+      </Card>
+
+      <Card tone="solid" className="flex flex-col p-6 sm:p-7">
+        <CardHeading className="mb-1 text-[14px] font-bold uppercase tracking-tight text-card-solid-muted">Sesiones recientes</CardHeading>
+        {recent.length === 0 ? (
+          <p className="py-3 text-sm text-card-solid-muted">Todavía no hay sesiones registradas.</p>
+        ) : (
+          recent.slice(0, 8).map((s) => (
+            <div key={s.id} className="grid grid-cols-[100px_1fr_auto] items-center gap-3 border-t border-card-solid-line py-3.5 first:border-t-0">
+              <span className="text-card-solid-muted">{formatShortDateEs(new Date(s.startedAt))}</span>
+              <div className="flex flex-col gap-1">
+                <span className="font-medium">{s.note && s.note.trim() ? s.note : "Sesión de práctica"}</span>
+                <div role="img" aria-label={`Calidad ${s.quality ?? 0} de 5`} className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <span key={n} className="size-1.5 rounded-full" style={{ background: (s.quality ?? 0) >= n ? color : "var(--card-solid-line)" }} />
+                  ))}
+                </div>
+              </div>
+              <span className="font-num font-bold" style={{ color }}>
+                {formatMinutes(s.durationMin)}
+              </span>
+            </div>
+          ))
+        )}
+      </Card>
+
+      <Card tone="solid" className="flex flex-col gap-4 p-6 sm:p-7">
         <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <CardHeading>Actividad</CardHeading>
-          <span className="text-[13px] text-muted">Últimas 26 semanas</span>
+          <CardHeading className="text-[14px] font-bold uppercase tracking-tight text-card-solid-muted">Actividad</CardHeading>
+          <span className="text-[13px] text-card-solid-muted">Últimas 26 semanas</span>
         </div>
         <ConsistencyHeatmap
           dailyMinutes={skillDailyMinutes}
@@ -142,29 +219,26 @@ export default function SkillDetailPage() {
       </Card>
 
       <section className="grid grid-cols-[repeat(auto-fit,minmax(min(380px,100%),1fr))] items-start gap-4">
-        <Card className="flex flex-col p-5.5">
-          <CardHeading className="mb-2">Hitos</CardHeading>
+        <Card tone="solid" className="flex flex-col p-6 sm:p-7">
+          <CardHeading className="mb-2 text-[14px] font-bold uppercase tracking-tight text-card-solid-muted">Hitos</CardHeading>
           {MILESTONES.filter((m) => m <= skill.goalHours).map((m, i, arr) => {
             const done = hours >= m;
             const isNext = !done && m === nextH;
             const achievement = achievements.find((a) => a.hours === m);
             const status = done ? "Logrado" : isNext ? "Siguiente" : "Pendiente";
             return (
-              <div
-                key={m}
-                className={`flex items-center gap-4 py-3.5 ${i < arr.length - 1 ? "border-b border-line" : ""}`}
-              >
+              <div key={m} className={`flex items-center gap-4 py-3.5 ${i < arr.length - 1 ? "border-b border-card-solid-line" : ""}`}>
                 <span
                   className="size-2.5 shrink-0 rounded-full"
-                  style={{ background: done ? color : "transparent", border: done ? "none" : `1px solid ${isNext ? color : "var(--border)"}` }}
+                  style={{ background: done ? color : "transparent", border: done ? "none" : `1px solid ${isNext ? color : "var(--card-solid-line)"}` }}
                 />
                 <div className="flex flex-1 flex-col gap-0.5">
                   <span className="font-num text-[15px] font-medium">{formatInt(m)} horas</span>
-                  <span className="text-[13px] text-muted">
+                  <span className="text-[13px] text-card-solid-muted">
                     {done && achievement ? `Alcanzado el ${formatDateEs(new Date(achievement.achievedAt))}` : `Faltan ${formatInt(Math.max(0, m - hours))} h`}
                   </span>
                 </div>
-                <span className="label-xs" style={{ color: isNext ? color : undefined }}>
+                <span className="label-xs" style={{ color: isNext ? color : "var(--card-solid-muted)" }}>
                   {status}
                 </span>
               </div>
@@ -172,51 +246,18 @@ export default function SkillDetailPage() {
           })}
         </Card>
 
-        <Card className="flex flex-col p-5.5">
-          <div className="mb-2 flex flex-wrap items-baseline justify-between gap-3">
-            <CardHeading>Sesiones recientes</CardHeading>
-            <span className="text-[13px] text-muted">Calidad de 1 a 5</span>
-          </div>
-          {recent.length === 0 ? (
-            <p className="py-3 text-sm text-muted">Todavía no hay sesiones registradas.</p>
-          ) : (
-            recent.slice(0, 8).map((s, i, arr) => (
-              <div key={s.id} className={`flex flex-col gap-1.5 py-3.5 ${i < arr.length - 1 ? "border-b border-line" : ""}`}>
-                <div className="flex flex-wrap items-center gap-2 gap-x-4">
-                  <span className="min-w-[84px] font-semibold">{formatShortDateEs(new Date(s.startedAt))}</span>
-                  <span className="font-num min-w-[70px] flex-1 text-sm text-muted">{formatMinutes(s.durationMin)}</span>
-                  <div role="img" aria-label={`Calidad ${s.quality ?? 0} de 5`} className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map((n) => (
-                      <span
-                        key={n}
-                        className="size-2 rounded-full"
-                        style={{ background: (s.quality ?? 0) >= n ? color : "var(--line)" }}
-                      />
-                    ))}
-                  </div>
-                </div>
-                {s.note && <span className="text-sm text-muted">{s.note}</span>}
-              </div>
-            ))
+        <Card tone="solid" className="flex flex-col gap-4.5 p-6 sm:p-7">
+          <CardHeading className="text-[14px] font-bold uppercase tracking-tight text-card-solid-muted">Metas</CardHeading>
+          <GoalRow label="Hoy" current={skillSessionsToday} goal={skill.dailyGoalMin} color={color} />
+          <GoalRow label="Esta semana" current={skillSessionsWeek} goal={skill.dailyGoalMin * skill.daysPerWeek} color={color} />
+          {nextH && nextMilestoneProjection && (
+            <p className="m-0 border-t border-card-solid-line pt-4 text-[13px] text-card-solid-muted">
+              Siguiente hito: {formatInt(nextH)} h · {formatProjection(nextMilestoneProjection)}
+            </p>
           )}
         </Card>
       </section>
-
-      <Card className="flex flex-col gap-4.5 p-5.5">
-        <CardHeading>Metas</CardHeading>
-        <GoalRow label="Hoy" current={skillSessionsToday} goal={skill.dailyGoalMin} color={color} />
-        <GoalRow label="Esta semana" current={skillSessionsWeek} goal={skill.dailyGoalMin * skill.daysPerWeek} color={color} />
-      </Card>
     </>
-  );
-}
-
-function StatRow({ label, value, last }: { label: string; value: string; last?: boolean }) {
-  return (
-    <div className={`flex items-baseline justify-between gap-4 py-3 ${last ? "" : "border-b border-line"}`}>
-      <span className="label-xs">{label}</span>
-      <span className="font-num text-[15px]">{value}</span>
-    </div>
   );
 }
 
@@ -225,11 +266,11 @@ function GoalRow({ label, current, goal, color }: { label: string; current: numb
     <div className="flex flex-col gap-2">
       <div className="flex justify-between gap-3">
         <span className="font-semibold">{label}</span>
-        <span className="font-num text-sm text-muted">
+        <span className="font-num text-sm text-card-solid-muted">
           {formatMinutes(current)} / {formatMinutes(goal)}
         </span>
       </div>
-      <ProgressBar pct={(current / Math.max(1, goal)) * 100} color={color} ariaLabel={`${label}: ${formatMinutes(current)} de ${formatMinutes(goal)}`} />
+      <ProgressBar pct={(current / Math.max(1, goal)) * 100} color={color} trackColor="var(--card-solid-line)" ariaLabel={`${label}: ${formatMinutes(current)} de ${formatMinutes(goal)}`} />
     </div>
   );
 }
@@ -243,7 +284,7 @@ function skillWeeklyHours(sessions: PracticeSession[], skillId: string): number 
 }
 
 /** Average minutes/day logged for `skillId` over the trailing 30 days — the
- * reference's "Ritmo últimos 30 d" stat (e.g. "1:37 / día"). */
+ * reference's "Promedio diario" stat. */
 function last30DaysAvgMinPerDay(sessions: PracticeSession[], skillId: string): number {
   const since = Date.now() - 30 * 24 * 60 * 60 * 1000;
   const minutes = sessions
@@ -264,11 +305,16 @@ function weekMinutesForSkill(sessions: PracticeSession[], skillId: string): numb
     .reduce((acc, s) => acc + s.durationMin, 0);
 }
 
-/** "nov 2034" — short month + year, `weeksRemaining` from now. Page-local
- * display formatting only (not a projection.ts change): derives a calendar
- * estimate from the pure weeks-remaining figure already returned by
- * projectTimeRemaining. */
-function estimatedDateLabel(weeksRemaining: number): string {
-  const date = new Date(Date.now() + weeksRemaining * 7 * 24 * 60 * 60 * 1000);
-  return dfFormat(date, "MMM yyyy", { locale: es });
+/** Last 14 calendar days' minutes for this skill (reference's "Últimos 14
+ * días" bar chart), from the already-built per-day minutes map. */
+function buildLast14DayBars(dailyMinutes: Record<string, number>, timezone: string): { minutes: number; isToday: boolean }[] {
+  const out: { minutes: number; isToday: boolean }[] = [];
+  const today = new Date();
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const key = dateKeyInTz(d, timezone);
+    out.push({ minutes: dailyMinutes[key] ?? 0, isToday: i === 0 });
+  }
+  return out;
 }
