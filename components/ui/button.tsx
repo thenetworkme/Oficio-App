@@ -35,8 +35,8 @@ export const buttonVariants = cva(
         subtle: "border-line bg-card text-ink hover:border-border",
         danger: "border-danger/45 bg-transparent text-danger hover:border-danger hover:bg-danger/10",
         go: "border-0 bg-go-bg font-sans text-[16px] font-bold normal-case tracking-normal text-[var(--mode-bg)] shadow-[0_6px_0_var(--go-shadow)] active:translate-y-1.5 active:shadow-none data-[pressed=true]:translate-y-1.5 data-[pressed=true]:shadow-none",
-        dark: "border-0 bg-flat-dark text-flat-dark-ink hover:opacity-85",
-        light: "border-0 bg-surface-muted text-surface-muted-ink hover:bg-surface-muted-hover",
+        dark: "border-0 bg-flat-dark font-sans text-[15px] font-bold normal-case tracking-normal text-flat-dark-ink hover:opacity-85",
+        light: "border-0 bg-surface-muted font-sans text-[15px] font-bold normal-case tracking-normal text-surface-muted-ink hover:bg-surface-muted-hover",
         onColor: "border-card-tint-border bg-card-tint text-mode-ink font-sans text-[15px] font-semibold normal-case tracking-normal hover:bg-white/30",
       },
       size: {
